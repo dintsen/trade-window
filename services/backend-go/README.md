@@ -18,7 +18,7 @@ Follow these exact steps to run the backend in a stateless production environmen
 4. Set the following Environment Variables in your hosting provider:
    - `STORAGE_DRIVER=postgres`
    - `DATABASE_URL=postgres://...` (your Supabase connection string)
-   - `ALLOWED_ORIGINS=https://trade-window-final.vercel.app` (or your actual Vercel URL)
+   - `ALLOWED_ORIGINS=https://tradewindow.xyz` (or your actual Vercel URL)
 5. Set the Vercel frontend environment variables:
    - `NEXT_PUBLIC_API_URL=https://<your-backend-url>`
    - `NEXT_PUBLIC_WS_URL=wss://<your-backend-url>/ws`
