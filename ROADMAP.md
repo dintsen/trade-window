@@ -25,3 +25,9 @@
 - IBC 2.0 research
 - utility token fee logic
 - production security review
+
+## Deal Request / Contact Platform
+
+Trade Window includes a public inquiry flow where users can submit OTC deal requests and contact details for manual follow-up.
+
+This does not execute trades automatically and does not provide custody, financial advice, guaranteed settlement or production wallet signing.

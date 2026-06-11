@@ -37,3 +37,9 @@ The Adena integration safely checks for `window.adena` and only calls `AddEstabl
 
 ### Local Deployment Safety
 The `local-deploy-dry-run.sh` script enforces a strict check for the `gnoland` local node before attempting any deployment or interaction. Since the tool is missing, the script halts securely without making unintended network calls or attempting mainnet interactions.
+
+## Deal Request / Contact Platform
+
+Trade Window includes a public inquiry flow where users can submit OTC deal requests and contact details for manual follow-up.
+
+This does not execute trades automatically and does not provide custody, financial advice, guaranteed settlement or production wallet signing.

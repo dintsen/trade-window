@@ -30,6 +30,9 @@ export default function TradeRoomWrapper() {
         </div>
 
         <div className="flex items-center gap-4 text-sm font-medium">
+          <Link href="/request" className="hidden sm:block px-4 py-1.5 rounded-full border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 transition-colors text-xs font-semibold">
+            Request OTC Deal
+          </Link>
           {account ? (
             <div className="flex items-center gap-3 bg-black/50 border border-white/5 rounded-full px-4 py-1.5">
               <span className="text-emerald-400 flex items-center gap-1.5 text-xs"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_5px_#10b981]"></div> Active: {account.displayAddress}</span>

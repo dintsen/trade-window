@@ -19,13 +19,21 @@ export function FinalCtaSection() {
         </p>
 
         <div className="flex flex-col items-center gap-6">
-          <Link 
-            href="/trade" 
-            className="px-10 py-5 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold rounded-full text-lg transition-all flex items-center gap-2 group shadow-[0_0_30px_rgba(16,185,129,0.3)]"
-          >
-            Launch Demo
-            <ArrowRight className="group-hover:translate-x-1 transition-transform" />
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Link 
+              href="/request" 
+              className="px-10 py-5 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold rounded-full text-lg transition-all flex items-center justify-center gap-2 group shadow-[0_0_30px_rgba(16,185,129,0.3)]"
+            >
+              Request a Deal
+              <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link 
+              href="/trade" 
+              className="px-10 py-5 bg-transparent border border-white/10 hover:border-white/30 hover:bg-white/5 text-white font-medium rounded-full text-lg transition-all flex items-center justify-center gap-2"
+            >
+              Launch Demo Room
+            </Link>
+          </div>
           
           <div className="flex items-center gap-2 text-xs font-mono text-white/30 bg-white/5 px-4 py-2 rounded-full border border-white/5">
             <Info size={14} />

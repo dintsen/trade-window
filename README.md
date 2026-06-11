@@ -127,3 +127,9 @@ The Apache-2.0 license does not grant trademark rights.
 * no real asset transfer is implemented;
 * no token investment or financial product is offered;
 * current demo is mock/research only.
+
+## Deal Request / Contact Platform
+
+Trade Window includes a public inquiry flow where users can submit OTC deal requests and contact details for manual follow-up.
+
+This does not execute trades automatically and does not provide custody, financial advice, guaranteed settlement or production wallet signing.

@@ -49,8 +49,8 @@ export function Header() {
             EN
           </div>
           <div className="w-px h-4 bg-white/10"></div>
-          <Link href="/contact" className="px-6 py-2.5 rounded-full border border-white/10 hover:border-white/30 hover:bg-white/5 text-white transition-all text-xs tracking-wide">
-            Contact
+          <Link href="/request" className="px-6 py-2.5 rounded-full border border-white/10 hover:border-white/30 hover:bg-white/5 text-white transition-all text-xs tracking-wide">
+            Request a Deal
           </Link>
         </div>
 
@@ -80,7 +80,7 @@ export function Header() {
           </div>
           <Link href="/ecosystem" onClick={() => setMobileMenuOpen(false)} className="py-2 text-white/80 hover:text-white mt-2">Ecosystem</Link>
           <Link href="/whitepaper" onClick={() => setMobileMenuOpen(false)} className="py-2 text-white/80 hover:text-white">Whitepaper</Link>
-          <Link href="/contact" onClick={() => setMobileMenuOpen(false)} className="py-2 text-white/80 hover:text-white">Contact</Link>
+          <Link href="/request" onClick={() => setMobileMenuOpen(false)} className="py-2 text-white/80 hover:text-white">Request a Deal</Link>
         </div>
       )}
     </header>

@@ -94,3 +94,9 @@ In the current prototype, connecting the Adena wallet only reads the account add
 
 ### Gno Deployment Note
 The actual deployment of Gno contracts and broadcasting of signatures via the frontend is not implemented. A local deployment dry-run was attempted but is blocked by missing `gnoland` tooling.
+
+## Deal Request / Contact Platform
+
+Trade Window includes a public inquiry flow where users can submit OTC deal requests and contact details for manual follow-up.
+
+This does not execute trades automatically and does not provide custody, financial advice, guaranteed settlement or production wallet signing.

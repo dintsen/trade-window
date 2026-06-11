@@ -62,3 +62,9 @@ Frontend should handle:
 * **Adena Priority**: Adena is the priority wallet path. The current implementation is a read-only/detection prototype only.
 * **Limitations**: There is no real signing and no real settlement implemented yet.
 * **Gno Contracts**: The Gno contracts are a local validated commitment scaffold. Deployment is not implemented.
+
+## Deal Request / Contact Platform
+
+Trade Window includes a public inquiry flow where users can submit OTC deal requests and contact details for manual follow-up.
+
+This does not execute trades automatically and does not provide custody, financial advice, guaranteed settlement or production wallet signing.

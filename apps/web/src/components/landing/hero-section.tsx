@@ -32,17 +32,17 @@ export function HeroSection() {
 
           <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
             <Link 
-              href="/trade" 
+              href="/request" 
               className="w-full sm:w-auto px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold rounded-full transition-all flex items-center justify-center gap-2 group shadow-[0_0_20px_rgba(16,185,129,0.2)]"
             >
-              Launch Demo
+              Request a Deal
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link 
-              href="#how-it-works" 
+              href="/trade" 
               className="w-full sm:w-auto px-8 py-4 bg-transparent border border-white/10 hover:border-white/30 hover:bg-white/5 text-white font-medium rounded-full transition-all text-center"
             >
-              View Demo Flow
+              Launch Demo Room
             </Link>
           </div>
         </div>

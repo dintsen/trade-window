@@ -24,3 +24,9 @@ Trade Window is a Gno.land-native OTC trade-room protocol and interface for safe
 
 ## Roadmap Highlights
 Phase 1 focuses on Gno protocol architecture (Docs and realm structure). Phase 2 delivers the Gno intent commitment MVP (Create/cancel/expire/commit intent). Later phases will introduce Adena wallet research, AtomOne path, and IBC 2.0.
+
+## Deal Request / Contact Platform
+
+Trade Window includes a public inquiry flow where users can submit OTC deal requests and contact details for manual follow-up.
+
+This does not execute trades automatically and does not provide custody, financial advice, guaranteed settlement or production wallet signing.
