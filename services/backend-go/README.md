@@ -1,36 +1,49 @@
-# Trade Window Backend (Go)
+# Trade Window Go Backend
 
-MVP Backend implementing the Trade Window Room State Machine and WebSocket protocol.
+This is the Go coordination service for Trade Window. It provides HTTP endpoints for OTC Deal requests and Board listings, as well as WebSocket rooms for real-time mock trade negotiation.
 
-## Features (Hardened MVP)
-- Real-time bipartite trade state synchronization.
-- **Configurable Constraints:** Timeouts and logic bounded by env configs.
-- **Structured Error Payloads:** Clean `trade:error` events matching standard error codes.
-- **Authoritative State Machine:** Backend strictly governs lock flow, expiry limits, and countdown timers.
-- **Safe Rendering:** Reject payloads lacking required parameters.
-
-## Environment Variables
-The backend consumes the following variables:
-- `PORT` (Default: `8080`): The port the HTTP server binds to.
-- `ALLOWED_ORIGINS` (Default: `http://localhost:3000,http://localhost:3001`): Comma-separated list of accepted CORS origins for the WebSocket upgrader.
-- `COUNTDOWN_SECONDS` (Default: `10`): How long the safety countdown runs once both parties lock.
-- `ROOM_EXPIRY_MINUTES` (Default: `60`): TTL for inactive rooms before the cleanup goroutine deletes them.
-- `ROOM_CLEANUP_INTERVAL_SECONDS` (Default: `60`): How often the cleanup routine polls memory for expired/completed rooms.
-
-## Running Locally
-
-Requires Go 1.21+.
+## Local Development
 
 ```bash
-cd services/backend-go
-go run cmd/server/main.go
+go run ./cmd/server
 ```
 
-The WebSocket server listens on `ws://localhost:8080/ws?wallet=<address>`.
+## Production Deployment
 
-## HTTP Endpoints
-- `GET /health`: Returns JSON `{ "status": "ok", "service": "trade-window-backend" }`
-- `GET /rooms/:id`: Returns JSON state of a specific room, or `{"error":"room_not_found"}`.
+This backend provides both standard HTTP API endpoints and WebSocket endpoints. It requires a persistent filesystem if configured to use the JSONL MVP storage (`.jsonl`).
 
-## In-Memory Constraints
-All room state is currently stored in application memory. Rooms disappear if the process crashes or restarts. For multi-instance horizontal scaling, a distributed memory store (e.g. Redis pub/sub) must be implemented.
+### Environment Variables Required
+
+When deploying to production, provide the following environment variables:
+
+```ini
+PORT=8080
+ALLOWED_ORIGINS=https://trade-window-final.vercel.app
+
+# Paths for JSONL data files
+REQUESTS_STORAGE_PATH=/app/data/deal-requests.jsonl
+BOARD_STORAGE_PATH=/app/data/board-listings.jsonl
+
+# Rate Limits and Payload size limits
+BOARD_MAX_BODY_BYTES=16384
+BOARD_RATE_LIMIT_PER_MINUTE=10
+BOARD_DEFAULT_TTL_DAYS=30
+```
+
+### Storage Persistence Warning
+
+**IMPORTANT:** This backend currently stores Deal Requests and OTC Board listings using local `.jsonl` files. 
+
+If you deploy to an ephemeral platform (such as standard Render Web Services without a Disk, or standard Heroku / Fly.io deployments without a volume), your data will be **lost on every deployment or restart**. 
+
+#### Deployment Options:
+
+1. **VPS (Recommended for MVP):**
+   Deploy via Docker Compose on a traditional VPS (DigitalOcean, Hetzner, AWS EC2) and mount a volume for `/app/data`.
+   
+2. **Render / Fly.io / Railway:**
+   You MUST provision a persistent volume and mount it to `/app/data` to ensure data survives restarts.
+
+### Long-term Storage
+
+For a fully stateless deployment, it is highly recommended to migrate the storage layer from `.jsonl` files to a hosted database like **Supabase (PostgreSQL)** in the near future.
