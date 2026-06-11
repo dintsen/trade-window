@@ -13,6 +13,11 @@ type Config struct {
 	CountdownSeconds           int
 	RoomExpiryMinutes          int
 	RoomCleanupIntervalSeconds int
+	BoardStoragePath           string
+	BoardMaxBodyBytes          int
+	BoardRateLimitPerMinute    int
+	BoardDefaultTTLDays        int
+	BoardAdminToken            string
 }
 
 var AppConfig *Config
@@ -24,6 +29,11 @@ func Init() {
 		CountdownSeconds:           getEnvInt("COUNTDOWN_SECONDS", 10),
 		RoomExpiryMinutes:          getEnvInt("ROOM_EXPIRY_MINUTES", 60),
 		RoomCleanupIntervalSeconds: getEnvInt("ROOM_CLEANUP_INTERVAL_SECONDS", 60),
+		BoardStoragePath:           getEnvString("BOARD_STORAGE_PATH", "./data/board-listings.jsonl"),
+		BoardMaxBodyBytes:          getEnvInt("BOARD_MAX_BODY_BYTES", 16384),
+		BoardRateLimitPerMinute:    getEnvInt("BOARD_RATE_LIMIT_PER_MINUTE", 10),
+		BoardDefaultTTLDays:        getEnvInt("BOARD_DEFAULT_TTL_DAYS", 30),
+		BoardAdminToken:            getEnvString("BOARD_ADMIN_TOKEN", ""),
 	}
 }
 

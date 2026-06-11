@@ -30,3 +30,12 @@ Phase 1 focuses on Gno protocol architecture (Docs and realm structure). Phase 2
 Trade Window includes a public inquiry flow where users can submit OTC deal requests and contact details for manual follow-up.
 
 This does not execute trades automatically and does not provide custody, financial advice, guaranteed settlement or production wallet signing.
+
+## Public OTC Board
+
+Trade Window provides a public OTC listing board (`/board`) where users can post negotiated deal intents. 
+Users can create new listings at `/board/new`. 
+Backend endpoints support `GET /api/board/listings`, `POST /api/board/listings`, and `GET /api/board/listings/{id}` using JSONL MVP storage.
+Private email and name data are strictly protected and never exposed publicly.
+The board does not provide custody, guaranteed matching, automatic settlement, liquidity, or financial advice.
+Production storage should later move to Postgres/Supabase or another persistent DB.

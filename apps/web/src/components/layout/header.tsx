@@ -31,6 +31,7 @@ export function Header() {
               <Link href="/careers" className="block px-3 py-2 text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">Careers</Link>
             </div>
           </div>
+          <Link href="/board" className="hover:text-white transition-colors text-emerald-400">Board</Link>
           <Link href="/ecosystem" className="hover:text-white transition-colors">Ecosystem</Link>
           <Link href="/whitepaper" className="hover:text-white transition-colors">Whitepaper</Link>
         </nav>
@@ -78,7 +79,8 @@ export function Header() {
             <Link href="/company" onClick={() => setMobileMenuOpen(false)} className="pl-4 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg">Company</Link>
             <Link href="/careers" onClick={() => setMobileMenuOpen(false)} className="pl-4 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg">Careers</Link>
           </div>
-          <Link href="/ecosystem" onClick={() => setMobileMenuOpen(false)} className="py-2 text-white/80 hover:text-white mt-2">Ecosystem</Link>
+          <Link href="/board" onClick={() => setMobileMenuOpen(false)} className="py-2 text-emerald-400 hover:text-emerald-300 mt-2">Board</Link>
+          <Link href="/ecosystem" onClick={() => setMobileMenuOpen(false)} className="py-2 text-white/80 hover:text-white">Ecosystem</Link>
           <Link href="/whitepaper" onClick={() => setMobileMenuOpen(false)} className="py-2 text-white/80 hover:text-white">Whitepaper</Link>
           <Link href="/request" onClick={() => setMobileMenuOpen(false)} className="py-2 text-white/80 hover:text-white">Request a Deal</Link>
         </div>

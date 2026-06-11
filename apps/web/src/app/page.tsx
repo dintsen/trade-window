@@ -8,6 +8,7 @@ import { AssetClassesSection } from '../components/landing/asset-classes-section
 import { SafetyMechanicsSection } from '../components/landing/safety-mechanics-section';
 import { ProductPreviewSection } from '../components/landing/product-preview-section';
 import { EcosystemRoadmapSection } from '../components/landing/ecosystem-roadmap-section';
+import { OtcBoardSection } from '../components/landing/otc-board-section';
 import { FinalCtaSection } from '../components/landing/final-cta-section';
 
 import { ChevronDown } from 'lucide-react';
@@ -22,6 +23,7 @@ export default function Home() {
         <HeroSection />
         <ProblemSection />
         <AssetClassesSection />
+        <OtcBoardSection />
         <SafetyMechanicsSection />
         <ProductPreviewSection />
         <EcosystemRoadmapSection />

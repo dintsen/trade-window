@@ -19,19 +19,25 @@ export function FinalCtaSection() {
         </p>
 
         <div className="flex flex-col items-center gap-6">
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-4">
             <Link 
-              href="/request" 
-              className="px-10 py-5 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold rounded-full text-lg transition-all flex items-center justify-center gap-2 group shadow-[0_0_30px_rgba(16,185,129,0.3)]"
+              href="/trade" 
+              className="px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold rounded-xl text-base transition-all flex items-center justify-center gap-2 group shadow-[0_0_20px_rgba(16,185,129,0.3)]"
             >
-              Request a Deal
+              Open Trade Room
               <ArrowRight className="group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link 
-              href="/trade" 
-              className="px-10 py-5 bg-transparent border border-white/10 hover:border-white/30 hover:bg-white/5 text-white font-medium rounded-full text-lg transition-all flex items-center justify-center gap-2"
+              href="/board" 
+              className="px-8 py-4 bg-white/5 border border-white/10 hover:border-white/30 hover:bg-white/10 text-white font-medium rounded-xl text-base transition-all flex items-center justify-center gap-2"
             >
-              Launch Demo Room
+              Browse OTC Board
+            </Link>
+            <Link 
+              href="/request" 
+              className="px-8 py-4 bg-transparent border border-white/10 hover:border-white/30 hover:bg-white/5 text-white/80 font-medium rounded-xl text-base transition-all flex items-center justify-center gap-2"
+            >
+              Request Manual OTC Coordination
             </Link>
           </div>
           

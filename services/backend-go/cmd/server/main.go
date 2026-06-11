@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/gorilla/websocket"
+	"github.com/tradewindow/backend-go/internal/board"
 	"github.com/tradewindow/backend-go/internal/config"
 	"github.com/tradewindow/backend-go/internal/ws"
 )
@@ -50,6 +51,7 @@ func main() {
 	go hub.RunCleanup()
 
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(map[string]string{
@@ -57,6 +59,25 @@ func main() {
 			"service": "trade-window-backend",
 		})
 	})
+
+	boardStorage := board.NewStorage(config.AppConfig.BoardStoragePath)
+	boardHandlers := board.NewHandlers(boardStorage)
+
+	corsMiddleware := func(next http.HandlerFunc) http.HandlerFunc {
+		return func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Access-Control-Allow-Origin", "*") // simplified for board
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+			if r.Method == "OPTIONS" {
+				w.WriteHeader(http.StatusOK)
+				return
+			}
+			next(w, r)
+		}
+	}
+
+	http.HandleFunc("/api/board/listings", corsMiddleware(boardHandlers.HandleListings))
+	http.HandleFunc("/api/board/listings/", corsMiddleware(boardHandlers.HandleListingByID))
 
 	http.HandleFunc("/rooms/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
