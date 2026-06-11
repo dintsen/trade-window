@@ -46,7 +46,7 @@ export function OtcBoardSection() {
           <div className="bg-[#111] border border-white/5 rounded-2xl p-6 shadow-2xl relative">
             <div className="flex flex-col gap-4">
               {[
-                { title: "Looking to swap AON", type: "Swap", offer: "10,000 USDC", want: "AON", chain: "AtomOne" },
+                { title: "Looking to swap ATONE", type: "Swap", offer: "10,000 PHOTON", want: "ATONE", chain: "AtomOne" },
                 { title: "Selling rare NFT collection", type: "NFT_Game_RWA", offer: "3 NFTs", want: "500 GNOT", chain: "Gno.land" },
                 { title: "Buying USDC with GNOT", type: "Buy", offer: "1,000 GNOT", want: "USDC", chain: "Gno.land" },
               ].map((mock, i) => (

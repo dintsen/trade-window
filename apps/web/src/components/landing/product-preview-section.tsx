@@ -53,7 +53,7 @@ export function ProductPreviewSection() {
                     <div className="flex justify-between items-start">
                       <div className="flex items-center gap-3 pl-1">
                         <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 relative p-1.5">
-                          <Image src="/assets/logos/atomone.svg" alt="AON" width={24} height={24} className="object-contain drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                          <Image src="/assets/logos/atomone.svg" alt="ATONE" width={24} height={24} className="object-contain drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
                         </div>
                         <div className="flex flex-col">
                           <div className="text-base font-bold text-white tracking-wide">1,500.00</div>

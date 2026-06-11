@@ -36,10 +36,10 @@ func TestPostListingValid(t *testing.T) {
 	defer cleanup()
 
 	payload := []byte(`{
-		"title": "Looking to swap AON",
+		"title": "Looking to swap ATONE",
 		"requestType": "swap",
-		"offerAsset": "1000 USDC",
-		"wantAsset": "AON",
+		"offerAsset": "1000 PHOTON",
+		"wantAsset": "ATONE",
 		"chain": "atomone",
 		"privateEmail": "test@test.com",
 		"consentAccepted": true
@@ -57,7 +57,7 @@ func TestPostListingValid(t *testing.T) {
 	var resp PublicBoardListing
 	json.NewDecoder(rr.Body).Decode(&resp)
 
-	if resp.Title != "Looking to swap AON" {
+	if resp.Title != "Looking to swap ATONE" {
 		t.Errorf("handler returned wrong title: got %v", resp.Title)
 	}
 	if resp.Status != "open" {

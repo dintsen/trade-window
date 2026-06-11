@@ -474,7 +474,7 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
           {activeTab === 'assets' && (
             <div className="flex flex-col gap-4">
               <div className="text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 p-3 rounded-lg mb-2">
-                <strong>Demo Rule:</strong> Assets are mocked. Technical denom-first display ensures safety against spoofed names.
+                <strong>Demo Rule:</strong> Planned ecosystem assets and balances are mocked for demo purposes. Technical denom-first display ensures safety against spoofed names.
               </div>
               
               {DEMO_ASSETS.map((asset, i) => {
@@ -486,10 +486,10 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
                     <div className="flex justify-between items-start">
                       <div className="flex items-center gap-3 pl-1">
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center border overflow-hidden relative p-1.5 ${isSuspicious ? 'bg-rose-500/10 border-rose-500/20' : 'bg-emerald-500/10 border-emerald-500/20'}`}>
-                          {asset.displayDenom === 'AON' && <Image src="/assets/logos/atomone.svg" alt="AON" width={24} height={24} className="object-contain drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]" />}
+                          {asset.displayDenom === 'ATONE' && <Image src="/assets/logos/atomone.svg" alt="ATONE" width={24} height={24} className="object-contain drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]" />}
                           {asset.displayDenom === 'GNOT' && <Image src="/assets/logos/gno.svg" alt="GNOT" width={24} height={24} className="object-contain" />}
-                          {asset.displayDenom === 'USDC' && <Image src="/assets/logos/usdc.svg" alt="USDC" width={24} height={24} className="object-contain drop-shadow-[0_0_8px_rgba(244,63,94,0.5)]" />}
-                          {!['AON', 'GNOT', 'USDC'].includes(asset.displayDenom) && (
+                          {asset.displayDenom === 'PHOTON' && <Image src="/assets/logos/photon.svg" alt="PHOTON" width={24} height={24} className="object-contain text-rose-400 drop-shadow-[0_0_8px_rgba(244,63,94,0.5)]" />}
+                          {!['ATONE', 'GNOT', 'PHOTON'].includes(asset.displayDenom) && (
                             <span className="font-bold text-[10px]">{asset.displayDenom.slice(0,3)}</span>
                           )}
                         </div>
@@ -594,10 +594,10 @@ function AssetCard({ asset }: { asset: TradeAsset }) {
       <div className="flex justify-between items-start">
         <div className="flex items-center gap-3 pl-1">
           <div className={`w-10 h-10 rounded-full flex items-center justify-center border overflow-hidden relative p-1.5 ${isSuspicious ? 'bg-rose-500/10 border-rose-500/20' : 'bg-emerald-500/10 border-emerald-500/20'}`}>
-            {asset.displayDenom === 'AON' && <Image src="/assets/logos/atomone.svg" alt="AON" width={24} height={24} className="object-contain drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]" />}
+            {asset.displayDenom === 'ATONE' && <Image src="/assets/logos/atomone.svg" alt="ATONE" width={24} height={24} className="object-contain drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]" />}
             {asset.displayDenom === 'GNOT' && <Image src="/assets/logos/gno.svg" alt="GNOT" width={24} height={24} className="object-contain" />}
-            {asset.displayDenom === 'USDC' && <Image src="/assets/logos/usdc.svg" alt="USDC" width={24} height={24} className="object-contain drop-shadow-[0_0_8px_rgba(244,63,94,0.5)]" />}
-            {!['AON', 'GNOT', 'USDC'].includes(asset.displayDenom) && (
+            {asset.displayDenom === 'PHOTON' && <Image src="/assets/logos/photon.svg" alt="PHOTON" width={24} height={24} className="object-contain text-rose-400 drop-shadow-[0_0_8px_rgba(244,63,94,0.5)]" />}
+            {!['ATONE', 'GNOT', 'PHOTON'].includes(asset.displayDenom) && (
               <span className="font-bold text-[10px]">{asset.displayDenom.slice(0,3)}</span>
             )}
           </div>

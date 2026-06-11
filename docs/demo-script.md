@@ -9,7 +9,7 @@
 1. **Window 1 (User A):** Open `/trade`, select "Demo User A". Click "Create Room". Copy the Room ID.
 2. **Window 2 (User B):** Open `/trade`, select "Demo User B". Paste the Room ID and click "Join Room".
 3. Both users see the room transition to "Active".
-4. **User A:** Adds 1500 AON to the offer.
+4. **User A:** Adds 1500 ATONE to the offer.
 5. **User B:** Adds 2000 USDC (Suspicious) to the offer. The UI explicitly flags this based on verification status.
 6. **User A:** Inspects B's offer and locks.
 7. **User B:** Inspects A's offer and locks.

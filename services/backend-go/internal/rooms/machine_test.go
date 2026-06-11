@@ -66,7 +66,7 @@ func TestRoomStateMachine(t *testing.T) {
 	}
 
 	// Test add asset rejection during non-active
-	err = r.AddAsset("party-a", TradeAsset{Amount: "1", DisplayDenom: "AON"})
+	err = r.AddAsset("party-a", TradeAsset{Amount: "1", DisplayDenom: "ATONE"})
 	if err == nil {
 		t.Fatalf("expected error adding asset when cancelled")
 	}

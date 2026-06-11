@@ -86,7 +86,7 @@ export default function NewListingPage() {
                 
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-white/60">Listing Title *</label>
-                  <input required name="title" type="text" placeholder="e.g. Looking to swap large volume of AON" className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:ring-2 focus:ring-emerald-500/50 outline-none" />
+                  <input required name="title" type="text" placeholder="e.g. Looking to swap large volume of ATONE" className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:ring-2 focus:ring-emerald-500/50 outline-none" />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
