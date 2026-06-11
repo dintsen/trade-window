@@ -18,6 +18,7 @@ export function Header() {
               Products <ChevronDown size={12} className="opacity-60 group-hover:opacity-100 transition-opacity" />
             </div>
             <div className="absolute top-full left-0 w-48 bg-[#0a0a0a] border border-white/10 rounded-xl p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all translate-y-2 group-hover:translate-y-0 shadow-xl z-50">
+              <Link href="/board" className="block px-3 py-2 text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">Board</Link>
               <Link href="/trade" className="block px-3 py-2 text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">OTC Trading</Link>
               <Link href="/escrow" className="block px-3 py-2 text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">Escrow Service</Link>
             </div>
@@ -31,7 +32,6 @@ export function Header() {
               <Link href="/careers" className="block px-3 py-2 text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">Careers</Link>
             </div>
           </div>
-          <Link href="/board" className="hover:text-white transition-colors text-emerald-400">Board</Link>
           <Link href="/ecosystem" className="hover:text-white transition-colors">Ecosystem</Link>
           <Link href="/whitepaper" className="hover:text-white transition-colors">Whitepaper</Link>
         </nav>
@@ -71,6 +71,7 @@ export function Header() {
         <div className="md:hidden absolute top-full left-0 w-full bg-[#0a0a0a] border-b border-white/10 px-6 py-4 flex flex-col gap-4 shadow-2xl">
           <div className="flex flex-col gap-2">
             <span className="text-white/40 text-xs font-mono uppercase tracking-wider mb-1">Products</span>
+            <Link href="/board" onClick={() => setMobileMenuOpen(false)} className="pl-4 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg">Board</Link>
             <Link href="/trade" onClick={() => setMobileMenuOpen(false)} className="pl-4 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg">OTC Trading</Link>
             <Link href="/escrow" onClick={() => setMobileMenuOpen(false)} className="pl-4 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg">Escrow Service</Link>
           </div>
@@ -79,7 +80,6 @@ export function Header() {
             <Link href="/company" onClick={() => setMobileMenuOpen(false)} className="pl-4 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg">Company</Link>
             <Link href="/careers" onClick={() => setMobileMenuOpen(false)} className="pl-4 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg">Careers</Link>
           </div>
-          <Link href="/board" onClick={() => setMobileMenuOpen(false)} className="py-2 text-emerald-400 hover:text-emerald-300 mt-2">Board</Link>
           <Link href="/ecosystem" onClick={() => setMobileMenuOpen(false)} className="py-2 text-white/80 hover:text-white">Ecosystem</Link>
           <Link href="/whitepaper" onClick={() => setMobileMenuOpen(false)} className="py-2 text-white/80 hover:text-white">Whitepaper</Link>
           <Link href="/request" onClick={() => setMobileMenuOpen(false)} className="py-2 text-white/80 hover:text-white">Request a Deal</Link>
