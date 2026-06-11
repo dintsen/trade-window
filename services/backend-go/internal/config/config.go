@@ -18,6 +18,11 @@ type Config struct {
 	BoardRateLimitPerMinute    int
 	BoardDefaultTTLDays        int
 	BoardAdminToken            string
+	StorageDriver              string
+	DatabaseURL                string
+	RequestsStoragePath        string
+	RequestsMaxBodyBytes       int
+	RequestsRateLimitPerMinute int
 }
 
 var AppConfig *Config
@@ -34,6 +39,11 @@ func Init() {
 		BoardRateLimitPerMinute:    getEnvInt("BOARD_RATE_LIMIT_PER_MINUTE", 10),
 		BoardDefaultTTLDays:        getEnvInt("BOARD_DEFAULT_TTL_DAYS", 30),
 		BoardAdminToken:            getEnvString("BOARD_ADMIN_TOKEN", ""),
+		StorageDriver:              getEnvString("STORAGE_DRIVER", "jsonl"),
+		DatabaseURL:                getEnvString("DATABASE_URL", ""),
+		RequestsStoragePath:        getEnvString("REQUESTS_STORAGE_PATH", "./data/deal-requests.jsonl"),
+		RequestsMaxBodyBytes:       getEnvInt("REQUESTS_MAX_BODY_BYTES", 16384),
+		RequestsRateLimitPerMinute: getEnvInt("REQUESTS_RATE_LIMIT_PER_MINUTE", 10),
 	}
 }
 

@@ -2,28 +2,28 @@ package board
 
 import (
 	"bufio"
+	"context"
 	"encoding/json"
 	"os"
 	"path/filepath"
 	"sync"
 )
 
-type Storage struct {
+type JSONLBoardStore struct {
 	mu       sync.Mutex
 	filePath string
 }
 
-func NewStorage(filePath string) *Storage {
-	// Ensure directory exists
+func NewJSONLBoardStore(filePath string) *JSONLBoardStore {
 	if dir := filepath.Dir(filePath); dir != "" {
 		os.MkdirAll(dir, 0755)
 	}
-	return &Storage{
+	return &JSONLBoardStore{
 		filePath: filePath,
 	}
 }
 
-func (s *Storage) AppendListing(listing BoardListing) error {
+func (s *JSONLBoardStore) Create(ctx context.Context, listing BoardListing) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -43,20 +43,20 @@ func (s *Storage) AppendListing(listing BoardListing) error {
 	return err
 }
 
-func (s *Storage) GetAllListings() ([]BoardListing, error) {
+func (s *JSONLBoardStore) ListPublic(ctx context.Context) ([]PublicBoardListing, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
 	f, err := os.Open(s.filePath)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return []BoardListing{}, nil
+			return []PublicBoardListing{}, nil
 		}
 		return nil, err
 	}
 	defer f.Close()
 
-	var listings []BoardListing
+	var listings []PublicBoardListing
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		line := scanner.Bytes()
@@ -65,15 +65,17 @@ func (s *Storage) GetAllListings() ([]BoardListing, error) {
 		}
 		var l BoardListing
 		if err := json.Unmarshal(line, &l); err == nil {
-			listings = append(listings, l)
+			if l.Status == "open" {
+				listings = append(listings, l.ToPublic())
+			}
 		}
 	}
 
 	return listings, scanner.Err()
 }
 
-func (s *Storage) GetListingByID(id string) (*BoardListing, error) {
-	listings, err := s.GetAllListings()
+func (s *JSONLBoardStore) GetPublic(ctx context.Context, id string) (*PublicBoardListing, error) {
+	listings, err := s.ListPublic(ctx)
 	if err != nil {
 		return nil, err
 	}

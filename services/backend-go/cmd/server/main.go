@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -8,8 +9,10 @@ import (
 	"strings"
 
 	"github.com/gorilla/websocket"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/tradewindow/backend-go/internal/board"
 	"github.com/tradewindow/backend-go/internal/config"
+	"github.com/tradewindow/backend-go/internal/requests"
 	"github.com/tradewindow/backend-go/internal/ws"
 )
 
@@ -60,8 +63,32 @@ func main() {
 		})
 	})
 
-	boardStorage := board.NewStorage(config.AppConfig.BoardStoragePath)
-	boardHandlers := board.NewHandlers(boardStorage)
+	var boardStore board.Store
+	var requestsStore requests.Store
+
+	if config.AppConfig.StorageDriver == "postgres" {
+		ctx := context.Background()
+		pool, err := pgxpool.New(ctx, config.AppConfig.DatabaseURL)
+		if err != nil {
+			log.Fatalf("Unable to create connection pool: %v\n", err)
+		}
+		defer pool.Close()
+
+		if err := pool.Ping(ctx); err != nil {
+			log.Fatalf("Unable to connect to database: %v\n", err)
+		}
+
+		log.Println("Using Postgres storage")
+		boardStore = board.NewPostgresBoardStore(pool)
+		requestsStore = requests.NewPostgresRequestStore(pool)
+	} else {
+		log.Println("Using JSONL MVP storage")
+		boardStore = board.NewJSONLBoardStore(config.AppConfig.BoardStoragePath)
+		requestsStore = requests.NewJSONLRequestStore(config.AppConfig.RequestsStoragePath)
+	}
+
+	boardHandlers := board.NewHandlers(boardStore)
+	requestsHandlers := requests.NewHandlers(requestsStore)
 
 	corsMiddleware := func(next http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
@@ -78,6 +105,7 @@ func main() {
 
 	http.HandleFunc("/api/board/listings", corsMiddleware(boardHandlers.HandleListings))
 	http.HandleFunc("/api/board/listings/", corsMiddleware(boardHandlers.HandleListingByID))
+	http.HandleFunc("/api/deal-requests", corsMiddleware(requestsHandlers.HandleDealRequests))
 
 	http.HandleFunc("/rooms/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")

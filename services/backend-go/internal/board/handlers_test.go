@@ -10,23 +10,29 @@ import (
 	"github.com/tradewindow/backend-go/internal/config"
 )
 
-func setupTest() (*Storage, *Handlers, func()) {
+func setupTest(t *testing.T) (*Handlers, *JSONLBoardStore, func()) {
 	config.AppConfig = &config.Config{
 		BoardMaxBodyBytes: 1024,
 		BoardDefaultTTLDays: 30,
 	}
-	f, _ := os.CreateTemp("", "board-test-*.jsonl")
-	store := NewStorage(f.Name())
+	// Create a temporary file for testing
+	tmpfile, err := os.CreateTemp("", "test-board-*.jsonl")
+	if err != nil {
+		t.Fatal(err)
+	}
+	tmpfile.Close()
+
+	store := NewJSONLBoardStore(tmpfile.Name())
 	handlers := NewHandlers(store)
 
 	cleanup := func() {
-		os.Remove(f.Name())
+		os.Remove(tmpfile.Name())
 	}
-	return store, handlers, cleanup
+	return handlers, store, cleanup
 }
 
 func TestPostListingValid(t *testing.T) {
-	_, h, cleanup := setupTest()
+	h, _, cleanup := setupTest(t)
 	defer cleanup()
 
 	payload := []byte(`{
@@ -65,7 +71,7 @@ func TestPostListingValid(t *testing.T) {
 }
 
 func TestPostListingInvalid(t *testing.T) {
-	_, h, cleanup := setupTest()
+	h, _, cleanup := setupTest(t)
 	defer cleanup()
 
 	payloads := []string{

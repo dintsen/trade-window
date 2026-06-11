@@ -10,6 +10,14 @@ Gno.land smart-contract commitment layer
 Adena / GnoConnect read-only prototype
 Future AtomOne / Interchain support
 
+## Tech Stack
+
+*   **Frontend**: Next.js (React), TailwindCSS, TypeScript.
+*   **Backend**: Go (standard library HTTP, Gorilla WebSockets, pgx/v5).
+*   **Storage**: Postgres (Supabase) for production, JSONL for local MVP fallback.
+*   **Smart Contracts**: Gno.land (realms).
+*   **Deployment**: Vercel (Frontend), Docker / Generic Host (Backend).
+
 ## Current MVP Status
 
 Implemented:

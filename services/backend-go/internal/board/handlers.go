@@ -11,30 +11,24 @@ import (
 )
 
 type Handlers struct {
-	storage *Storage
+	store Store
 }
 
-func NewHandlers(storage *Storage) *Handlers {
+func NewHandlers(store Store) *Handlers {
 	return &Handlers{
-		storage: storage,
+		store: store,
 	}
 }
 
 func (h *Handlers) HandleListings(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	ctx := r.Context()
 
 	if r.Method == http.MethodGet {
-		listings, err := h.storage.GetAllListings()
+		publicListings, err := h.store.ListPublic(ctx)
 		if err != nil {
 			http.Error(w, `{"error":"internal_error"}`, http.StatusInternalServerError)
 			return
-		}
-
-		publicListings := make([]PublicBoardListing, 0)
-		for _, l := range listings {
-			if l.Status == "open" { // Only return open listings publicly
-				publicListings = append(publicListings, l.ToPublic())
-			}
 		}
 
 		json.NewEncoder(w).Encode(publicListings)
@@ -99,7 +93,7 @@ func (h *Handlers) HandleListings(w http.ResponseWriter, r *http.Request) {
 		l.ExpiresAt = now.Add(time.Duration(config.AppConfig.BoardDefaultTTLDays) * 24 * time.Hour)
 		l.Status = "open"
 
-		if err := h.storage.AppendListing(l); err != nil {
+		if err := h.store.Create(ctx, l); err != nil {
 			http.Error(w, `{"error":"internal_error"}`, http.StatusInternalServerError)
 			return
 		}
@@ -126,7 +120,8 @@ func (h *Handlers) HandleListingByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	id := pathParts[3]
-	listing, err := h.storage.GetListingByID(id)
+	ctx := r.Context()
+	listing, err := h.store.GetPublic(ctx, id)
 	if err != nil {
 		http.Error(w, `{"error":"internal_error"}`, http.StatusInternalServerError)
 		return
@@ -137,6 +132,5 @@ func (h *Handlers) HandleListingByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// We only expose public view
-	json.NewEncoder(w).Encode(listing.ToPublic())
+	json.NewEncoder(w).Encode(listing)
 }
