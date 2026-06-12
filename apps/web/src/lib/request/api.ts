@@ -11,6 +11,7 @@ export interface DealRequestDraft {
   wantAsset: string;
   amountRange: string;
   message: string;
+  requesterWallet?: string;
   consentAccepted: boolean;
 }
 

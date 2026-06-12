@@ -21,22 +21,22 @@ func (s *PostgresBoardStore) Create(ctx context.Context, listing BoardListing) e
 	q := `INSERT INTO board_listings (
 		id, created_at, updated_at, expires_at, status, title, request_type, 
 		offer_asset, want_asset, amount_range, chain, public_message, 
-		public_contact, contact_method, private_email, private_name, consent_accepted
+		public_contact, contact_method, private_email, private_name, creator_wallet, consent_accepted
 	) VALUES (
-		$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17
+		$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18
 	)`
 	_, err := s.pool.Exec(ctx, q,
 		listing.ID, listing.CreatedAt, listing.UpdatedAt, listing.ExpiresAt, listing.Status,
 		listing.Title, listing.RequestType, listing.OfferAsset, listing.WantAsset,
 		listing.AmountRange, listing.Chain, listing.PublicMessage, listing.PublicContact,
-		listing.ContactMethod, listing.PrivateEmail, listing.PrivateName, listing.ConsentAccepted,
+		listing.ContactMethod, listing.PrivateEmail, listing.PrivateName, listing.CreatorWallet, listing.ConsentAccepted,
 	)
 	return err
 }
 
 func (s *PostgresBoardStore) ListPublic(ctx context.Context) ([]PublicBoardListing, error) {
 	q := `SELECT id, created_at, expires_at, status, title, request_type, 
-		offer_asset, want_asset, amount_range, chain, public_message, public_contact, contact_method
+		offer_asset, want_asset, amount_range, chain, public_message, public_contact, contact_method, creator_wallet
 		FROM board_listings WHERE status = 'open' ORDER BY created_at DESC`
 	
 	rows, err := s.pool.Query(ctx, q)
@@ -51,7 +51,7 @@ func (s *PostgresBoardStore) ListPublic(ctx context.Context) ([]PublicBoardListi
 		err := rows.Scan(
 			&l.ID, &l.CreatedAt, &l.ExpiresAt, &l.Status, &l.Title, &l.RequestType,
 			&l.OfferAsset, &l.WantAsset, &l.AmountRange, &l.Chain, &l.PublicMessage, 
-			&l.PublicContact, &l.ContactMethod,
+			&l.PublicContact, &l.ContactMethod, &l.CreatorWallet,
 		)
 		if err != nil {
 			return nil, err
@@ -67,14 +67,14 @@ func (s *PostgresBoardStore) ListPublic(ctx context.Context) ([]PublicBoardListi
 
 func (s *PostgresBoardStore) GetPublic(ctx context.Context, id string) (*PublicBoardListing, error) {
 	q := `SELECT id, created_at, expires_at, status, title, request_type, 
-		offer_asset, want_asset, amount_range, chain, public_message, public_contact, contact_method
+		offer_asset, want_asset, amount_range, chain, public_message, public_contact, contact_method, creator_wallet
 		FROM board_listings WHERE id = $1 AND status = 'open'`
 	
 	var l PublicBoardListing
 	err := s.pool.QueryRow(ctx, q, id).Scan(
 		&l.ID, &l.CreatedAt, &l.ExpiresAt, &l.Status, &l.Title, &l.RequestType,
 		&l.OfferAsset, &l.WantAsset, &l.AmountRange, &l.Chain, &l.PublicMessage, 
-		&l.PublicContact, &l.ContactMethod,
+		&l.PublicContact, &l.ContactMethod, &l.CreatorWallet,
 	)
 	if err != nil {
 		if err == pgx.ErrNoRows {

@@ -26,5 +26,6 @@ export interface BoardListingDraft {
   contactMethod: string;
   privateEmail: string;
   privateName: string;
+  creatorWallet?: string;
   consentAccepted: boolean;
 }

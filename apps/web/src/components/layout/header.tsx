@@ -21,6 +21,7 @@ export function Header() {
               <Link href="/board" className="block px-3 py-2 text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">Board</Link>
               <Link href="/trade" className="block px-3 py-2 text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">OTC Trading</Link>
               <Link href="/escrow" className="block px-3 py-2 text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">Escrow Service</Link>
+              <Link href="/history" className="block px-3 py-2 text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">My Trades</Link>
             </div>
           </div>
           <div className="relative group cursor-pointer">
@@ -74,6 +75,7 @@ export function Header() {
             <Link href="/board" onClick={() => setMobileMenuOpen(false)} className="pl-4 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg">Board</Link>
             <Link href="/trade" onClick={() => setMobileMenuOpen(false)} className="pl-4 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg">OTC Trading</Link>
             <Link href="/escrow" onClick={() => setMobileMenuOpen(false)} className="pl-4 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg">Escrow Service</Link>
+            <Link href="/history" onClick={() => setMobileMenuOpen(false)} className="pl-4 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg">My Trades</Link>
           </div>
           <div className="flex flex-col gap-2 mt-2">
             <span className="text-white/40 text-xs font-mono uppercase tracking-wider mb-1">About Us</span>

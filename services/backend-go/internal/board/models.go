@@ -31,6 +31,8 @@ type BoardListing struct {
 	PrivateEmail    string    `json:"privateEmail,omitempty"`
 	PrivateName     string    `json:"privateName,omitempty"`
 
+	CreatorWallet   string    `json:"creatorWallet,omitempty"`
+
 	ConsentAccepted bool      `json:"consentAccepted"`
 }
 
@@ -48,6 +50,7 @@ type PublicBoardListing struct {
 	PublicMessage string    `json:"publicMessage,omitempty"`
 	PublicContact string    `json:"publicContact,omitempty"`
 	ContactMethod string    `json:"contactMethod,omitempty"`
+	CreatorWallet string    `json:"creatorWallet,omitempty"`
 }
 
 func (l *BoardListing) ToPublic() PublicBoardListing {
@@ -65,5 +68,6 @@ func (l *BoardListing) ToPublic() PublicBoardListing {
 		PublicMessage: l.PublicMessage,
 		PublicContact: l.PublicContact,
 		ContactMethod: l.ContactMethod,
+		CreatorWallet: l.CreatorWallet,
 	}
 }

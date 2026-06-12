@@ -12,6 +12,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/tradewindow/backend-go/internal/board"
 	"github.com/tradewindow/backend-go/internal/config"
+	"github.com/tradewindow/backend-go/internal/history"
 	"github.com/tradewindow/backend-go/internal/requests"
 	"github.com/tradewindow/backend-go/internal/storage"
 	"github.com/tradewindow/backend-go/internal/ws"
@@ -79,6 +80,7 @@ func main() {
 
 	var boardStore board.Store
 	var requestsStore requests.Store
+	var historyHandlers *history.Handlers
 
 	if config.AppConfig.StorageDriver == "postgres" {
 		if config.AppConfig.DatabaseURL == "" {
@@ -91,10 +93,14 @@ func main() {
 		log.Println("Using Postgres storage")
 		boardStore = board.NewPostgresBoardStore(pool)
 		requestsStore = requests.NewPostgresRequestStore(pool)
+		
+		historyStore := history.NewPostgresHistoryStore(pool)
+		historyHandlers = history.NewHandlers(historyStore)
 	} else {
 		log.Println("Using JSONL MVP storage")
 		boardStore = board.NewJSONLBoardStore(config.AppConfig.BoardStoragePath)
 		requestsStore = requests.NewJSONLRequestStore(config.AppConfig.RequestsStoragePath)
+		historyHandlers = history.NewHandlers(nil) // JSONL no-op
 	}
 
 	boardHandlers := board.NewHandlers(boardStore)
@@ -129,6 +135,7 @@ func main() {
 	http.HandleFunc("/api/board/listings", corsMiddleware(boardHandlers.HandleListings))
 	http.HandleFunc("/api/board/listings/", corsMiddleware(boardHandlers.HandleListingByID))
 	http.HandleFunc("/api/deal-requests", corsMiddleware(requestsHandlers.HandleDealRequests))
+	http.HandleFunc("/api/me/trades", corsMiddleware(historyHandlers.HandleMyTrades))
 
 	http.HandleFunc("/api/trade/rooms", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")

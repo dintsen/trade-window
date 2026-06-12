@@ -6,9 +6,11 @@ import { ArrowLeft, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createListing } from "@/lib/board/api";
 import { getAllAssets } from "@/lib/assets/asset-registry";
+import { useWalletStore } from "@/lib/wallet/wallet-store";
 
 export default function NewListingPage() {
   const router = useRouter();
+  const { account } = useWalletStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,6 +35,7 @@ export default function NewListingPage() {
         contactMethod: data.contactMethod as string,
         privateEmail: data.privateEmail as string,
         privateName: data.privateName as string,
+        creatorWallet: account?.address,
         consentAccepted: data.consentAccepted === "on",
       });
       router.push(`/board?created=${listing.id}`);

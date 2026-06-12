@@ -22,6 +22,7 @@ type DealRequest struct {
 	Chain            string    `json:"chain,omitempty"`
 
 	Message          string    `json:"message,omitempty"`
+	RequesterWallet  string    `json:"requesterWallet,omitempty"`
 	ConsentAccepted  bool      `json:"consentAccepted"`
 	Status           string    `json:"status"` // open, reviewed, archived
 }

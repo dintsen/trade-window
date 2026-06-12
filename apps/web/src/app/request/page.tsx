@@ -4,11 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useWalletStore } from "@/lib/wallet/wallet-store";
 
 import { createDealRequest } from "@/lib/request/api";
 
 export default function RequestPage() {
   const router = useRouter();
+  const { account } = useWalletStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,6 +34,7 @@ export default function RequestPage() {
         wantAsset: data.assetWant as string,
         amountRange: data.amount as string,
         message: data.message as string,
+        requesterWallet: account?.address,
         consentAccepted: true,
       });
 
