@@ -35,9 +35,16 @@ export default function Home() {
             Trade Window is an open-source project. Not financial advice.
           </p>
           <div className="text-[11px] text-white/40 leading-relaxed font-mono space-y-1">
-            <p>• Planned Gno.land protocol layer / Gno commitment layer.</p>
+            <p>• Non-custodial OTC coordination and transaction preview. No private keys are ever stored.</p>
+            <p>• Mainnet settlement remains disabled while the Gno.land commitment layer is finalized.</p>
             <p>• Current demo uses backend-authoritative mock rooms.</p>
-            <p>• Future finalized commitments are planned for Gno smart contracts.</p>
+          </div>
+          <div className="flex items-center justify-center gap-4 mt-6 text-[11px] text-white/40 font-mono">
+            <a href="https://github.com/dintsen/trade-window" target="_blank" rel="noopener noreferrer" className="hover:text-white/70 transition-colors">GitHub</a>
+            <span className="text-white/10">|</span>
+            <a href="/whitepaper" className="hover:text-white/70 transition-colors">Whitepaper</a>
+            <span className="text-white/10">|</span>
+            <a href="/history" className="hover:text-white/70 transition-colors">My Trades</a>
           </div>
         </div>
       </footer>

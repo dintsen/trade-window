@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Clock, Activity, CheckCircle, XCircle } from "lucide-react";
+import { Wallet, Clock, Activity, CheckCircle, XCircle, ExternalLink } from "lucide-react";
+import { Header } from "@/components/layout/header";
 import { useWalletStore } from "@/lib/wallet/wallet-store";
 import { fetchMyTrades } from "@/lib/history/api";
 import { HistoryItem } from "@/lib/history/types";
@@ -53,24 +54,34 @@ export default function HistoryPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <div className="flex items-center gap-4 mb-8">
-        <Link
-          href="/"
-          className="p-2 hover:bg-zinc-800 rounded-full transition-colors"
-        >
-          <ArrowLeft className="w-6 h-6 text-zinc-400" />
-        </Link>
-        <h1 className="text-3xl font-bold text-zinc-100">My Trades</h1>
+    <div className="min-h-screen bg-[#030303] text-white">
+      <Header />
+      <div className="max-w-4xl mx-auto px-4 py-10">
+      <div className="flex items-center justify-between mb-2">
+        <h1 className="text-3xl font-bold text-zinc-100 tracking-tight">My Trades</h1>
+        {account?.address && (
+          <span className="font-mono text-xs text-zinc-500 bg-zinc-900 border border-zinc-800 rounded-full px-3 py-1.5">
+            {account.address.slice(0, 10)}...{account.address.slice(-4)}
+          </span>
+        )}
       </div>
+      <p className="text-sm text-zinc-500 mb-8">
+        Your listings, private requests and trade rooms — coordination history only. Mainnet settlement is disabled.
+      </p>
 
       {!account?.address ? (
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center">
-          <Clock className="w-12 h-12 text-zinc-500 mx-auto mb-4" />
+          <Wallet className="w-12 h-12 text-zinc-500 mx-auto mb-4" />
           <h2 className="text-xl font-medium text-zinc-200 mb-2">Connect Wallet to View History</h2>
           <p className="text-zinc-400 mb-6 max-w-md mx-auto">
-            Your trade history is associated with your connected wallet address. Please connect your wallet to view your listings, requests, and trade rooms.
+            Your trade history is associated with your connected wallet address. Connect your wallet to view your listings, requests, and trade rooms.
           </p>
+          <Link
+            href="/trade"
+            className="inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-black rounded-lg transition-colors font-medium"
+          >
+            <Wallet className="w-4 h-4" /> Connect in Trade Room
+          </Link>
         </div>
       ) : isLoading ? (
         <div className="flex items-center justify-center py-12">
@@ -159,9 +170,21 @@ export default function HistoryPage() {
                       </Link>
                     )}
                     {item.commitmentHash && (
-                      <span className="px-3 py-1.5 bg-zinc-800 text-zinc-400 rounded-lg text-sm font-mono flex items-center gap-2 border border-zinc-700">
+                      <span
+                        title={item.commitmentHash}
+                        className="px-3 py-1.5 bg-zinc-800 text-zinc-400 rounded-lg text-sm font-mono flex items-center gap-2 border border-zinc-700"
+                      >
                         <CheckCircle className="w-3 h-3 text-emerald-500" />
-                        Committed
+                        Commitment {item.commitmentHash.slice(0, 8)}…
+                      </span>
+                    )}
+                    {item.txHash && (
+                      <span
+                        title={`Explorer link coming with the Gno.land receipt layer. Tx: ${item.txHash}`}
+                        className="px-3 py-1.5 bg-zinc-800 text-zinc-400 rounded-lg text-sm font-mono flex items-center gap-2 border border-zinc-700"
+                      >
+                        <ExternalLink className="w-3 h-3 text-zinc-500" />
+                        Tx {item.txHash.slice(0, 8)}…
                       </span>
                     )}
                   </div>
@@ -171,6 +194,7 @@ export default function HistoryPage() {
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 }
