@@ -91,6 +91,12 @@ func main() {
 		defer pool.Close()
 
 		log.Println("Using Postgres storage")
+
+		// Run database migrations
+		if err := storage.RunMigrations(ctx, pool); err != nil {
+			log.Fatalf("Database migrations failed: %v", err)
+		}
+
 		boardStore = board.NewPostgresBoardStore(pool)
 		requestsStore = requests.NewPostgresRequestStore(pool)
 		

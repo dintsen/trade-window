@@ -1,9 +1,10 @@
-# Wallet Flow Status
+# Wallet Flow & Authentication Status
 
 ## Current Wallet Support Status
 - **Supported Wallet**: Adena (Gno.land)
-- **Implementation Level**: Read-only prototype and testnet transaction preview functionality implemented.
+- **Implementation Level**: Read-only prototype and testnet transaction preview functionality.
 - **Auto-connect**: Disabled (No automatic wallet popup on load; requires user click).
+- **Authentication**: **Blocked / Pending**. Query-parameter filtering (`?wallet=<address>`) is deprecated and disabled in production.
 
 ## Enabled Feature Flags
 - `NEXT_PUBLIC_ENABLE_ADENA=true`
@@ -13,20 +14,15 @@
 - `NEXT_PUBLIC_ENABLE_GNO_TESTNET_TRANSFERS=false`
 - `NEXT_PUBLIC_ENABLE_GNO_MAINNET_TRANSFERS=false`
 
-## Known Limitations
-- The integration is an early read-only and preview prototype.
-- Real mainnet transfers and real settlement claims are currently **disabled** and unsupported.
-- The `adenaWalletAdapter` connects by establishing connection and getting the account, but does not persist local offline private keys or offer backend custody signing.
+## Critical Security Limitations
+1. **No Production Authentication**:
+   * The query parameter `?wallet=<address>` used in MVP mode is **deprecated**. It is strictly a developer fallback and must not be used as secure authentication.
+   * Cryptographic signature verification is currently blocked (see [WALLET_AUTH_PLAN.md](file:///Users/dmitriydintsen/ai-tools/trade/docs/WALLET_AUTH_PLAN.md)).
+2. **Non-Custodial Architecture**:
+   * No user private keys are ever stored or transmitted to the backend.
+   * No backend wallet signing is performed on behalf of the user.
+   * Real mainnet transfers are strictly disabled.
 
-## Manual QA Checklist
-- [ ] Ensure "Adena Wallet" appears in the connect modal if available.
-- [ ] Connect without error to Adena (should show address in UI).
-- [ ] Attempt a mock trade flow up to transaction preview.
-- [ ] Verify that real mainnet transactions cannot be executed (transfer guards enforce this).
-- [ ] Verify that no private data is collected or exposed by the wallet.
-
-## Security Statement
-Trade Window is fully **non-custodial**. 
-- No user private keys are ever stored or transmitted to the backend.
-- No backend wallet signing is performed on behalf of the user.
-- Mainnet transfers are strictly guarded and remain disabled in this deployment phase.
+## Technical Blockers for Production Auth
+1. **Adena API Constraints**: Adena lacks a standard `signMessage` or `signArbitrary` method for browser dApps, supporting only Gno transaction signing (`adena.Sign(tx)`).
+2. **Missing Local Compiler**: The local agent environment lacks Go/Docker, preventing verification of secp256k1 cryptographic verification routines before shipping to CI.
