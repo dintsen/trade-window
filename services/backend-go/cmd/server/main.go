@@ -67,6 +67,9 @@ func main() {
 	var requestsStore requests.Store
 
 	if config.AppConfig.StorageDriver == "postgres" {
+		if config.AppConfig.DatabaseURL == "" {
+			log.Fatal("STORAGE_DRIVER is set to postgres but DATABASE_URL is missing")
+		}
 		ctx := context.Background()
 		pool, err := pgxpool.New(ctx, config.AppConfig.DatabaseURL)
 		if err != nil {
@@ -92,7 +95,28 @@ func main() {
 
 	corsMiddleware := func(next http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Access-Control-Allow-Origin", "*") // simplified for board
+			origin := r.Header.Get("Origin")
+			allowedOrigin := ""
+			
+			// Allow localhost by default or match configured origins
+			if strings.HasPrefix(origin, "http://localhost:") {
+				allowedOrigin = origin
+			} else {
+				for _, allowed := range config.AppConfig.AllowedOrigins {
+					if origin == allowed {
+						allowedOrigin = origin
+						break
+					}
+				}
+			}
+
+			if allowedOrigin != "" {
+				w.Header().Set("Access-Control-Allow-Origin", allowedOrigin)
+			} else {
+				// Fallback to strict empty or * if you prefer, but strict is better
+				w.Header().Set("Access-Control-Allow-Origin", "null")
+			}
+
 			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 			if r.Method == "OPTIONS" {
