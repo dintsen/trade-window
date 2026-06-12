@@ -1,21 +1,34 @@
-/**
- * Pure helper to prepare a Gno commitment call description.
- * This does NOT call Adena, does not sign, does not broadcast, 
- * and does not mutate any state.
- * 
- * It purely formats the expected shape of the contract interaction
- * for the user to review.
- */
-export function buildCommitIntentCall(intentHash: string, roomId: string, partyA: string, partyB: string) {
+import { GnoTransactionPayload } from "../wallet/gno-transaction";
+
+export interface GnoCommitmentCallPreview {
+  realmPath: string;
+  method: string;
+  args: string[];
+  intentHash: string;
+  roomId: string;
+  parties: string[];
+  chainId?: string;
+}
+
+export function buildRoomCommitmentPayload(
+  preview: GnoCommitmentCallPreview,
+  callerAddress: string
+): GnoTransactionPayload {
   return {
-    realm: "gno.land/r/demo/tradewindow/rooms",
-    method: "CreateRoomCommitment",
-    args: {
-      roomId,
-      partyA,
-      partyB,
-      intentHash
-    },
-    warning: "Preview only. Not signed or broadcast."
+    messages: [
+      {
+        type: "/vm.m_call",
+        value: {
+          caller: callerAddress,
+          send: "",
+          pkg_path: preview.realmPath,
+          func: preview.method,
+          args: preview.args,
+        },
+      },
+    ],
+    gasFee: 1000000,
+    gasWanted: 2000000,
+    memo: `Trade Window Room: ${preview.roomId}`,
   };
 }

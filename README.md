@@ -33,6 +33,7 @@ Implemented:
 * Adena / GnoConnect read-only detection prototype
 * Gno commitment call preview
 * Mock Wallet demo flow
+* Testnet Transfer prototype via Adena
 
 Not implemented yet:
 * real wallet signing
@@ -90,6 +91,10 @@ gno test . -v
 
 * `NEXT_PUBLIC_WS_URL`: WebSocket endpoint (e.g. `ws://localhost:8080/ws`)
 * `NEXT_PUBLIC_DEMO_MODE`: Enable mock UI flows
+* `NEXT_PUBLIC_ENABLE_ADENA`: Enable Adena wallet integration (true/false)
+* `NEXT_PUBLIC_ENABLE_GNO_TX_PREVIEW`: Enable Gno transaction previews (true/false)
+* `NEXT_PUBLIC_ENABLE_GNO_TESTNET_TRANSFERS`: Enable testnet/local Gno transfers via Adena (true/false)
+* `NEXT_PUBLIC_ENABLE_GNO_MAINNET_TRANSFERS`: Strictly guarded mainnet transfer enabler (true/false)
 * `PORT`: Backend port
 * `ALLOWED_ORIGINS`: CORS origins
 * `COUNTDOWN_SECONDS`: Final lock countdown duration

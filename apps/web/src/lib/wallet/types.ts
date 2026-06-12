@@ -1,35 +1,18 @@
-export type WalletEcosystem = "atomone" | "gno";
+export type GnoWalletProviderId = "mock" | "adena";
 
-export type WalletProviderId =
-  | "mock"
-  | "keplr"
-  | "cosmostation"
-  | "adena";
-
-declare global {
-  interface Window {
-    adena?: {
-      AddEstablish: (dappName: string) => Promise<unknown>;
-      GetAccount: () => Promise<{ address: string }>;
-    };
-  }
-}
-
-export interface WalletAccount {
+export interface GnoWalletAccount {
   address: string;
   displayAddress: string;
-  chainId: string;
-  source: WalletProviderId;
-  ecosystem: WalletEcosystem;
+  chainId?: string;
+  provider: GnoWalletProviderId;
   isMock: boolean;
 }
 
 export interface WalletAdapter {
-  id: WalletProviderId;
-  ecosystem: WalletEcosystem;
+  id: GnoWalletProviderId;
   label: string;
   isAvailable(): boolean;
-  connect(): Promise<WalletAccount>;
+  connect(): Promise<GnoWalletAccount>;
+  getAccount(): Promise<GnoWalletAccount | null>;
   disconnect(): Promise<void>;
-  getAccount(): Promise<WalletAccount | null>;
 }

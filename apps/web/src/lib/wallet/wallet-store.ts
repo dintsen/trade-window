@@ -1,24 +1,20 @@
 import { useState, useCallback } from "react";
-import { WalletAccount, WalletAdapter, WalletProviderId } from "./types";
+import { GnoWalletAccount, WalletAdapter, GnoWalletProviderId } from "./types";
 import { mockWalletAdapter, setNextMockUser } from "./mock-wallet";
-import { keplrWalletAdapter } from "./keplr-wallet";
-import { cosmostationWalletAdapter } from "./cosmostation-wallet";
 import { adenaWalletAdapter } from "./adena-wallet";
 
-const ADAPTERS: Record<WalletProviderId, WalletAdapter> = {
+const ADAPTERS: Record<GnoWalletProviderId, WalletAdapter> = {
   mock: mockWalletAdapter,
-  keplr: keplrWalletAdapter,
-  cosmostation: cosmostationWalletAdapter,
   adena: adenaWalletAdapter,
 };
 
 export function useWalletStore() {
-  const [account, setAccount] = useState<WalletAccount | null>(null);
-  const [activeProvider, setActiveProvider] = useState<WalletProviderId | null>(null);
+  const [account, setAccount] = useState<GnoWalletAccount | null>(null);
+  const [activeProvider, setActiveProvider] = useState<GnoWalletProviderId | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const connect = useCallback(async (providerId: WalletProviderId, mockUser?: "A" | "B") => {
+  const connect = useCallback(async (providerId: GnoWalletProviderId, mockUser?: "A" | "B") => {
     setIsConnecting(true);
     setError(null);
     try {

@@ -1,44 +1,47 @@
-import { WalletAdapter } from "./types";
-
+import { GnoWalletAccount, WalletAdapter } from "./types";
 export const adenaWalletAdapter: WalletAdapter = {
   id: "adena",
-  ecosystem: "gno",
-  label: "Adena",
-  isAvailable: () => typeof window !== 'undefined' && !!window.adena,
-  connect: async () => {
-    if (!window.adena) {
+  label: "Adena Wallet",
+  isAvailable: () => typeof window !== 'undefined' && !!(window as any).adena,
+  
+  connect: async (): Promise<GnoWalletAccount> => {
+    if (!(window as any).adena) {
       throw new Error("Adena not detected. Please install the Adena extension.");
     }
     try {
-      await window.adena.AddEstablish("Trade Window");
-      const accountInfo = await window.adena.GetAccount();
+      const adena = (window as any).adena;
+      await adena.AddEstablish("Trade Window");
+      const accountInfo = await adena.GetAccount();
       
       return {
         address: accountInfo.address,
         displayAddress: "Adena User",
-        chainId: "gno-testnet",
-        source: "adena",
-        ecosystem: "gno",
+        provider: "adena",
         isMock: false
       };
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
-      throw new Error("Adena connection research pending: " + (msg || "Failed to connect to Adena"));
+      throw new Error("Failed to connect to Adena: " + msg);
     }
   },
-  disconnect: async () => {
+  
+  disconnect: async (): Promise<void> => {
     // Read-only prototype; disconnecting just drops the state in our app
   },
-  getAccount: async () => {
-    if (!window.adena) return null;
+  
+  getAccount: async (): Promise<GnoWalletAccount | null> => {
+    if (!(window as any).adena) return null;
     try {
-      const accountInfo = await window.adena.GetAccount();
+      // In a real app we might need to check if we are established first.
+      // But for prototype, we just attempt GetAccount
+      const adena = (window as any).adena;
+      const accountInfo = await adena.GetAccount();
+      if (!accountInfo || !accountInfo.address) return null;
+
       return {
         address: accountInfo.address,
         displayAddress: "Adena User",
-        chainId: "gno-testnet",
-        source: "adena",
-        ecosystem: "gno",
+        provider: "adena",
         isMock: false
       };
     } catch {

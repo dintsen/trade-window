@@ -11,7 +11,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 import { useWalletStore } from '@/lib/wallet/wallet-store';
-import { buildCommitIntentCall } from '@/lib/gno/commitment-call';
+import { buildRoomCommitmentPayload } from '@/lib/gno/commitment-call';
+import { GnoTransactionPreview } from '@/components/trade/GnoTransactionPreview';
+import { GnoTestnetTransfer } from '@/components/trade/GnoTestnetTransfer';
 
 export default function TradeRoomWrapper() {
   const { account, connect, disconnect, adapters, isConnecting, activeProvider } = useWalletStore();
@@ -167,7 +169,8 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
   const { connected, isOfflineMode, roomData, logs, countdown, intentHash, error, actions } = useTradeRoom(walletAddress);
   const [joinId, setJoinId] = useState('');
   const [chatMsg, setChatMsg] = useState('');
-  const [activeTab, setActiveTab] = useState<'setup'|'assets'|'chat'|'logs'>('setup');
+  const { account } = useWalletStore();
+  const [activeTab, setActiveTab] = useState<'setup'|'assets'|'chat'|'logs'|'transfer'>('setup');
   const [forceOfflineView, setForceOfflineView] = useState(false);
 
   const isPartyA = roomData?.partyA === walletAddress;
@@ -212,7 +215,7 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
 
   if (isOfflineMode && !forceOfflineView) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center p-6 bg-[#030303]">
+      <div className="flex-1 flex flex-col items-center justify-center p-6 bg-[#030303] overflow-y-auto">
         <div className="max-w-2xl w-full bg-[#0a0a0a] border border-white/10 rounded-2xl p-10 shadow-2xl">
           <div className="flex items-center gap-3 mb-6">
             <AlertTriangle className="text-amber-400" size={28} />
@@ -397,19 +400,21 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
                       <h4 className="text-sm font-medium text-white/80">Future Gno commitment call preview</h4>
                       <Badge variant="outline" className="text-[10px] bg-white/5 border-white/10 text-white/50">Preview only</Badge>
                     </div>
-                    <pre className="text-xs text-emerald-400/70 font-mono bg-black rounded-lg p-3 overflow-x-auto">
-                      {JSON.stringify(buildCommitIntentCall(intentHash || '', roomData.id, roomData.partyA, roomData.partyB), null, 2)}
-                    </pre>
-                    <div className="mt-3 flex gap-2 text-[10px] text-white/40">
-                      <span className="flex items-center gap-1"><XCircle size={10}/> Signing not implemented</span>
-                      <span className="flex items-center gap-1"><XCircle size={10}/> Broadcast not implemented</span>
-                      <span className="flex items-center gap-1"><XCircle size={10}/> Settlement not implemented</span>
-                    </div>
+                    
+                    <GnoTransactionPreview 
+                      payload={buildRoomCommitmentPayload({
+                        realmPath: "gno.land/r/tradewindow/rooms",
+                        method: "CommitIntent",
+                        args: [roomData.id, intentHash || "", roomData.partyA, roomData.partyB],
+                        intentHash: intentHash || "",
+                        roomId: roomData.id,
+                        parties: [roomData.partyA, roomData.partyB]
+                      }, walletAddress)}
+                      disabledReason="Signing not implemented yet. This is a read-only preview of the future smart contract call."
+                      onSign={() => {}}
+                    />
+                    
                   </div>
-                  
-                  <Button disabled className="w-full py-7 text-lg bg-emerald-500 text-black font-semibold tracking-wide hover:bg-emerald-400 transition-colors shadow-[0_0_30px_rgba(16,185,129,0.3)]">
-                    Preview Gno Commitment
-                  </Button>
                 </div>
               </div>
             )}
@@ -429,11 +434,14 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
 
       {/* Right Sidebar */}
       <div className="w-full md:w-[350px] lg:w-[400px] border-l border-white/5 bg-[#0a0a0a] flex flex-col h-full">
-        <div className="flex items-center border-b border-white/5">
-          <button onClick={() => setActiveTab('setup')} className={`flex-1 py-4 text-xs font-medium uppercase tracking-wider transition-colors border-b-2 ${activeTab === 'setup' ? 'border-emerald-400 text-emerald-400 bg-emerald-500/5' : 'border-transparent text-white/40 hover:bg-white/5 hover:text-white/80'}`}>Setup</button>
-          <button onClick={() => setActiveTab('assets')} className={`flex-1 py-4 text-xs font-medium uppercase tracking-wider transition-colors border-b-2 ${activeTab === 'assets' ? 'border-emerald-400 text-emerald-400 bg-emerald-500/5' : 'border-transparent text-white/40 hover:bg-white/5 hover:text-white/80'}`}>Assets</button>
-          <button onClick={() => setActiveTab('chat')} className={`flex-1 py-4 text-xs font-medium uppercase tracking-wider transition-colors border-b-2 ${activeTab === 'chat' ? 'border-emerald-400 text-emerald-400 bg-emerald-500/5' : 'border-transparent text-white/40 hover:bg-white/5 hover:text-white/80'}`}>Chat</button>
-          <button onClick={() => setActiveTab('logs')} className={`flex-1 py-4 text-xs font-medium uppercase tracking-wider transition-colors border-b-2 ${activeTab === 'logs' ? 'border-emerald-400 text-emerald-400 bg-emerald-500/5' : 'border-transparent text-white/40 hover:bg-white/5 hover:text-white/80'}`}>Logs</button>
+        <div className="flex items-center border-b border-white/5 overflow-x-auto custom-scrollbar shrink-0">
+          <button onClick={() => setActiveTab('setup')} className={`flex-1 py-4 px-2 text-xs font-medium uppercase tracking-wider transition-colors border-b-2 ${activeTab === 'setup' ? 'border-emerald-400 text-emerald-400 bg-emerald-500/5' : 'border-transparent text-white/40 hover:bg-white/5 hover:text-white/80'}`}>Setup</button>
+          <button onClick={() => setActiveTab('assets')} className={`flex-1 py-4 px-2 text-xs font-medium uppercase tracking-wider transition-colors border-b-2 ${activeTab === 'assets' ? 'border-emerald-400 text-emerald-400 bg-emerald-500/5' : 'border-transparent text-white/40 hover:bg-white/5 hover:text-white/80'}`}>Assets</button>
+          <button onClick={() => setActiveTab('chat')} className={`flex-1 py-4 px-2 text-xs font-medium uppercase tracking-wider transition-colors border-b-2 ${activeTab === 'chat' ? 'border-emerald-400 text-emerald-400 bg-emerald-500/5' : 'border-transparent text-white/40 hover:bg-white/5 hover:text-white/80'}`}>Chat</button>
+          <button onClick={() => setActiveTab('logs')} className={`flex-1 py-4 px-2 text-xs font-medium uppercase tracking-wider transition-colors border-b-2 ${activeTab === 'logs' ? 'border-emerald-400 text-emerald-400 bg-emerald-500/5' : 'border-transparent text-white/40 hover:bg-white/5 hover:text-white/80'}`}>Logs</button>
+          {account?.provider === 'adena' && (
+             <button onClick={() => setActiveTab('transfer')} className={`flex-1 py-4 px-2 text-xs font-medium uppercase tracking-wider transition-colors border-b-2 ${activeTab === 'transfer' ? 'border-emerald-400 text-emerald-400 bg-emerald-500/5' : 'border-transparent text-white/40 hover:bg-white/5 hover:text-white/80'}`}>Transfer</button>
+          )}
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
@@ -575,6 +583,11 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
                 })}
               </div>
             </div>
+          )}
+
+          {/* Transfer Tab */}
+          {activeTab === 'transfer' && (
+            <GnoTestnetTransfer />
           )}
 
         </div>
