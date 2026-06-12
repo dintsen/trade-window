@@ -26,11 +26,11 @@ export const metadata: Metadata = {
   description: "Trade Window is an MVP/research prototype for structured OTC deal coordination, public deal intents and future Gno.land commitment flows. It does not provide custody, financial advice, guaranteed execution or real settlement.",
   icons: {
     icon: [
-      { url: '/favicon-v3.ico' },
-      { url: '/favicon-v3.svg', type: 'image/svg+xml' },
+      { url: '/favicon-v4.ico' },
+      { url: '/favicon-v4.svg', type: 'image/svg+xml' },
     ],
     apple: [
-      { url: '/apple-touch-icon-v3.png', sizes: '180x180', type: 'image/png' },
+      { url: '/apple-touch-icon-v4.png', sizes: '180x180', type: 'image/png' },
     ],
     other: [
       { rel: 'manifest', url: '/site.webmanifest' },
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Trade Window",
     description: "Structured OTC deal coordination, public deal intents and future Gno.land commitment flows.",
-    images: ["https://tradewindow.xyz/og-image-v3.png"],
+    images: ["https://tradewindow.xyz/og-image-v4.png"],
   },
   openGraph: {
     title: "Trade Window",
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     siteName: "Trade Window",
     images: [
       {
-        url: "https://tradewindow.xyz/og-image-v3.png",
+        url: "https://tradewindow.xyz/og-image-v4.png",
         width: 1200,
         height: 630,
         alt: "Trade Window — OTC Trade Room for AtomOne & Gno.land",
