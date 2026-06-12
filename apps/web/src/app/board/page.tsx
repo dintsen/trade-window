@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft, Plus, RefreshCw, AlertTriangle, Filter } from "lucide-react";
 import { PublicBoardListing } from "@/lib/board/types";
 import { fetchListings } from "@/lib/board/api";
@@ -162,7 +163,7 @@ export default function BoardPage() {
                         {(() => {
                           const asset = getAsset(listing.offerAsset);
                           if (asset) {
-                            return <><img src={asset.logoUrl} className="w-5 h-5 rounded-full" alt="" /> <span>{asset.symbol}</span> {asset.isDemo && <span className="text-xs text-white/30 bg-white/5 px-1.5 py-0.5 rounded">Demo</span>}</>;
+                            return <><Image src={asset.logoUrl} width={20} height={20} className="w-5 h-5 rounded-full" alt="" /> <span>{asset.symbol}</span> {asset.isDemo && <span className="text-xs text-white/30 bg-white/5 px-1.5 py-0.5 rounded">Demo</span>}</>;
                           }
                           return listing.offerAsset;
                         })()}
@@ -174,7 +175,7 @@ export default function BoardPage() {
                         {(() => {
                           const asset = getAsset(listing.wantAsset);
                           if (asset) {
-                            return <><img src={asset.logoUrl} className="w-5 h-5 rounded-full" alt="" /> <span>{asset.symbol}</span> {asset.isDemo && <span className="text-xs text-white/30 bg-white/5 px-1.5 py-0.5 rounded">Demo</span>}</>;
+                            return <><Image src={asset.logoUrl} width={20} height={20} className="w-5 h-5 rounded-full" alt="" /> <span>{asset.symbol}</span> {asset.isDemo && <span className="text-xs text-white/30 bg-white/5 px-1.5 py-0.5 rounded">Demo</span>}</>;
                           }
                           return listing.wantAsset;
                         })()}
