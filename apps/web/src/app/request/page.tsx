@@ -5,53 +5,41 @@ import Link from "next/link";
 import { ArrowLeft, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+import { createDealRequest } from "@/lib/request/api";
+
 export default function RequestPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setError(null);
 
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
 
-    // Generate mailto link as fallback since backend is not implemented
-    const subject = `OTC Inquiry: ${data.requestType} - ${data.assetOffer} for ${data.assetWant}`;
-    const body = `
-Name: ${data.name}
-Email: ${data.email}
-Social Handle: ${data.social || "N/A"}
-Preferred Contact: ${data.preferredContact}
+    try {
+      await createDealRequest({
+        name: data.name as string,
+        email: data.email as string,
+        contactHandle: data.social as string,
+        preferredContact: data.preferredContact as string,
+        requestType: data.requestType as string,
+        chain: data.chain as string,
+        offerAsset: data.assetOffer as string,
+        wantAsset: data.assetWant as string,
+        amountRange: data.amount as string,
+        message: data.message as string,
+        consentAccepted: true,
+      });
 
-Request Type: ${data.requestType}
-Chain/Ecosystem: ${data.chain}
-
-Asset Offer: ${data.assetOffer}
-Asset Want: ${data.assetWant}
-Amount/Range: ${data.amount}
-
-Details:
-${data.message}
-
----
-Consent provided: Yes. User understands this is a manual inquiry for an MVP/research prototype and does not guarantee execution or settlement.
-    `.trim();
-
-    const mailtoLink = `mailto:hello@tradewindow.com?subject=${encodeURIComponent(
-      subject
-    )}&body=${encodeURIComponent(body)}`;
-
-    // Simulate short delay then redirect to thank you or open mail client
-    setTimeout(() => {
-      // We open the mail client since we have no DB
-      window.location.href = mailtoLink;
-      
-      // Then route to thank you
-      setTimeout(() => {
-        router.push("/thank-you");
-      }, 500);
-    }, 800);
+      router.push("/thank-you");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to submit request");
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -88,6 +76,12 @@ Consent provided: Yes. User understands this is a manual inquiry for an MVP/rese
               contact you for manual coordination.
             </p>
           </div>
+
+          {error && (
+            <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 p-4 rounded-xl mb-6 text-sm text-center">
+              {error}
+            </div>
+          )}
 
           {/* Form Card */}
           <div className="p-1 rounded-3xl bg-gradient-to-b from-white/10 to-transparent">

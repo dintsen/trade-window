@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, Plus, RefreshCw, AlertTriangle, Filter } from "lucide-react";
 import { PublicBoardListing } from "@/lib/board/types";
 import { fetchListings } from "@/lib/board/api";
+import { getAsset } from "@/lib/assets/asset-registry";
 
 export default function BoardPage() {
   const [listings, setListings] = useState<PublicBoardListing[]>([]);
@@ -157,11 +158,27 @@ export default function BoardPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                     <div className="bg-black/50 border border-white/5 rounded-xl p-4">
                       <div className="text-xs text-white/40 mb-1 uppercase tracking-wider font-semibold">Offering</div>
-                      <div className="text-lg font-medium text-white">{listing.offerAsset}</div>
+                      <div className="text-lg font-medium text-white flex items-center gap-2">
+                        {(() => {
+                          const asset = getAsset(listing.offerAsset);
+                          if (asset) {
+                            return <><img src={asset.logoUrl} className="w-5 h-5 rounded-full" alt="" /> <span>{asset.symbol}</span> {asset.isDemo && <span className="text-xs text-white/30 bg-white/5 px-1.5 py-0.5 rounded">Demo</span>}</>;
+                          }
+                          return listing.offerAsset;
+                        })()}
+                      </div>
                     </div>
                     <div className="bg-black/50 border border-white/5 rounded-xl p-4">
                       <div className="text-xs text-white/40 mb-1 uppercase tracking-wider font-semibold">Wanting</div>
-                      <div className="text-lg font-medium text-white">{listing.wantAsset}</div>
+                      <div className="text-lg font-medium text-white flex items-center gap-2">
+                        {(() => {
+                          const asset = getAsset(listing.wantAsset);
+                          if (asset) {
+                            return <><img src={asset.logoUrl} className="w-5 h-5 rounded-full" alt="" /> <span>{asset.symbol}</span> {asset.isDemo && <span className="text-xs text-white/30 bg-white/5 px-1.5 py-0.5 rounded">Demo</span>}</>;
+                          }
+                          return listing.wantAsset;
+                        })()}
+                      </div>
                     </div>
                   </div>
 

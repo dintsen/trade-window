@@ -10,10 +10,10 @@ import (
 	"unicode"
 
 	"github.com/gorilla/websocket"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/tradewindow/backend-go/internal/board"
 	"github.com/tradewindow/backend-go/internal/config"
 	"github.com/tradewindow/backend-go/internal/requests"
+	"github.com/tradewindow/backend-go/internal/storage"
 	"github.com/tradewindow/backend-go/internal/ws"
 )
 
@@ -85,15 +85,8 @@ func main() {
 			log.Fatal("STORAGE_DRIVER is set to postgres but DATABASE_URL is missing")
 		}
 		ctx := context.Background()
-		pool, err := pgxpool.New(ctx, config.AppConfig.DatabaseURL)
-		if err != nil {
-			log.Fatalf("Unable to create connection pool: %v\n", err)
-		}
+		pool := storage.InitPostgresPool(ctx)
 		defer pool.Close()
-
-		if err := pool.Ping(ctx); err != nil {
-			log.Fatalf("Unable to connect to database: %v\n", err)
-		}
 
 		log.Println("Using Postgres storage")
 		boardStore = board.NewPostgresBoardStore(pool)
@@ -137,17 +130,29 @@ func main() {
 	http.HandleFunc("/api/board/listings/", corsMiddleware(boardHandlers.HandleListingByID))
 	http.HandleFunc("/api/deal-requests", corsMiddleware(requestsHandlers.HandleDealRequests))
 
-	http.HandleFunc("/rooms/", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/trade/rooms", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if r.Method == http.MethodPost {
+			// Stub for POST /api/trade/rooms
+			// Currently rooms are created via WS, but this satisfies the REST API requirement.
+			w.WriteHeader(http.StatusNotImplemented)
+			json.NewEncoder(w).Encode(map[string]string{"error": "use_websocket_for_creation"})
+			return
+		}
+		w.WriteHeader(http.StatusMethodNotAllowed)
+	}))
+
+	http.HandleFunc("/api/trade/rooms/", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
 		pathParts := strings.Split(r.URL.Path, "/")
-		if len(pathParts) < 3 || pathParts[2] == "" {
+		if len(pathParts) < 4 || pathParts[4] == "" {
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(map[string]string{"error": "invalid_room_id"})
 			return
 		}
 
-		roomID := pathParts[2]
+		roomID := pathParts[4]
 		room, exists := hub.GetRoom(roomID)
 
 		if !exists {
@@ -158,7 +163,7 @@ func main() {
 
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(room)
-	})
+	}))
 
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		wallet := r.URL.Query().Get("wallet")

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createListing } from "@/lib/board/api";
+import { getAllAssets } from "@/lib/assets/asset-registry";
 
 export default function NewListingPage() {
   const router = useRouter();
@@ -114,11 +115,21 @@ export default function NewListingPage() {
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-white/60">Asset you offer *</label>
-                    <input required name="offerAsset" type="text" placeholder="e.g. 1000 USDC" className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:ring-2 focus:ring-emerald-500/50 outline-none" />
+                    <select required name="offerAsset" defaultValue="" className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-emerald-500/50 outline-none appearance-none">
+                      <option value="" disabled hidden>Select asset...</option>
+                      {getAllAssets().map(a => (
+                        <option key={a.technicalDenom} value={a.technicalDenom}>{a.symbol} {a.isDemo ? '(Demo)' : ''}</option>
+                      ))}
+                    </select>
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-white/60">Asset you want *</label>
-                    <input required name="wantAsset" type="text" placeholder="e.g. GNO Tokens" className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:ring-2 focus:ring-emerald-500/50 outline-none" />
+                    <select required name="wantAsset" defaultValue="" className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-emerald-500/50 outline-none appearance-none">
+                      <option value="" disabled hidden>Select asset...</option>
+                      {getAllAssets().map(a => (
+                        <option key={a.technicalDenom} value={a.technicalDenom}>{a.symbol} {a.isDemo ? '(Demo)' : ''}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
 

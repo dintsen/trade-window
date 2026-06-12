@@ -106,7 +106,7 @@ export default function TradeRoomWrapper() {
                       <div className="w-full flex flex-col items-start p-4 rounded-xl border border-white/5 bg-black/20 transition-all relative overflow-hidden group hover:border-white/10">
                         <div className="flex justify-between items-start w-full mb-2">
                           <div className="flex items-center gap-2">
-                            <Image src="/assets/logos/adena.png" alt="Adena" width={16} height={16} className="w-4 h-4 rounded-full bg-white/10 object-cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                            <Image src="/assets/wallets/adena.svg" alt="Adena" width={16} height={16} className="w-4 h-4 rounded-full bg-white/10 object-cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
                             <span className="font-medium text-white/80">Adena Wallet</span>
                           </div>
                           {isAvailable ? (
@@ -607,9 +607,9 @@ function AssetCard({ asset }: { asset: TradeAsset }) {
       <div className="flex justify-between items-start">
         <div className="flex items-center gap-3 pl-1">
           <div className={`w-10 h-10 rounded-full flex items-center justify-center border overflow-hidden relative p-1.5 ${isSuspicious ? 'bg-rose-500/10 border-rose-500/20' : 'bg-emerald-500/10 border-emerald-500/20'}`}>
-            {asset.displayDenom === 'ATONE' && <Image src="/assets/logos/atomone.svg" alt="ATONE" width={24} height={24} className="object-contain drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]" />}
-            {asset.displayDenom === 'GNOT' && <Image src="/assets/logos/gno.svg" alt="GNOT" width={24} height={24} className="object-contain" />}
-            {asset.displayDenom === 'PHOTON' && <Image src="/assets/logos/photon.svg" alt="PHOTON" width={24} height={24} className="object-contain text-rose-400 drop-shadow-[0_0_8px_rgba(244,63,94,0.5)]" />}
+            {asset.displayDenom === 'ATONE' && <Image src="/assets/tokens/atone.svg" alt="ATONE" width={24} height={24} className="object-contain drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]" />}
+            {asset.displayDenom === 'GNOT' && <Image src="/assets/tokens/gnot.svg" alt="GNOT" width={24} height={24} className="object-contain" />}
+            {asset.displayDenom === 'PHOTON' && <Image src="/assets/tokens/photon.svg" alt="PHOTON" width={24} height={24} className="object-contain text-rose-400 drop-shadow-[0_0_8px_rgba(244,63,94,0.5)]" />}
             {!['ATONE', 'GNOT', 'PHOTON'].includes(asset.displayDenom) && (
               <span className="font-bold text-[10px]">{asset.displayDenom.slice(0,3)}</span>
             )}

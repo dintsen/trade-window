@@ -1,60 +1,23 @@
-# Gno.land Wallet Integration
+# Gno Wallet Integration
 
-## Adena Wallet API
-Adena is the flagship non-custodial browser extension wallet designed for the Gno.land ecosystem. It operates via the `window.adena` object injected into the browser.
+Trade Window uses a dual-wallet strategy for testing and future production:
 
-### Key Methods
-*   **Connection**: `await window.adena.AddEstablish("AppName")` prompts the user to allow connection.
-*   **Account**: `await window.adena.GetAccount()` returns the current account information.
+1. **Mock Wallet** (`isMock: true`): Used for local UI demo flows, simulating different users connecting without needing an actual browser extension.
+2. **Adena Wallet** (`isMock: false`): The real Gno.land wallet extension.
 
-### Transaction Payload
-Gno.land utilizes `vm.m_call` for calling smart contract (realm) methods. The payload shape via Adena typically looks like:
+## Wallet Store (`lib/wallet/wallet-store.ts`)
 
-```javascript
-const tx = {
-  messages: [
-    {
-      type: "/vm.m_call",
-      value: {
-        caller: "gno1...",
-        send: "10000ugnot", // optional funds sent with the call
-        pkg_path: "gno.land/r/demo/realm",
-        func: "MethodName",
-        args: ["arg1", "arg2"]
-      }
-    }
-  ],
-  gasFee: 1000000,
-  gasWanted: 1000000
-};
+The `useWalletStore` hook manages the active account, available adapters (`MockWalletAdapter`, `AdenaWalletAdapter`), and connection status.
 
-// Call via DoContract
-await window.adena.DoContract({
-    messages: tx.messages,
-    gasFee: tx.gasFee,
-    gasWanted: tx.gasWanted
-});
-```
-Token transfers are done via the `bank.MsgSend` message type:
-```javascript
-const transferTx = {
-  messages: [
-    {
-      type: "/bank.MsgSend",
-      value: {
-        from_address: "gno1...",
-        to_address: "gno1...",
-        amount: "1000000ugnot"
-      }
-    }
-  ]
-};
-```
+## Gno Transaction Preview
 
-## GnoConnect Standard
-Gno.land uses the GnoConnect standard for interaction. While Adena has `window.adena`, GnoConnect is standardizing around this.
+The `GnoTransactionPreview` component safely displays what a transaction will do before it is broadcast.
 
-## Local / Testnet Considerations
-*   Adena supports network switching. The application should handle testnet vs mainnet logic gracefully.
-*   The `gno` and `gnokey` CLIs remain as fallbacks for raw offline transaction generation if `gnodev` is unavailable or for testing.
-*   Trade Window will strictly disable mainnet transfers via a feature flag until explicitly enabled.
+- Parses `/bank.MsgSend` and `/vm.m_call` payloads.
+- Displays the action type, from/to addresses, payload method, amount, and chain ID.
+- Expands raw JSON for technical users.
+
+## Safety Guidelines
+
+- Mainnet transfers are strictly guarded via the `NEXT_PUBLIC_ENABLE_GNO_MAINNET_TRANSFERS` feature flag.
+- Backend never signs transactions or holds private keys. All signing is handled client-side by Adena.
