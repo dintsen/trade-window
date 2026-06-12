@@ -2,6 +2,7 @@ package rooms
 
 import (
 	"errors"
+	"strings"
 	"sync"
 	"time"
 
@@ -58,7 +59,7 @@ type Room struct {
 	LockB          bool         `json:"lockB"`
 	CountdownAt    time.Time    `json:"countdownAt"`
 	LastActivityAt time.Time    `json:"-"`
-	
+
 	countdownStarted bool
 }
 
@@ -100,7 +101,7 @@ func (r *Room) Join(party string) error {
 	if r.PartyA != "" && r.PartyB != "" && r.State == StateLobby {
 		r.State = StateActive
 	} else if r.PartyA != "" && r.State == StateLobby {
-		r.State = StateActive 
+		r.State = StateActive
 	}
 	return nil
 }
@@ -113,25 +114,64 @@ func (r *Room) AddAsset(party string, asset TradeAsset) error {
 	if r.State != StateActive {
 		return errors.New("cannot add assets unless room is active")
 	}
-	
-	if asset.Amount == "" || asset.DisplayDenom == "" {
-		return errors.New("invalid asset payload")
+
+	if err := ValidateTradeAsset(asset); err != nil {
+		return err
 	}
 
 	if party == r.PartyA {
 		r.OfferA = append(r.OfferA, asset)
 		if r.LockB {
-			r.LockB = false 
+			r.LockB = false
 		}
 	} else if party == r.PartyB {
 		r.OfferB = append(r.OfferB, asset)
 		if r.LockA {
-			r.LockA = false 
+			r.LockA = false
 		}
 	} else {
 		return errors.New("unauthorized party")
 	}
 
+	return nil
+}
+
+func ValidateTradeAsset(asset TradeAsset) error {
+	if strings.TrimSpace(asset.ID) == "" || len(asset.ID) > 128 {
+		return errors.New("invalid asset id")
+	}
+	if asset.Type != "coin" && asset.Type != "nft" && asset.Type != "unknown" {
+		return errors.New("invalid asset type")
+	}
+	if strings.TrimSpace(asset.Amount) == "" || len(asset.Amount) > 80 {
+		return errors.New("invalid asset amount")
+	}
+	if strings.TrimSpace(asset.DisplayDenom) == "" || len(asset.DisplayDenom) > 80 {
+		return errors.New("invalid asset display denom")
+	}
+	if strings.TrimSpace(asset.TechnicalDenom) == "" || len(asset.TechnicalDenom) > 256 {
+		return errors.New("invalid asset technical denom")
+	}
+	if strings.TrimSpace(asset.ChainID) == "" || len(asset.ChainID) > 128 {
+		return errors.New("invalid asset chain id")
+	}
+	if strings.TrimSpace(asset.SourceChain) == "" || len(asset.SourceChain) > 128 {
+		return errors.New("invalid asset source chain")
+	}
+	if asset.Decimals < 0 || asset.Decimals > 30 {
+		return errors.New("invalid asset decimals")
+	}
+	switch asset.VerificationStatus {
+	case VerifyVerified, VerifyUnverified, VerifyUnknown, VerifySuspicious:
+	default:
+		return errors.New("invalid asset verification status")
+	}
+	if len(asset.Metadata) > 2048 {
+		return errors.New("asset metadata too large")
+	}
+	if len(asset.IbcTrace) > 512 {
+		return errors.New("asset ibc trace too large")
+	}
 	return nil
 }
 
@@ -143,7 +183,7 @@ func (r *Room) ToggleLock(party string, lock bool) error {
 	if r.State != StateActive && r.State != StateLockedCountdown {
 		return errors.New("can only lock or unlock in active or countdown states")
 	}
-	
+
 	// If unlocking during countdown, it breaks the countdown
 	if !lock && r.State == StateLockedCountdown {
 		r.State = StateActive
@@ -184,15 +224,15 @@ func (r *Room) Cancel() {
 func (r *Room) StartCountdown() bool {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	
+
 	if r.State != StateLockedCountdown {
 		return false
 	}
-	
+
 	if r.countdownStarted {
 		return false
 	}
-	
+
 	r.countdownStarted = true
 	return true
 }

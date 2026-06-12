@@ -123,7 +123,7 @@ export function GnoTransactionPreview({ payload, disabledReason, onSign, isMainn
             onClick={onSign}
             className="w-full py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded font-medium transition-colors"
           >
-            Sign & Broadcast
+            Sign Testnet/Local Transaction
           </button>
         )}
       </div>

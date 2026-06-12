@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { GnoTransactionPreview } from "./GnoTransactionPreview";
 import { GnoTransactionPayload } from "@/lib/wallet/gno-transaction";
 import { useWalletStore } from "@/lib/wallet/wallet-store";
-import { config } from "@/lib/config";
+import { config, TRANSFERS_DISABLED_MESSAGE } from "@/lib/config";
 import { Send, AlertTriangle } from "lucide-react";
 
 export function GnoTestnetTransfer() {
@@ -43,12 +43,11 @@ export function GnoTestnetTransfer() {
   };
 
   const handleSign = async () => {
-    if (!config.enableGnoTestnetTransfers) return;
+    if (!config.enableGnoTestnetTransfers || config.enableGnoMainnetTransfers) return;
     try {
       const payload = buildPayload();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const adena = (window as any).adena;
-      if (adena) {
+      const adena = window.adena;
+      if (adena?.DoContract) {
         await adena.DoContract({
           messages: payload.messages,
           gasFee: payload.gasFee,
@@ -66,10 +65,10 @@ export function GnoTestnetTransfer() {
 
   const getDisabledReason = () => {
     if (config.enableGnoMainnetTransfers) {
-      return "Mainnet transfers are strictly guarded but explicitly enabled in config. Proceed with extreme caution.";
+      return `${TRANSFERS_DISABLED_MESSAGE} Mainnet transfers remain disabled.`;
     }
     if (!config.enableGnoTestnetTransfers) {
-      return "Real token transfer is disabled in this MVP. Use testnet/local mode only by setting NEXT_PUBLIC_ENABLE_GNO_TESTNET_TRANSFERS=true.";
+      return TRANSFERS_DISABLED_MESSAGE;
     }
     return undefined;
   };
@@ -82,7 +81,7 @@ export function GnoTestnetTransfer() {
           Testnet/Local Transfer Prototype
         </h3>
         <p className="text-zinc-400 text-xs mt-1">
-          Send assets directly via Adena. This is a prototype and must not be used with real mainnet funds.
+          Preview a testnet/local Adena transfer. Real mainnet token transfers are disabled.
         </p>
       </div>
 

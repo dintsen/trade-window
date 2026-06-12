@@ -1,7 +1,4 @@
 import { Header } from '@/components/layout/header';
-import Link from 'next/link';
-import Image from 'next/image';
-import { ChevronDown, Globe } from 'lucide-react';
 
 export default function WhitepaperPage() {
   return (
@@ -18,10 +15,10 @@ export default function WhitepaperPage() {
               Technical Paper v1.0
             </div>
             <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-8 bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-white">
-              Deterministic OTC Settlement
+              Deterministic OTC Coordination
             </h1>
             <p className="text-xl text-white/60 font-light leading-relaxed">
-              An architecture for trustless, multi-asset peer-to-peer exchanges on the Interchain network.
+              An architecture for structured, non-custodial multi-asset OTC coordination on the Interchain.
             </p>
           </div>
 
@@ -31,7 +28,7 @@ export default function WhitepaperPage() {
               Over-the-Counter (OTC) trading in decentralized finance has historically been fraught with UX friction and security vulnerabilities. Traditional atomic swaps often require complex smart contract interactions or suffer from non-deterministic states where one party can grief the other.
             </p>
             <p>
-              TradeWindow introduces a strict, append-only negotiation protocol combined with a double-lock deterministic settlement engine, built explicitly for the AtomOne and Gno.land ecosystems.
+              TradeWindow introduces a strict, append-only negotiation protocol combined with a double-lock deterministic intent model, built explicitly for the AtomOne and Gno.land ecosystems.
             </p>
 
             <h2 className="text-3xl font-semibold text-white mt-16 mb-6">2. The Double-Lock Mechanism</h2>
@@ -39,7 +36,7 @@ export default function WhitepaperPage() {
               To eliminate substitution scams (where a counterparty swaps an asset at the last millisecond), TradeWindow enforces an append-only state. Assets cannot be removed from an offer once added.
             </p>
             <p>
-              When a party is satisfied with their bundle, they &quot;Lock&quot; their side. The smart contract requires both parties to have an active lock. If either party modifies their bundle (which forces an append), all existing locks are instantly invalidated and must be explicitly re-approved.
+              When a party is satisfied with their bundle, they &quot;Lock&quot; their side. Future Gno.land commitment logic can require both parties to have an active lock. If either party modifies their bundle, existing locks are invalidated and must be explicitly re-approved.
             </p>
 
             <h2 className="text-3xl font-semibold text-white mt-16 mb-6">3. Technical Traceability</h2>

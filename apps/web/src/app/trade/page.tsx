@@ -385,7 +385,7 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
                     </div>
                     <div>
                       <h3 className="text-base font-medium text-white">Final Intent Hash</h3>
-                      <p className="text-xs text-white/50">Sign this deterministic hash to execute the swap.</p>
+                      <p className="text-xs text-white/50">Review this deterministic hash before any future signing step.</p>
                     </div>
                   </div>
                   

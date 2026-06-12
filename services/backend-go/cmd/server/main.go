@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"unicode"
 
 	"github.com/gorilla/websocket"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -22,27 +23,40 @@ func initUpgrader() {
 	upgrader = websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool {
 			origin := r.Header.Get("Origin")
-			// Allow empty origin (local dev/postman)
-			if origin == "" {
+			if isAllowedOrigin(origin) {
 				return true
 			}
-			
-			// Allow localhost by default
-			if strings.HasPrefix(origin, "http://localhost:") {
-				return true
-			}
-			
-			// Check configured allowed origins
-			for _, allowed := range config.AppConfig.AllowedOrigins {
-				if origin == allowed {
-					return true
-				}
-			}
-			
 			log.Printf("Blocked origin: %s\n", origin)
 			return false
 		},
 	}
+}
+
+func isAllowedOrigin(origin string) bool {
+	if strings.TrimSpace(origin) == "" {
+		return false
+	}
+	for _, allowed := range config.AppConfig.AllowedOrigins {
+		allowed = strings.TrimSpace(allowed)
+		if allowed == "*" || origin == allowed {
+			return true
+		}
+	}
+	return false
+}
+
+func isValidWalletAddress(wallet string) bool {
+	wallet = strings.TrimSpace(wallet)
+	if len(wallet) < 6 || len(wallet) > 128 {
+		return false
+	}
+	for _, r := range wallet {
+		if unicode.IsLetter(r) || unicode.IsDigit(r) || r == '-' || r == '_' || r == ':' {
+			continue
+		}
+		return false
+	}
+	return true
 }
 
 func main() {
@@ -97,17 +111,9 @@ func main() {
 		return func(w http.ResponseWriter, r *http.Request) {
 			origin := r.Header.Get("Origin")
 			allowedOrigin := ""
-			
-			// Allow localhost by default or match configured origins
-			if strings.HasPrefix(origin, "http://localhost:") {
+
+			if isAllowedOrigin(origin) {
 				allowedOrigin = origin
-			} else {
-				for _, allowed := range config.AppConfig.AllowedOrigins {
-					if origin == allowed {
-						allowedOrigin = origin
-						break
-					}
-				}
 			}
 
 			if allowedOrigin != "" {
@@ -133,31 +139,31 @@ func main() {
 
 	http.HandleFunc("/rooms/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		
+
 		pathParts := strings.Split(r.URL.Path, "/")
 		if len(pathParts) < 3 || pathParts[2] == "" {
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(map[string]string{"error": "invalid_room_id"})
 			return
 		}
-		
+
 		roomID := pathParts[2]
 		room, exists := hub.GetRoom(roomID)
-		
+
 		if !exists {
 			w.WriteHeader(http.StatusNotFound)
 			json.NewEncoder(w).Encode(map[string]string{"error": "room_not_found"})
 			return
 		}
-		
+
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(room)
 	})
 
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		wallet := r.URL.Query().Get("wallet")
-		if strings.TrimSpace(wallet) == "" {
-			http.Error(w, "wallet query param required", http.StatusUnauthorized)
+		if !isValidWalletAddress(wallet) {
+			http.Error(w, "valid wallet query param required", http.StatusUnauthorized)
 			return
 		}
 
@@ -166,7 +172,7 @@ func main() {
 			log.Println(err)
 			return
 		}
-		
+
 		client := &ws.Client{
 			Hub:     hub,
 			Conn:    conn,

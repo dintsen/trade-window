@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { ArrowRight, List, Lock, FileSearch, ShieldAlert } from 'lucide-react';
+import { ArrowRight, List, ShieldAlert } from 'lucide-react';
 
 export function OtcBoardSection() {
   return (

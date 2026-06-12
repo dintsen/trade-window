@@ -1,6 +1,5 @@
 import { Header } from '@/components/layout/header';
-import Link from 'next/link';
-import { ChevronLeft, Shield, Globe, Cpu } from 'lucide-react';
+import { Shield, Globe, Cpu } from 'lucide-react';
 
 export default function CompanyPage() {
   return (
@@ -18,7 +17,7 @@ export default function CompanyPage() {
         </h1>
         
         <p className="text-xl text-white/60 font-light max-w-2xl mb-24 leading-relaxed">
-          Trade Window was founded to solve a critical issue in decentralized finance: executing high-value, peer-to-peer asset swaps safely without relying on centralized intermediaries.
+          Trade Window was founded to improve high-value, peer-to-peer OTC coordination without relying on centralized custody.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -27,7 +26,7 @@ export default function CompanyPage() {
             <Shield className="text-emerald-400 mb-6" size={32} />
             <h3 className="text-xl font-semibold text-white mb-3">Security First</h3>
             <p className="text-white/40 text-sm leading-relaxed">
-              We leverage Gno.land&apos;s strictly evaluated smart contracts to ensure determinism and security at the protocol layer.
+              We are building toward Gno.land commitment logic for deterministic intent review at the protocol layer.
             </p>
           </div>
 
@@ -35,7 +34,7 @@ export default function CompanyPage() {
             <Globe className="text-emerald-400 mb-6" size={32} />
             <h3 className="text-xl font-semibold text-white mb-3">Cosmos Native</h3>
             <p className="text-white/40 text-sm leading-relaxed">
-              Designed for IBC interoperability from day one, opening up trustless liquidity across the entire interchain.
+              Designed for IBC-aware asset identity from day one, with transfer paths validated only after wallet and protocol research.
             </p>
           </div>
 

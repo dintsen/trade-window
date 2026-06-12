@@ -42,7 +42,7 @@ func TestHubProcessMessage(t *testing.T) {
 
 	// Test append-only add asset
 	assetBytes, _ := json.Marshal(map[string]interface{}{
-		"asset": rooms.TradeAsset{ID: "asset-1", Type: "coin", SourceChain: "atomone", TechnicalDenom: "uatone", Amount: "100", DisplayDenom: "ATONE", VerificationStatus: rooms.VerifyVerified},
+		"asset": rooms.TradeAsset{ID: "asset-1", Type: "coin", ChainID: "atomone-1", SourceChain: "atomone", TechnicalDenom: "uatone", BaseDenom: "uatone", Amount: "100", DisplayDenom: "ATONE", Decimals: 6, VerificationStatus: rooms.VerifyVerified},
 	})
 	hub.ProcessMessage(clientA, protocol.WSMessage{Type: "offer:add", Payload: assetBytes})
 	if len(r.OfferA) != 1 {
@@ -57,7 +57,7 @@ func TestHubProcessMessage(t *testing.T) {
 
 	// Test lock reset
 	assetBytes2, _ := json.Marshal(map[string]interface{}{
-		"asset": rooms.TradeAsset{ID: "asset-2", Type: "coin", SourceChain: "atomone", TechnicalDenom: "uphoton", Amount: "50", DisplayDenom: "PHOTON", VerificationStatus: rooms.VerifyVerified},
+		"asset": rooms.TradeAsset{ID: "asset-2", Type: "coin", ChainID: "atomone-1", SourceChain: "atomone", TechnicalDenom: "uphoton", BaseDenom: "uphoton", Amount: "50", DisplayDenom: "PHOTON", Decimals: 6, VerificationStatus: rooms.VerifyVerified},
 	})
 	hub.ProcessMessage(clientB, protocol.WSMessage{Type: "offer:add", Payload: assetBytes2})
 	if r.LockA {
@@ -99,7 +99,7 @@ func TestHubProcessMessage(t *testing.T) {
 	}
 	chatPayload, _ := json.Marshal(protocol.ChatPayload{Message: string(longMsg)})
 	hub.ProcessMessage(clientA, protocol.WSMessage{Type: "chat:message", Payload: chatPayload})
-	
+
 	// Ensure these bad messages didn't crash us and we still have the room
 	if hub.Rooms[roomID] == nil {
 		t.Fatal("hub should still have room after invalid messages")
@@ -115,19 +115,19 @@ func TestHubCleanup(t *testing.T) {
 	hub := NewHub()
 	r1 := rooms.NewRoom("r1")
 	r1.State = rooms.StateCancelled
-	
+
 	r2 := rooms.NewRoom("r2")
 	r2.State = rooms.StateActive
-	
+
 	r3 := rooms.NewRoom("r3")
 	r3.LastActivityAt = time.Now().Add(-120 * time.Minute)
-	
+
 	hub.Rooms["r1"] = r1
 	hub.Rooms["r2"] = r2
 	hub.Rooms["r3"] = r3
-	
+
 	hub.cleanupRooms()
-	
+
 	if hub.Rooms["r1"] != nil {
 		t.Fatal("expected r1 to be cleaned up (cancelled)")
 	}

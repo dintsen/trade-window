@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import Image from 'next/image';
 import { Header } from '@/components/layout/header';
 
@@ -10,8 +9,6 @@ import { ProductPreviewSection } from '../components/landing/product-preview-sec
 import { EcosystemRoadmapSection } from '../components/landing/ecosystem-roadmap-section';
 import { OtcBoardSection } from '../components/landing/otc-board-section';
 import { FinalCtaSection } from '../components/landing/final-cta-section';
-
-import { ChevronDown } from 'lucide-react';
 
 export default function Home() {
   return (

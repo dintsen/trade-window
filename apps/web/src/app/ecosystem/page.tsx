@@ -1,7 +1,5 @@
 import { Header } from '@/components/layout/header';
-import Link from 'next/link';
-import Image from 'next/image';
-import { ChevronDown, Globe, Shield, Zap, Layers } from 'lucide-react';
+import { Shield, Zap, Layers } from 'lucide-react';
 
 export default function EcosystemPage() {
   return (
@@ -17,7 +15,7 @@ export default function EcosystemPage() {
             The Sovereign <br/> <span className="text-white/40">Ecosystem</span>
           </h1>
           <p className="text-xl text-white/60 font-light max-w-xl leading-relaxed">
-            TradeWindow is engineered specifically for the AtomOne and Gno.land ecosystems, leveraging the Interchain architecture for unparalleled security and decentralization.
+            TradeWindow is engineered specifically for the AtomOne and Gno.land ecosystems, using Interchain-aware architecture for transparent OTC coordination.
           </p>
         </div>
 
@@ -27,7 +25,7 @@ export default function EcosystemPage() {
             <Shield className="w-8 h-8 text-emerald-400 mb-6" />
             <h3 className="text-xl font-semibold text-white mb-3">AtomOne</h3>
             <p className="text-white/40 leading-relaxed text-sm">
-              A highly secure fork of the Cosmos Hub, designed to provide the ultimate settlement layer. TradeWindow utilizes AtomOne for rock-solid deterministic OTC settlements.
+              A highly secure fork of the Cosmos Hub and a target ecosystem for future asset inspection, wallet support, and settlement research.
             </p>
             <div className="mt-8 pt-6 border-t border-white/5 flex gap-4 text-xs font-mono text-emerald-400/50 uppercase tracking-widest">
               <span>Settlement</span>
@@ -53,7 +51,7 @@ export default function EcosystemPage() {
             <Layers className="w-8 h-8 text-emerald-400 mb-6" />
             <h3 className="text-xl font-semibold text-white mb-3">Interchain</h3>
             <p className="text-white/40 leading-relaxed text-sm">
-              Built on the IBC protocol, enabling trustless cross-chain asset transfers. Move liquidity seamlessly between sovereign networks with full technical traceability.
+              Built around IBC-aware asset identity. Future routing work must be validated before any cross-chain transfer or execution claims.
             </p>
             <div className="mt-8 pt-6 border-t border-white/5 flex gap-4 text-xs font-mono text-emerald-400/50 uppercase tracking-widest">
               <span>Transport</span>

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/tradewindow/backend-go/internal/config"
 	"github.com/tradewindow/backend-go/internal/protocol"
 )
 
@@ -16,11 +17,11 @@ const (
 )
 
 type Client struct {
-	Hub      *Hub
-	Conn     *websocket.Conn
-	Send     chan []byte
-	Address  string
-	RoomID   string
+	Hub     *Hub
+	Conn    *websocket.Conn
+	Send    chan []byte
+	Address string
+	RoomID  string
 }
 
 func (c *Client) ReadPump() {
@@ -30,7 +31,14 @@ func (c *Client) ReadPump() {
 			c.Conn.Close()
 		}
 	}()
-	if c.Conn == nil { return } // for mock tests
+	if c.Conn == nil {
+		return
+	} // for mock tests
+	maxBytes := int64(16384)
+	if config.AppConfig != nil {
+		maxBytes = config.AppConfig.MaxWSMessageBytes
+	}
+	c.Conn.SetReadLimit(maxBytes)
 	c.Conn.SetReadDeadline(time.Now().Add(pongWait))
 	c.Conn.SetPongHandler(func(string) error { c.Conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 	for {
@@ -40,6 +48,10 @@ func (c *Client) ReadPump() {
 				log.Printf("error: %v", err)
 			}
 			break
+		}
+		if int64(len(message)) > maxBytes {
+			c.SendError(protocol.ErrMessageTooLong, "WebSocket message exceeds configured size limit")
+			continue
 		}
 		var msg protocol.WSMessage
 		if err := json.Unmarshal(message, &msg); err != nil {
@@ -51,7 +63,9 @@ func (c *Client) ReadPump() {
 }
 
 func (c *Client) WritePump() {
-	if c.Conn == nil { return } // for mock tests
+	if c.Conn == nil {
+		return
+	} // for mock tests
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
 		ticker.Stop()

@@ -106,7 +106,7 @@ export function ProductPreviewSection() {
                     <FileCheck size={20} className="text-emerald-400" />
                     <div>
                       <div className="text-sm font-medium text-white/90">Final Intent Hash</div>
-                      <div className="text-xs text-white/40 mt-0.5">Sign this deterministic hash to execute the swap.</div>
+                      <div className="text-xs text-white/40 mt-0.5">Review this deterministic intent hash before any future signing step.</div>
                     </div>
                   </div>
                   <span className="text-sm font-mono text-emerald-400 bg-emerald-500/10 px-4 py-2 rounded-lg border border-emerald-500/20 shadow-inner">

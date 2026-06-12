@@ -1,6 +1,5 @@
 import { Header } from '@/components/layout/header';
-import Link from 'next/link';
-import { ChevronLeft, LockKeyhole, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { LockKeyhole, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 export default function EscrowPage() {
   return (
@@ -23,7 +22,7 @@ export default function EscrowPage() {
           </h1>
           
           <p className="text-lg text-white/50 font-light mb-8 leading-relaxed">
-            A native Gno.land escrow facility for complex multi-party deals. Hold assets securely on-chain with custom release conditions and automated settlement.
+            A future Gno.land escrow research track for complex multi-party deals. Mainnet custody and automated settlement are not live.
           </p>
 
           <ul className="space-y-4 mb-10">

@@ -1,9 +1,15 @@
 import { BoardListingDraft, PublicBoardListing } from "./types";
+import { config } from "../config";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+function getApiUrl(): string {
+  if (!config.apiUrl) {
+    throw new Error("Backend API URL is not configured. Set NEXT_PUBLIC_API_URL.");
+  }
+  return config.apiUrl;
+}
 
 export async function fetchListings(): Promise<PublicBoardListing[]> {
-  const res = await fetch(`${API_URL}/api/board/listings`, {
+  const res = await fetch(`${getApiUrl()}/api/board/listings`, {
     cache: 'no-store',
   });
   if (!res.ok) {
@@ -13,7 +19,7 @@ export async function fetchListings(): Promise<PublicBoardListing[]> {
 }
 
 export async function createListing(draft: BoardListingDraft): Promise<PublicBoardListing> {
-  const res = await fetch(`${API_URL}/api/board/listings`, {
+  const res = await fetch(`${getApiUrl()}/api/board/listings`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

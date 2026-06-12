@@ -1,6 +1,5 @@
 import { Header } from '@/components/layout/header';
-import Link from 'next/link';
-import { ChevronLeft, Lock, Users, Briefcase } from 'lucide-react';
+import { Lock, Users, Briefcase } from 'lucide-react';
 
 export default function CareersPage() {
   return (

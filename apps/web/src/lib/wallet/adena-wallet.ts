@@ -1,21 +1,30 @@
 import { GnoWalletAccount, WalletAdapter } from "./types";
+
+function getAdenaProvider() {
+  if (typeof window === "undefined") return null;
+  return window.adena ?? null;
+}
+
 export const adenaWalletAdapter: WalletAdapter = {
   id: "adena",
   label: "Adena Wallet",
-  isAvailable: () => typeof window !== 'undefined' && !!(window as any).adena,
+  isAvailable: () => getAdenaProvider() !== null,
   
   connect: async (): Promise<GnoWalletAccount> => {
-    if (!(window as any).adena) {
+    const adena = getAdenaProvider();
+    if (!adena) {
       throw new Error("Adena not detected. Please install the Adena extension.");
     }
     try {
-      const adena = (window as any).adena;
       await adena.AddEstablish("Trade Window");
       const accountInfo = await adena.GetAccount();
+      if (!accountInfo.address) {
+        throw new Error("Adena did not return an address.");
+      }
       
       return {
         address: accountInfo.address,
-        displayAddress: "Adena User",
+        displayAddress: accountInfo.name || "Adena User",
         provider: "adena",
         isMock: false
       };
@@ -30,17 +39,17 @@ export const adenaWalletAdapter: WalletAdapter = {
   },
   
   getAccount: async (): Promise<GnoWalletAccount | null> => {
-    if (!(window as any).adena) return null;
+    const adena = getAdenaProvider();
+    if (!adena) return null;
     try {
       // In a real app we might need to check if we are established first.
       // But for prototype, we just attempt GetAccount
-      const adena = (window as any).adena;
       const accountInfo = await adena.GetAccount();
       if (!accountInfo || !accountInfo.address) return null;
 
       return {
         address: accountInfo.address,
-        displayAddress: "Adena User",
+        displayAddress: accountInfo.name || "Adena User",
         provider: "adena",
         isMock: false
       };

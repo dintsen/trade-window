@@ -10,6 +10,7 @@ import (
 type Config struct {
 	Port                       string
 	AllowedOrigins             []string
+	MaxWSMessageBytes          int64
 	CountdownSeconds           int
 	RoomExpiryMinutes          int
 	RoomCleanupIntervalSeconds int
@@ -31,6 +32,7 @@ func Init() {
 	AppConfig = &Config{
 		Port:                       getEnvString("PORT", "8080"),
 		AllowedOrigins:             getEnvStringSlice("ALLOWED_ORIGINS", []string{"http://localhost:3000", "http://localhost:3001"}),
+		MaxWSMessageBytes:          int64(getEnvInt("MAX_WS_MESSAGE_BYTES", 16384)),
 		CountdownSeconds:           getEnvInt("COUNTDOWN_SECONDS", 10),
 		RoomExpiryMinutes:          getEnvInt("ROOM_EXPIRY_MINUTES", 60),
 		RoomCleanupIntervalSeconds: getEnvInt("ROOM_CLEANUP_INTERVAL_SECONDS", 60),

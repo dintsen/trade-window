@@ -20,12 +20,7 @@ const logoContent = fs.readFileSync(path.join(publicDir, 'logo-trade.svg'), 'utf
 const allPathsMatch = logoContent.match(/<path[^>]+>/g) || [];
 const greenPaths = allPathsMatch.filter(p => p.includes('#10B981'));
 
-// 1. Generate Logo Mark SVG (Symbol only)
-const symbolOnlySvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="40 10 220 250">
-  ${greenPaths.join('\n  ')}
-</svg>`;
-
-// 2. Generate Favicon SVG (Symbol with background, or just symbol on transparent)
+// Generate Favicon SVG (Symbol with background, or just symbol on transparent)
 const faviconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <rect width="512" height="512" rx="112" fill="#050807" />
   <g transform="translate(146, 126) scale(1.1)">

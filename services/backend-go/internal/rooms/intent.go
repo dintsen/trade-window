@@ -4,7 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
-	"time"
+	"sort"
 )
 
 type TradeIntent struct {
@@ -42,13 +42,32 @@ func (r *Room) GenerateIntent() TradeIntent {
 		ChainID:   "atomone-1",
 		PartyA:    r.PartyA,
 		PartyB:    r.PartyB,
-		OfferA:    r.OfferA,
-		OfferB:    r.OfferB,
+		OfferA:    canonicalAssets(r.OfferA),
+		OfferB:    canonicalAssets(r.OfferB),
 		Fee:       "0",
 		FeeToken:  "uatone",
-		CreatedAt: time.Now().UTC().Format(time.RFC3339),
-		ExpiresAt: time.Now().Add(24 * time.Hour).UTC().Format(time.RFC3339),
-		Nonce:     "1",
+		CreatedAt: "",
+		ExpiresAt: "",
+		Nonce:     r.ID,
 		Status:    "ready_to_sign",
 	}
+}
+
+func canonicalAssets(assets []TradeAsset) []TradeAsset {
+	canonical := append([]TradeAsset(nil), assets...)
+	sort.SliceStable(canonical, func(i, j int) bool {
+		left := canonicalAssetKey(canonical[i])
+		right := canonicalAssetKey(canonical[j])
+		return left < right
+	})
+	return canonical
+}
+
+func canonicalAssetKey(asset TradeAsset) string {
+	return asset.ChainID + "\x00" +
+		asset.SourceChain + "\x00" +
+		asset.TechnicalDenom + "\x00" +
+		asset.BaseDenom + "\x00" +
+		asset.Amount + "\x00" +
+		asset.ID
 }
