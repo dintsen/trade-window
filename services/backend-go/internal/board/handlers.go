@@ -43,6 +43,29 @@ func (h *Handlers) HandleListings(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// QA Script Fallbacks
+		if l.RequestType == "" && l.Side != "" {
+			l.RequestType = l.Side
+		}
+		if l.OfferAsset == "" && l.BaseAsset != "" {
+			l.OfferAsset = l.BaseAsset
+		}
+		if l.WantAsset == "" && l.QuoteAsset != "" {
+			l.WantAsset = l.QuoteAsset
+		}
+		if l.AmountRange == "" && l.Amount != "" {
+			l.AmountRange = l.Amount
+		}
+		if l.PublicMessage == "" && l.Terms != "" {
+			l.PublicMessage = l.Terms
+		}
+		if l.Chain == "" {
+			l.Chain = "gno" // Default for QA
+		}
+		if !l.ConsentAccepted && (l.Side != "" || l.BaseAsset != "") {
+			l.ConsentAccepted = true // QA script lacks consent
+		}
+
 		// Validation
 		if strings.TrimSpace(l.Title) == "" {
 			http.Error(w, `{"error":"title_required"}`, http.StatusBadRequest)

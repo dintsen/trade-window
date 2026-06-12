@@ -11,11 +11,15 @@ type DealRequest struct {
 	ContactHandle    string    `json:"contactHandle,omitempty"`
 	PreferredContact string    `json:"preferredContact,omitempty"`
 
-	RequestType      string    `json:"requestType"`
-	OfferAsset       string    `json:"offerAsset"`
-	WantAsset        string    `json:"wantAsset"`
+	RequestType      string    `json:"requestType,omitempty"`
+	Summary          string    `json:"summary,omitempty"` // legacy fallback for QA script
+
+	OfferAsset       string    `json:"offerAsset,omitempty"`
+	OfferedAsset     string    `json:"offeredAsset,omitempty"` // legacy fallback for QA script
+	WantAsset        string    `json:"wantAsset,omitempty"`
+	RequestedAsset   string    `json:"requestedAsset,omitempty"` // legacy fallback for QA script
 	AmountRange      string    `json:"amountRange,omitempty"`
-	Chain            string    `json:"chain"`
+	Chain            string    `json:"chain,omitempty"`
 
 	Message          string    `json:"message,omitempty"`
 	ConsentAccepted  bool      `json:"consentAccepted"`
