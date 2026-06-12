@@ -1,20 +1,33 @@
 # Trade Window
 
-A Gno.land-native OTC trade-room protocol and interface for safer negotiated P2P asset deals.
+A Gno.land-oriented non-custodial OTC coordination platform for safer negotiated P2P asset deals.
+
+**Live demo**: https://tradewindow.xyz
+**Backend**: https://trade-window-production.up.railway.app
+
+> Trade Window is a Gno.land-oriented non-custodial OTC coordination platform with public listings, private deal requests, wallet-aware trade rooms, transaction preview, and user trade history. The current production MVP uses a Go backend, Postgres storage, and a Next.js frontend. Mainnet transfers remain disabled while the Gno.land commitment receipt layer is finalized.
 
 ## Architecture
 
-Next.js Trade UI
-Go WebSocket coordination backend
-Gno.land smart-contract commitment layer
-Adena / GnoConnect read-only prototype
-Future AtomOne / Interchain support
+```txt
+Trade Window = Gno.land commitment layer (planned) + Go coordination backend + Next.js OTC frontend
+```
+
+* Next.js Trade UI (Vercel)
+* Go WebSocket coordination backend (Railway)
+* Postgres storage (Supabase)
+* Gno.land smart-contract commitment scaffold (local, tested, not deployed)
+* Adena / GnoConnect read-only wallet prototype
+* Future AtomOne / Interchain support
 
 ## What it does
 
-* Displays a public `/board` of OTC intents.
-* Connects counterparties in a private realtime WebSocket `room`.
-* Coordinates structured steps (lock assets, review deal, etc.).
+* Displays a public `/board` of OTC intents with a create flow at `/board/new`.
+* Accepts private deal requests at `/request` (contact data never exposed publicly).
+* Connects counterparties in a private realtime WebSocket trade room at `/trade`.
+* Coordinates structured steps: append-only offers, double lock, countdown, deterministic intent hash.
+* Shows wallet-aware trade history (My Trades) at `/history` and `/trades`.
+* Previews Gno commitment calls without signing or broadcasting anything.
 
 ## Tech Stack
 
@@ -24,25 +37,27 @@ Future AtomOne / Interchain support
 *   **Smart Contracts**: Gno.land (realms).
 *   **Deployment**: Vercel (Frontend), Docker / Generic Host (Backend).
 
-## Current MVP Status
+## Current Production Status
 
-Implemented:
-* Next.js trade-room UI
-* Go WebSocket coordination backend
-* Gno.land commitment scaffold and tests
-* Adena / GnoConnect read-only detection prototype
-* Gno commitment call preview
+Live in production:
+* Next.js frontend at `tradewindow.xyz` (`/`, `/board`, `/board/new`, `/request`, `/trade`, `/history`, `/trades`)
+* Go backend on Railway with Postgres (Supabase) storage and startup auto-migrations
+* Public OTC board API, deal request API, trade history API (`/api/me/trades`)
+* Adena detection / read-only connect prototype, Gno transaction preview
 * Mock Wallet demo flow
-* Testnet Transfer prototype via Adena
 
-Not implemented yet:
-* real wallet signing
-* real asset settlement
-* production deployment
+Implemented but not deployed:
+* Gno.land commitment realm scaffold with local tests (`gno/realms/tradewindow`)
+
+Not implemented yet (honest limitations):
+* real wallet signing (blocked on Adena off-chain message signing — see `docs/WALLET_AUTH_PLAN.md`)
+* real asset settlement — mainnet transfers are disabled
 * token/NFT/RWA transfer
-* AtomOne RPC
+* AtomOne RPC integration
 * IBC execution
 * token payments
+
+Wallet history filtering uses a deprecated `?wallet=` MVP parameter, not cryptographic authentication. It exposes only public activity, never private contact data.
 
 ## Features
 

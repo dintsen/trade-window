@@ -2,10 +2,11 @@
 
 Due to exposure, the following credentials must be rotated:
 
-- [ ] Rotate GitHub PAT
+- [ ] Rotate GitHub PAT (exposed in chat session 2026-06-12)
+- [ ] Rotate GitHub PAT embedded in local git remote URL (then run `git remote set-url origin https://github.com/dintsen/trade-window.git` and use a credential helper)
 - [ ] Rotate Railway token
-- [ ] Rotate Vercel token
-- [ ] Rotate Supabase DB password
+- [ ] Rotate Vercel token (exposed in chat session 2026-06-12)
+- [ ] Rotate Supabase DB password (exposed in chat session 2026-06-12)
 
 ### Post-Rotation Steps
 

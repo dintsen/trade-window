@@ -4,7 +4,7 @@
 - **Supported Wallet**: Adena (Gno.land)
 - **Implementation Level**: Read-only prototype and testnet transaction preview functionality.
 - **Auto-connect**: Disabled (No automatic wallet popup on load; requires user click).
-- **Authentication**: **Blocked / Pending**. Query-parameter filtering (`?wallet=<address>`) is deprecated and disabled in production.
+- **Authentication**: **Blocked / Pending**. Query-parameter filtering (`?wallet=<address>`) remains active in production as an MVP-only filter over public activity data. It is deprecated as an authentication mechanism and will be replaced by signature auth. It never exposes private contact data.
 
 ## Enabled Feature Flags
 - `NEXT_PUBLIC_ENABLE_ADENA=true`
