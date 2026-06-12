@@ -1,14 +1,16 @@
 # Trade Window
 
-A Gno.land-native OTC trade-room protocol and interface for safer negotiated P2P asset deals.
+Trade Window is an MVP/research prototype for a structured OTC deal-room protocol. It currently provides a frontend interface and a real-time negotiation backend.
 
-## Architecture
+We are actively exploring integrations with:
+* **Gno.land:** Exploring native Gno.land commitment flows.
+* **Starknet:** Developing Cairo-based escrow contracts leveraging ZK-rollups and Account Abstraction.
 
-Next.js Trade UI
-Go WebSocket coordination backend
-Gno.land smart-contract commitment layer
-Adena / GnoConnect read-only prototype
-Future AtomOne / Interchain support
+## What it does
+
+* Displays a public `/board` of OTC intents.
+* Connects counterparties in a private realtime WebSocket `room`.
+* Coordinates structured steps (lock assets, review deal, etc.).
 
 ## Tech Stack
 
