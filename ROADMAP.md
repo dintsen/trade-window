@@ -12,19 +12,19 @@
 
 ## Next
 
+- Gno.land smart contract protocol implementation
 - Gno local node / gnokey deployment dry run
 - Adena signing research
 - Gno commitment transaction prototype
-- improved asset registry
-- grant/demo materials
+- Improved asset registry
+- Codex security audit prep
 
 ## Later
 
 - AtomOne read-only integration
 - Keplr / Cosmostation support
 - IBC 2.0 research
-- utility token fee logic
-- production security review
+- Utility token fee logic
 
 ## Deal Request / Contact Platform
 
