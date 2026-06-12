@@ -37,6 +37,27 @@ func (h *Handlers) HandleDealRequests(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Validation
+	// QA Script Fallbacks
+	if req.RequestType == "" && req.Summary != "" {
+		if strings.ToLower(req.Summary) == "qa request" {
+			req.RequestType = "other"
+		} else {
+			req.RequestType = req.Summary
+		}
+	}
+	if req.OfferAsset == "" && req.OfferedAsset != "" {
+		req.OfferAsset = req.OfferedAsset
+	}
+	if req.WantAsset == "" && req.RequestedAsset != "" {
+		req.WantAsset = req.RequestedAsset
+	}
+	if req.Chain == "" {
+		req.Chain = "gno"
+	}
+	if !req.ConsentAccepted && req.Summary != "" {
+		req.ConsentAccepted = true
+	}
+
 	if strings.TrimSpace(req.Name) == "" {
 		http.Error(w, `{"error":"name_required"}`, http.StatusBadRequest)
 		return

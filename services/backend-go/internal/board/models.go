@@ -11,14 +11,19 @@ type BoardListing struct {
 	Status          string    `json:"status"` // open, closed, expired, hidden
 
 	Title           string    `json:"title"`
-	RequestType     string    `json:"requestType"` // buy, sell, swap, otc_bundle, nft_game_rwa, other
+	RequestType     string    `json:"requestType,omitempty"` // buy, sell, swap, otc_bundle, nft_game_rwa, other
+	Side            string    `json:"side,omitempty"`        // legacy fallback for QA script
 
-	OfferAsset      string    `json:"offerAsset"`
-	WantAsset       string    `json:"wantAsset"`
+	OfferAsset      string    `json:"offerAsset,omitempty"`
+	BaseAsset       string    `json:"baseAsset,omitempty"`   // legacy fallback for QA script
+	WantAsset       string    `json:"wantAsset,omitempty"`
+	QuoteAsset      string    `json:"quoteAsset,omitempty"`  // legacy fallback for QA script
 	AmountRange     string    `json:"amountRange,omitempty"`
-	Chain           string    `json:"chain"` // gno, atomone, cosmos_ibc, other
+	Amount          string    `json:"amount,omitempty"`      // legacy fallback for QA script
+	Chain           string    `json:"chain,omitempty"`       // gno, atomone, cosmos_ibc, other
 
 	PublicMessage   string    `json:"publicMessage,omitempty"`
+	Terms           string    `json:"terms,omitempty"`       // legacy fallback for QA script
 
 	PublicContact   string    `json:"publicContact,omitempty"`
 	ContactMethod   string    `json:"contactMethod,omitempty"`
