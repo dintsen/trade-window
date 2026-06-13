@@ -225,22 +225,6 @@ function TradeRoomWrapperInner() {
                   );
                 })()}
 
-                {/* Leap — sunset notice */}
-                <div className="rounded-lg border border-[#2b2b2b]/60 bg-[#141414] opacity-60">
-                  <div className="flex items-center justify-between px-4 py-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-md bg-[#1a1a1a] border border-[#2b2b2b] flex items-center justify-center overflow-hidden">
-                        <Image src="/assets/wallets/leap.svg" alt="Leap" width={20} height={20} className="object-contain grayscale" onError={(e) => (e.currentTarget.style.display = 'none')} />
-                      </div>
-                      <div>
-                        <div className="text-sm font-medium text-white/50">Leap</div>
-                        <div className="text-[11px] text-[#9b9b9b]">Sunset May 28, 2026</div>
-                      </div>
-                    </div>
-                    <span className="text-[10px] text-orange-400/70 bg-orange-500/10 border border-orange-500/20 rounded-full px-2 py-0.5">Sunset</span>
-                  </div>
-                </div>
-
               </div>
 
               {/* Footer note */}

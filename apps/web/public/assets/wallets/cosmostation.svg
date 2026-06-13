@@ -1,8 +1,16 @@
 <svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Dark purple bg matching Cosmostation brand -->
-  <path d="M0 64C0 41.6 0 30.4 4.36 21.84C8.19 14.31 14.31 8.19 21.84 4.36C30.4 0 41.6 0 64 0C86.4 0 97.6 0 106.16 4.36C113.69 8.19 119.81 14.31 123.64 21.84C128 30.4 128 41.6 128 64C128 86.4 128 97.6 123.64 106.16C119.81 113.69 113.69 119.81 106.16 123.64C97.6 128 86.4 128 64 128C41.6 128 30.4 128 21.84 123.64C14.31 119.81 8.19 113.69 4.36 106.16C0 97.6 0 86.4 0 64Z" fill="#1B0E41"/>
-  <!-- Cosmostation orbit ring: open arc forming a C shape -->
-  <path d="M92 64C92 79.464 79.464 92 64 92C48.536 92 36 79.464 36 64C36 48.536 48.536 36 64 36C71.732 36 78.732 39.12 83.882 44.118" stroke="white" stroke-width="10" stroke-linecap="round" fill="none"/>
-  <!-- Dot at orbit endpoint -->
-  <circle cx="88" cy="52" r="7" fill="white"/>
+  <defs>
+    <linearGradient id="cg" x1="28" y1="22" x2="100" y2="106" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#8B5CF6"/>
+      <stop offset="100%" stop-color="#06B6D4"/>
+    </linearGradient>
+  </defs>
+  <!-- Black rounded square background -->
+  <rect width="128" height="128" rx="24" fill="#0A0A0A"/>
+  <!-- Hexagon outline with gradient -->
+  <polygon points="64,20 101,41 101,87 64,108 27,87 27,41"
+           fill="none" stroke="url(#cg)" stroke-width="5" stroke-linejoin="round"/>
+  <!-- Abstract S / zigzag mark inside hex -->
+  <path d="M48 52 C48 44 80 44 80 54 C80 64 48 64 48 74 C48 84 80 84 80 76"
+        stroke="url(#cg)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
 </svg>

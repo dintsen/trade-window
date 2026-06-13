@@ -1,4 +1,7 @@
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="24" height="24" rx="4" fill="#2D2D2D"/>
-<circle cx="12" cy="12" r="6" fill="#00FF00"/>
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Blue circle background — Adena brand blue -->
+  <circle cx="64" cy="64" r="64" fill="#1250F0"/>
+  <!-- White "A" lettermark — clean bold sans-serif -->
+  <path d="M64 30 L88 94 H76 L70 76 H58 L52 94 H40 L64 30Z M64 48 L61 62 H67 L64 48Z"
+        fill="white"/>
 </svg>
