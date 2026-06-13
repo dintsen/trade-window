@@ -1,8 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Copy, Check } from "lucide-react";
 import { DonationWallet } from "@/lib/support/donations";
+
+const SYMBOL_LOGO: Record<string, string> = {
+  ATOM: "/assets/logos/cosmos.svg",
+  ATONE: "/assets/logos/atomone.svg",
+};
 
 export function DonationCard({ wallet }: { wallet: DonationWallet }) {
   const [copied, setCopied] = useState(false);
@@ -29,8 +35,12 @@ export function DonationCard({ wallet }: { wallet: DonationWallet }) {
     <div className="flex-1 min-w-0 bg-[#0a0a0c] border border-white/10 hover:border-emerald-500/20 rounded-2xl p-6 transition-colors">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center font-bold text-emerald-400 text-sm">
-            {wallet.symbol.slice(0, 2)}
+          <div className="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center overflow-hidden">
+            {SYMBOL_LOGO[wallet.symbol] ? (
+              <Image src={SYMBOL_LOGO[wallet.symbol]} alt={wallet.symbol} width={28} height={28} className="object-contain" />
+            ) : (
+              <span className="font-bold text-emerald-400 text-sm">{wallet.symbol.slice(0, 2)}</span>
+            )}
           </div>
           <div>
             <div className="font-semibold text-white">{wallet.symbol}</div>
