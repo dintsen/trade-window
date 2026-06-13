@@ -3,25 +3,99 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ChevronDown, Menu, X } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { ChevronDown, Menu, X, LayoutGrid, ArrowLeftRight, ShieldCheck, History, Lock } from 'lucide-react';
+import { Logo } from '@/components/layout/Logo';
+
+// Product definitions — icon, label, href, accent color
+const PRODUCTS = [
+  {
+    href: '/board',
+    label: 'OTC Board',
+    icon: LayoutGrid,
+    color: 'text-emerald-400',
+    bg: 'bg-emerald-500/10',
+    description: 'Public deal listings',
+  },
+  {
+    href: '/trade',
+    label: 'OTC Trading',
+    icon: ArrowLeftRight,
+    color: 'text-sky-400',
+    bg: 'bg-sky-500/10',
+    description: 'P2P trade room',
+  },
+  {
+    href: '/escrow',
+    label: 'Escrow Service',
+    icon: Lock,
+    color: 'text-violet-400',
+    bg: 'bg-violet-500/10',
+    description: 'Programmable escrow',
+  },
+  {
+    href: '/history',
+    label: 'My Trades',
+    icon: History,
+    color: 'text-amber-400',
+    bg: 'bg-amber-500/10',
+    description: 'Trade history',
+  },
+];
+
+function ProductLogo({ product }: { product: typeof PRODUCTS[0] }) {
+  const Icon = product.icon;
+  return (
+    <div className="flex items-center gap-2">
+      <div className={`w-6 h-6 rounded-md ${product.bg} flex items-center justify-center shrink-0`}>
+        <Icon size={13} className={product.color} />
+      </div>
+      <span className={`font-bold tracking-tight text-base leading-none ${product.color}`}>
+        {product.label}
+      </span>
+    </div>
+  );
+}
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  // Detect current product page
+  const activeProduct = PRODUCTS.find(p => pathname?.startsWith(p.href));
 
   return (
     <header className="w-full px-6 py-5 z-50 sticky top-0 left-0 bg-[#050505]/90 backdrop-blur-xl border-b border-white/5 transition-all text-white">
       <div className="max-w-[1600px] mx-auto flex items-center justify-between">
+
         {/* Left Nav (Desktop) */}
         <nav className="hidden md:flex flex-1 items-center gap-8 text-[13px] font-medium text-white/60">
           <div className="relative group cursor-pointer">
             <div className="flex items-center gap-1 hover:text-white transition-colors py-2">
               Products <ChevronDown size={12} className="opacity-60 group-hover:opacity-100 transition-opacity" />
             </div>
-            <div className="absolute top-full left-0 w-48 bg-[#0a0a0a] border border-white/10 rounded-xl p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all translate-y-2 group-hover:translate-y-0 shadow-xl z-50">
-              <Link href="/board" className="block px-3 py-2 text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">Board</Link>
-              <Link href="/trade" className="block px-3 py-2 text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">OTC Trading</Link>
-              <Link href="/escrow" className="block px-3 py-2 text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">Escrow Service</Link>
-              <Link href="/history" className="block px-3 py-2 text-white/60 hover:text-white hover:bg-white/5 rounded-lg transition-colors">My Trades</Link>
+            <div className="absolute top-full left-0 w-56 bg-[#0a0a0a] border border-white/10 rounded-xl p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all translate-y-2 group-hover:translate-y-0 shadow-xl z-50">
+              {PRODUCTS.map(p => {
+                const Icon = p.icon;
+                const isActive = pathname?.startsWith(p.href);
+                return (
+                  <Link
+                    key={p.href}
+                    href={p.href}
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group/item ${isActive ? 'bg-white/5' : 'hover:bg-white/5'}`}
+                  >
+                    <div className={`w-7 h-7 rounded-md ${p.bg} flex items-center justify-center shrink-0 border border-white/5`}>
+                      <Icon size={13} className={p.color} />
+                    </div>
+                    <div className="flex flex-col min-w-0">
+                      <span className={`text-xs font-semibold ${isActive ? p.color : 'text-white/80 group-hover/item:text-white'} transition-colors`}>
+                        {p.label}
+                      </span>
+                      <span className="text-[10px] text-white/30 truncate">{p.description}</span>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </div>
           <div className="relative group cursor-pointer">
@@ -37,10 +111,14 @@ export function Header() {
           <Link href="/whitepaper" className="hover:text-white transition-colors">Whitepaper</Link>
         </nav>
 
-        {/* Center Logo */}
+        {/* Center Logo — product-specific when on a product page */}
         <div className="flex justify-center md:flex-1">
-          <Link href="/" className="flex items-center">
-            <Image src="/logo-trade.svg" alt="TradeWindow" width={140} height={30} className="object-contain" priority />
+          <Link href={activeProduct ? activeProduct.href : '/'} className="flex items-center">
+            {activeProduct ? (
+              <ProductLogo product={activeProduct} />
+            ) : (
+              <Image src="/logo-trade.svg" alt="TradeWindow" width={140} height={30} className="object-contain" priority />
+            )}
           </Link>
         </div>
 
@@ -58,7 +136,7 @@ export function Header() {
 
         {/* Mobile Menu Toggle */}
         <div className="md:hidden flex items-center">
-          <button 
+          <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="text-white/80 hover:text-white transition-colors p-2"
           >
@@ -70,12 +148,24 @@ export function Header() {
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
         <div className="md:hidden absolute top-full left-0 w-full bg-[#0a0a0a] border-b border-white/10 px-6 py-4 flex flex-col gap-4 shadow-2xl">
-          <div className="flex flex-col gap-2">
-            <span className="text-white/40 text-xs font-mono uppercase tracking-wider mb-1">Products</span>
-            <Link href="/board" onClick={() => setMobileMenuOpen(false)} className="pl-4 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg">Board</Link>
-            <Link href="/trade" onClick={() => setMobileMenuOpen(false)} className="pl-4 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg">OTC Trading</Link>
-            <Link href="/escrow" onClick={() => setMobileMenuOpen(false)} className="pl-4 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg">Escrow Service</Link>
-            <Link href="/history" onClick={() => setMobileMenuOpen(false)} className="pl-4 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg">My Trades</Link>
+          <div className="flex flex-col gap-1">
+            <span className="text-white/40 text-xs font-mono uppercase tracking-wider mb-2">Products</span>
+            {PRODUCTS.map(p => {
+              const Icon = p.icon;
+              return (
+                <Link
+                  key={p.href}
+                  href={p.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 pl-2 py-2.5 text-white/80 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                >
+                  <div className={`w-7 h-7 rounded-md ${p.bg} flex items-center justify-center shrink-0`}>
+                    <Icon size={13} className={p.color} />
+                  </div>
+                  <span className="text-sm font-medium">{p.label}</span>
+                </Link>
+              );
+            })}
           </div>
           <div className="flex flex-col gap-2 mt-2">
             <span className="text-white/40 text-xs font-mono uppercase tracking-wider mb-1">About Us</span>

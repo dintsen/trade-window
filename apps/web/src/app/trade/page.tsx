@@ -195,7 +195,7 @@ function TradeRoomWrapperInner() {
                       <div className="flex items-center justify-between px-4 py-3">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-md bg-[#1a1a1a] border border-[#2b2b2b] flex items-center justify-center overflow-hidden">
-                            <Image src="/assets/wallets/cosmostation.svg" alt="Cosmostation" width={20} height={20} className="object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                            <Image src="/assets/wallets/cosmostation.png" alt="Cosmostation" width={20} height={20} className="object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
                           </div>
                           <div>
                             <div className="text-sm font-medium text-white">Cosmostation</div>
