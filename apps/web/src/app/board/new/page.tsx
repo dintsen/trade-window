@@ -2,17 +2,21 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Send } from "lucide-react";
+import { ArrowLeft, Send, Layers, ImageIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createListing } from "@/lib/board/api";
 import { getAllAssets } from "@/lib/assets/asset-registry";
 import { useWalletStore } from "@/lib/wallet/wallet-store";
+import { NftGrid } from "@/components/nfts/NftGrid";
+import { WalletNft } from "@/lib/wallet/types";
 
 export default function NewListingPage() {
   const router = useRouter();
   const { account } = useWalletStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [offerTab, setOfferTab] = useState<"token" | "nft">("token");
+  const [selectedNft, setSelectedNft] = useState<WalletNft | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -116,24 +120,86 @@ export default function NewListingPage() {
                       <option value="other">Other</option>
                     </select>
                   </div>
-                  <div className="space-y-2">
+                </div>
+
+                {/* Asset you offer — token or NFT tab */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
                     <label className="text-sm font-medium text-white/60">Asset you offer *</label>
+                    <div className="flex rounded-lg overflow-hidden border border-white/10">
+                      <button
+                        type="button"
+                        onClick={() => { setOfferTab("token"); setSelectedNft(null); }}
+                        className={`flex items-center gap-1.5 px-3 py-1 text-xs font-medium transition-colors
+                          ${offerTab === "token" ? "bg-white/10 text-white" : "text-white/40 hover:text-white/60"}`}
+                      >
+                        <Layers className="w-3 h-3" /> Token
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setOfferTab("nft")}
+                        className={`flex items-center gap-1.5 px-3 py-1 text-xs font-medium transition-colors border-l border-white/10
+                          ${offerTab === "nft" ? "bg-white/10 text-white" : "text-white/40 hover:text-white/60"}`}
+                      >
+                        <ImageIcon className="w-3 h-3" /> NFT
+                        <span className="text-[9px] text-pink-400/80 ml-0.5">Preview</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {offerTab === "token" ? (
                     <select required name="offerAsset" defaultValue="" className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-emerald-500/50 outline-none appearance-none">
                       <option value="" disabled hidden>Select asset...</option>
                       {getAllAssets().map(a => (
                         <option key={a.technicalDenom} value={a.technicalDenom}>{a.symbol} {a.isDemo ? '(Demo)' : ''}</option>
                       ))}
                     </select>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-white/60">Asset you want *</label>
-                    <select required name="wantAsset" defaultValue="" className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-emerald-500/50 outline-none appearance-none">
-                      <option value="" disabled hidden>Select asset...</option>
-                      {getAllAssets().map(a => (
-                        <option key={a.technicalDenom} value={a.technicalDenom}>{a.symbol} {a.isDemo ? '(Demo)' : ''}</option>
-                      ))}
-                    </select>
-                  </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {/* Hidden fields for NFT data */}
+                      <input type="hidden" name="offerAsset" value={selectedNft ? `nft:${selectedNft.collectionAddr}:${selectedNft.tokenId}` : ""} />
+                      <input type="hidden" name="offerAssetType" value="nft" />
+                      <input type="hidden" name="offerAssetChain" value="stargaze-1" />
+                      <input type="hidden" name="offerAssetContract" value={selectedNft?.collectionAddr ?? ""} />
+                      <input type="hidden" name="offerAssetTokenId" value={selectedNft?.tokenId ?? ""} />
+
+                      {selectedNft && (
+                        <div className="flex items-center gap-3 p-3 rounded-xl border border-emerald-500/20 bg-emerald-500/5 text-sm">
+                          {selectedNft.imageUrl && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={selectedNft.imageUrl} alt={selectedNft.name ?? ""} className="w-10 h-10 rounded-lg object-cover" />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-white/80 font-medium truncate">{selectedNft.name ?? `#${selectedNft.tokenId}`}</p>
+                            <p className="text-white/40 text-xs truncate">{selectedNft.collectionName}</p>
+                          </div>
+                          <button type="button" onClick={() => setSelectedNft(null)} className="text-white/30 hover:text-white/60 text-xs">Clear</button>
+                        </div>
+                      )}
+
+                      {account?.address?.startsWith("stars") ? (
+                        <NftGrid
+                          starsAddress={account.address}
+                          selectedNft={selectedNft}
+                          onSelectNft={setSelectedNft}
+                        />
+                      ) : (
+                        <div className="py-6 text-center text-white/40 text-sm border border-white/5 rounded-xl bg-white/[0.02]">
+                          Connect a Cosmos wallet with a Stargaze address (<code className="text-white/30">stars1…</code>) to browse NFTs.
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-white/60">Asset you want *</label>
+                  <select required name="wantAsset" defaultValue="" className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-emerald-500/50 outline-none appearance-none">
+                    <option value="" disabled hidden>Select asset...</option>
+                    {getAllAssets().map(a => (
+                      <option key={a.technicalDenom} value={a.technicalDenom}>{a.symbol} {a.isDemo ? '(Demo)' : ''}</option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="space-y-2">
