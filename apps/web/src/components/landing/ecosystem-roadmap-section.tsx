@@ -1,83 +1,109 @@
 import React from 'react';
-import { Network, Database, Wallet, Rocket } from 'lucide-react';
+import Image from 'next/image';
+import { Wallet, Globe, Rocket } from 'lucide-react';
 
 const networks = [
   {
-    icon: <Database size={24} />,
+    icon: '/assets/logos/atomone.svg',
+    iconAlt: 'AtomOne',
     title: "AtomOne",
-    description: "Initial target network for secure token OTC swaps."
+    description: "Initial target network for secure token OTC swaps.",
+    tag: "Primary",
+    tagColor: "text-[#3ECF8E]",
   },
   {
-    icon: <Network size={24} />,
+    icon: '/assets/logos/gno.svg',
+    iconAlt: 'Gno.land',
     title: "Gno.land",
-    description: "Exploratory target for deterministic smart contracts and RWA/NFT registry."
+    description: "Exploratory target for deterministic smart contracts and RWA/NFT registry.",
+    tag: "Primary",
+    tagColor: "text-[#3ECF8E]",
   },
   {
-    icon: <Rocket size={24} />,
+    icon: null,
+    iconFallback: <Rocket size={18} />,
+    iconAlt: 'IBC 2.0',
     title: "IBC 2.0 / Eureka",
-    description: "Research path for cross-chain packet routing and native asset visibility."
+    description: "Research path for cross-chain packet routing and native asset visibility.",
+    tag: "Research",
+    tagColor: "text-white/40",
   },
   {
-    icon: <Globe size={24} />,
+    icon: null,
+    iconFallback: <Globe size={18} />,
+    iconAlt: 'Other',
     title: "Additional Networks",
-    description: "Future integrations evaluated based on safety standards."
+    description: "Future integrations evaluated based on safety standards.",
+    tag: "Roadmap",
+    tagColor: "text-white/40",
   }
 ];
 
-import { Globe } from 'lucide-react';
+const wallets = [
+  { name: 'Keplr', status: 'AtomOne primary', statusColor: 'text-[#3ECF8E]' },
+  { name: 'Adena', status: 'Gno.land primary', statusColor: 'text-[#3ECF8E]' },
+  { name: 'Cosmostation', status: 'Secondary research', statusColor: 'text-white/30' },
+  { name: 'Leap', status: 'Optional target', statusColor: 'text-white/30' },
+];
 
 export function EcosystemRoadmapSection() {
   return (
-    <section className="relative w-full py-24 bg-[#030303] border-t border-white/5">
-      <div className="max-w-[1200px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
-        
+    <section className="relative w-full py-24 bg-[#030303] border-t border-[#1c1c1c]">
+      <div className="max-w-[1200px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+
         {/* Left: Content */}
         <div className="lg:col-span-5 flex flex-col items-start">
-          <h2 className="text-3xl md:text-5xl font-semibold tracking-tighter mb-6 text-white">
+          <p className="text-xs font-mono text-[#3ECF8E] uppercase tracking-[0.15em] mb-4">Ecosystem</p>
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tighter mb-5 text-white">
             AtomOne first. Built toward the Interchain.
           </h2>
-          <p className="text-lg text-white/40 font-light leading-relaxed mb-8">
+          <p className="text-base text-white/40 leading-relaxed mb-8">
             Trade Window starts with an AtomOne and Gno.land direction, built on a robust Go backend foundation. Future network integrations will be added only where wallet compatibility, asset identity, and settlement paths can be rigorously validated.
           </p>
 
-          <div className="w-full bg-[#0a0a0a] border border-white/5 rounded-xl p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <Wallet size={18} className="text-emerald-400" />
-              <h3 className="font-medium text-white/80">Wallet Research Strategy</h3>
+          {/* Wallet Research Table */}
+          <div className="w-full bg-[#0c0c0c] border border-[#1c1c1c] rounded-lg overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-3 border-b border-[#1c1c1c]">
+              <Wallet size={13} className="text-[#3ECF8E]" />
+              <span className="text-xs font-semibold text-white/60">Wallet Research Strategy</span>
             </div>
-            <ul className="space-y-3">
-              <li className="flex justify-between items-center text-sm border-b border-white/5 pb-3">
-                <span className="text-white/60">Keplr</span>
-                <span className="text-emerald-400 font-mono text-xs">AtomOne primary</span>
-              </li>
-              <li className="flex justify-between items-center text-sm border-b border-white/5 pb-3">
-                <span className="text-white/60">Adena</span>
-                <span className="text-emerald-400 font-mono text-xs">Gno.land primary</span>
-              </li>
-              <li className="flex justify-between items-center text-sm border-b border-white/5 pb-3">
-                <span className="text-white/60">Cosmostation</span>
-                <span className="text-white/40 font-mono text-xs">Secondary research</span>
-              </li>
-              <li className="flex justify-between items-center text-sm">
-                <span className="text-white/60">Leap</span>
-                <span className="text-white/40 font-mono text-xs">Optional target</span>
-              </li>
-            </ul>
-            <p className="text-[10px] text-white/30 mt-4 uppercase tracking-widest text-center">
-              Independent integrations. No official partnerships implied.
-            </p>
+            {wallets.map((w, i) => (
+              <div
+                key={w.name}
+                className={`flex justify-between items-center px-4 py-3 text-sm ${i < wallets.length - 1 ? 'border-b border-[#1c1c1c]' : ''}`}
+              >
+                <span className="text-white/50">{w.name}</span>
+                <span className={`font-mono text-xs ${w.statusColor}`}>{w.status}</span>
+              </div>
+            ))}
+            <div className="px-4 py-2.5 border-t border-[#1c1c1c]">
+              <p className="text-[10px] text-white/20 font-mono">Independent integrations. No official partnerships implied.</p>
+            </div>
           </div>
         </div>
 
-        {/* Right: Network Cards Grid */}
+        {/* Right: Network Cards */}
         <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
           {networks.map((net, i) => (
-            <div key={i} className="bg-[#111] border border-white/5 rounded-xl p-6 flex flex-col gap-4">
-              <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/60">
-                {net.icon}
+            <div key={i} className="bg-[#0f0f0f] border border-[#1c1c1c] hover:border-[#2b2b2b] rounded-lg p-5 flex flex-col gap-4 transition-colors">
+              <div className="flex items-center justify-between">
+                <div className="w-9 h-9 rounded-md bg-[#1a1a1a] border border-[#2b2b2b] flex items-center justify-center text-white/40 shrink-0 overflow-hidden">
+                  {net.icon ? (
+                    <Image
+                      src={net.icon}
+                      alt={net.iconAlt}
+                      width={22}
+                      height={22}
+                      className="object-contain p-1"
+                    />
+                  ) : (
+                    net.iconFallback
+                  )}
+                </div>
+                <span className={`text-[10px] font-mono font-semibold ${net.tagColor}`}>{net.tag}</span>
               </div>
               <div>
-                <h3 className="text-lg font-medium text-white mb-2">{net.title}</h3>
+                <h3 className="text-sm font-semibold text-white mb-1.5">{net.title}</h3>
                 <p className="text-sm text-white/40 leading-relaxed">{net.description}</p>
               </div>
             </div>

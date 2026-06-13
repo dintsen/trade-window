@@ -3,16 +3,34 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Plus, RefreshCw, AlertTriangle, Filter, LayoutGrid } from "lucide-react";
+import { Plus, RefreshCw, AlertTriangle, LayoutGrid, ArrowRight } from "lucide-react";
 import { PublicBoardListing } from "@/lib/board/types";
 import { fetchListings } from "@/lib/board/api";
 import { getAsset } from "@/lib/assets/asset-registry";
+
+function AssetCell({ denom }: { denom: string }) {
+  const asset = getAsset(denom);
+  if (asset) {
+    return (
+      <span className="flex items-center gap-1.5">
+        <Image src={asset.logoUrl} width={16} height={16} className="w-4 h-4 rounded-full shrink-0" alt="" />
+        <span className="font-medium text-white/80">{asset.symbol}</span>
+        {asset.isDemo && (
+          <span className="text-[10px] text-white/30 bg-white/5 px-1 py-0.5 rounded font-mono">demo</span>
+        )}
+      </span>
+    );
+  }
+  return <span className="text-white/60 font-mono text-xs">{denom}</span>;
+}
+
+const TYPE_FILTERS = ["All", "Buy", "Sell", "Swap", "OTC Bundle", "NFT_Game_RWA"];
+const CHAIN_FILTERS = ["All", "Gno", "AtomOne", "Cosmos / IBC", "Other"];
 
 export default function BoardPage() {
   const [listings, setListings] = useState<PublicBoardListing[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   const [typeFilter, setTypeFilter] = useState<string>("All");
   const [chainFilter, setChainFilter] = useState<string>("All");
 
@@ -41,65 +59,86 @@ export default function BoardPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-white selection:bg-emerald-500/30">
-      {/* Navbar Minimal */}
-      <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-black/50 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          {/* Product logo — OTC Board */}
+    <div className="min-h-screen bg-[#0A0A0A] text-white selection:bg-[#3ECF8E]/20">
+
+      {/* Navbar */}
+      <nav className="fixed top-0 w-full z-50 border-b border-[#1c1c1c] bg-[#0a0a0a]/80 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
           <Link href="/board" className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-emerald-500/10 flex items-center justify-center shrink-0 border border-white/5">
-              <LayoutGrid size={14} className="text-emerald-400" />
+            <div className="w-6 h-6 rounded-md bg-[#3ECF8E]/10 border border-[#3ECF8E]/20 flex items-center justify-center shrink-0">
+              <LayoutGrid size={12} className="text-[#3ECF8E]" />
             </div>
-            <span className="font-bold tracking-tight text-base leading-none text-emerald-400">OTC Board</span>
+            <span className="font-semibold text-sm text-white/80">OTC Board</span>
           </Link>
-          <div className="w-24 flex justify-end">
-            <Link href="/board/new" className="hidden sm:flex text-xs font-semibold bg-emerald-500 hover:bg-emerald-400 text-black px-3 py-1.5 rounded-full items-center gap-1 transition-colors">
-              <Plus size={14} /> Post
-            </Link>
-          </div>
+          <Link
+            href="/board/new"
+            className="hidden sm:flex items-center gap-1.5 text-xs font-semibold bg-[#3ECF8E] hover:bg-[#4ADBA0] text-black px-3.5 py-1.5 rounded-md transition-colors"
+          >
+            <Plus size={13} /> Post Listing
+          </Link>
         </div>
       </nav>
 
-      <main className="pt-28 pb-24 px-6 relative max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
-        
-        {/* Sidebar / Filters */}
-        <aside className="w-full lg:w-64 shrink-0 flex flex-col gap-6">
+      <main className="pt-24 pb-24 px-6 max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
+
+        {/* Sidebar */}
+        <aside className="w-full lg:w-56 shrink-0 flex flex-col gap-6">
           <div>
-            <h1 className="text-4xl font-bold tracking-tight mb-2">OTC Board</h1>
-            <p className="text-white/40 text-sm leading-relaxed mb-6">
+            <h1 className="text-2xl font-bold tracking-tight mb-1">OTC Board</h1>
+            <p className="text-sm text-white/40 leading-relaxed mb-5">
               Discover public deal intents and request manual OTC coordination.
             </p>
-            <div className="flex flex-col gap-3">
-              <Link href="/board/new" className="w-full text-center font-semibold bg-emerald-500 hover:bg-emerald-400 text-black px-4 py-3 rounded-xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+            <div className="flex flex-col gap-2">
+              <Link
+                href="/board/new"
+                className="w-full text-center text-sm font-semibold bg-[#3ECF8E] hover:bg-[#4ADBA0] text-black px-4 py-2.5 rounded-lg transition-all"
+              >
                 Post a Deal
               </Link>
-              <Link href="/request" className="w-full text-center font-medium bg-white/5 hover:bg-white/10 text-white border border-white/10 px-4 py-3 rounded-xl transition-all">
-                Submit Private Request
+              <Link
+                href="/request"
+                className="w-full text-center text-sm font-medium bg-transparent border border-[#2b2b2b] hover:border-[#3b3b3b] hover:bg-white/[0.03] text-white/70 px-4 py-2.5 rounded-lg transition-all"
+              >
+                Private Request
               </Link>
             </div>
           </div>
 
-          <div className="bg-[#111] border border-white/5 rounded-2xl p-5 space-y-6">
-            <div className="space-y-3">
-              <div className="text-xs font-semibold text-white/40 uppercase tracking-wider flex items-center gap-2">
-                <Filter size={14} /> Request Type
-              </div>
-              <div className="flex flex-col gap-1">
-                {["All", "Buy", "Sell", "Swap", "OTC Bundle", "NFT_Game_RWA"].map(t => (
-                  <button key={t} onClick={() => setTypeFilter(t)} className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${typeFilter === t ? "bg-emerald-500/10 text-emerald-400 font-medium" : "text-white/60 hover:bg-white/5 hover:text-white"}`}>
+          {/* Filters */}
+          <div className="bg-[#0c0c0c] border border-[#1c1c1c] rounded-lg overflow-hidden">
+            {/* Type filter */}
+            <div className="px-3 py-2.5 border-b border-[#1c1c1c]">
+              <p className="text-[10px] font-mono text-white/30 uppercase tracking-[0.12em] mb-2">Request Type</p>
+              <div className="flex flex-col gap-0.5">
+                {TYPE_FILTERS.map(t => (
+                  <button
+                    key={t}
+                    onClick={() => setTypeFilter(t)}
+                    className={`text-left px-2 py-1.5 rounded-md text-xs transition-colors ${
+                      typeFilter === t
+                        ? "bg-[#3ECF8E]/10 text-[#3ECF8E] font-medium"
+                        : "text-white/50 hover:bg-white/[0.04] hover:text-white/70"
+                    }`}
+                  >
                     {t.replace(/_/g, " / ")}
                   </button>
                 ))}
               </div>
             </div>
-
-            <div className="space-y-3">
-              <div className="text-xs font-semibold text-white/40 uppercase tracking-wider flex items-center gap-2">
-                <Filter size={14} /> Ecosystem
-              </div>
-              <div className="flex flex-col gap-1">
-                {["All", "Gno", "AtomOne", "Cosmos / IBC", "Other"].map(c => (
-                  <button key={c} onClick={() => setChainFilter(c)} className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${chainFilter === c ? "bg-emerald-500/10 text-emerald-400 font-medium" : "text-white/60 hover:bg-white/5 hover:text-white"}`}>
+            {/* Chain filter */}
+            <div className="px-3 py-2.5">
+              <p className="text-[10px] font-mono text-white/30 uppercase tracking-[0.12em] mb-2">Ecosystem</p>
+              <div className="flex flex-col gap-0.5">
+                {CHAIN_FILTERS.map(c => (
+                  <button
+                    key={c}
+                    onClick={() => setChainFilter(c)}
+                    className={`text-left px-2 py-1.5 rounded-md text-xs transition-colors ${
+                      chainFilter === c
+                        ? "bg-[#3ECF8E]/10 text-[#3ECF8E] font-medium"
+                        : "text-white/50 hover:bg-white/[0.04] hover:text-white/70"
+                    }`}
+                  >
                     {c}
                   </button>
                 ))}
@@ -109,95 +148,125 @@ export default function BoardPage() {
         </aside>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col">
-          <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 mb-6 flex gap-3 text-sm text-amber-200/80">
-            <AlertTriangle className="shrink-0 text-amber-500" size={20} />
+        <div className="flex-1 flex flex-col gap-4">
+          {/* Disclaimer */}
+          <div className="flex items-start gap-3 bg-amber-500/5 border border-amber-500/15 rounded-lg px-4 py-3 text-xs text-amber-200/60">
+            <AlertTriangle className="shrink-0 text-amber-500/50 mt-0.5" size={14} />
             <p>
               Listings are public deal intents only. Trade Window does not custody assets, execute trades, provide financial advice or guarantee settlement.
             </p>
           </div>
 
+          {/* States */}
           {loading ? (
-            <div className="flex-1 flex flex-col items-center justify-center py-20 text-white/40">
-              <RefreshCw className="animate-spin mb-4" size={24} />
-              Loading listings...
+            <div className="flex-1 flex flex-col items-center justify-center py-20 text-white/30">
+              <RefreshCw className="animate-spin mb-3" size={20} />
+              <span className="text-sm font-mono">Loading listings…</span>
             </div>
           ) : error ? (
-            <div className="flex-1 flex flex-col items-center justify-center py-20 text-rose-400/80 bg-rose-500/5 border border-rose-500/10 rounded-2xl">
-              <AlertTriangle className="mb-4" size={24} />
-              {error}
-              <button onClick={loadListings} className="mt-4 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-sm text-white">Retry</button>
+            <div className="flex flex-col items-center justify-center py-20 text-rose-400/70 bg-rose-500/5 border border-rose-500/10 rounded-xl">
+              <AlertTriangle className="mb-3" size={20} />
+              <p className="text-sm mb-3">{error}</p>
+              <button
+                onClick={loadListings}
+                className="px-4 py-1.5 bg-white/5 hover:bg-white/10 rounded-lg text-xs text-white border border-[#2b2b2b]"
+              >
+                Retry
+              </button>
             </div>
           ) : filteredListings.length === 0 ? (
-            <div className="flex-1 flex flex-col items-center justify-center py-20 bg-white/5 border border-white/5 rounded-2xl text-white/40">
-              <div className="text-lg mb-2">No listings found</div>
-              <p className="text-sm">Try adjusting your filters or be the first to post.</p>
+            <div className="flex flex-col items-center justify-center py-20 bg-[#0c0c0c] border border-[#1c1c1c] rounded-xl text-white/30">
+              <p className="text-sm mb-1">No listings found</p>
+              <p className="text-xs text-white/20">Try adjusting your filters or be the first to post.</p>
             </div>
           ) : (
-            <div className="flex flex-col gap-4">
-              {filteredListings.map(listing => (
-                <div key={listing.id} className="bg-[#111] hover:bg-[#151515] border border-white/5 hover:border-white/10 rounded-2xl p-6 transition-colors group">
-                  <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
-                    <div>
-                      <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-emerald-400 transition-colors">{listing.title}</h3>
-                      <div className="flex flex-wrap items-center gap-2 text-xs">
-                        <span className="px-2.5 py-1 bg-white/10 text-white/80 rounded-full font-medium capitalize">{listing.requestType.replace(/_/g, " ")}</span>
-                        <span className="px-2.5 py-1 bg-white/5 text-white/60 rounded-full">{listing.chain}</span>
-                        <span className="text-white/30">{new Date(listing.createdAt).toLocaleDateString()}</span>
-                      </div>
-                    </div>
-                    <div className="shrink-0 flex items-center gap-2">
-                      <span className="px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-lg text-xs font-semibold uppercase tracking-wider">
+            /* Listings table */
+            <div className="bg-[#0c0c0c] border border-[#1c1c1c] rounded-xl overflow-hidden">
+              {/* Table head */}
+              <div className="hidden md:grid grid-cols-[2fr_1fr_1fr_auto_auto] gap-4 px-5 py-2.5 border-b border-[#1c1c1c] bg-[#0a0a0a]">
+                <span className="text-[10px] font-mono text-white/30 uppercase tracking-[0.12em]">Title</span>
+                <span className="text-[10px] font-mono text-white/30 uppercase tracking-[0.12em]">Offering</span>
+                <span className="text-[10px] font-mono text-white/30 uppercase tracking-[0.12em]">Wanting</span>
+                <span className="text-[10px] font-mono text-white/30 uppercase tracking-[0.12em]">Amount</span>
+                <span className="text-[10px] font-mono text-white/30 uppercase tracking-[0.12em]">Date</span>
+              </div>
+
+              {filteredListings.map((listing, idx) => (
+                <div
+                  key={listing.id}
+                  className={`group flex flex-col md:grid md:grid-cols-[2fr_1fr_1fr_auto_auto] gap-2 md:gap-4 px-5 py-4 hover:bg-[#111111] transition-colors ${
+                    idx < filteredListings.length - 1 ? 'border-b border-[#1c1c1c]' : ''
+                  }`}
+                >
+                  {/* Title column */}
+                  <div className="flex flex-col gap-1.5 min-w-0">
+                    <span className="text-sm font-medium text-white/80 group-hover:text-white truncate transition-colors">
+                      {listing.title}
+                    </span>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-[10px] font-mono px-1.5 py-0.5 bg-[#1a1a1a] border border-[#2b2b2b] text-white/40 rounded capitalize">
+                        {listing.requestType.replace(/_/g, " ")}
+                      </span>
+                      <span className="text-[10px] font-mono px-1.5 py-0.5 bg-[#1a1a1a] border border-[#2b2b2b] text-white/30 rounded">
+                        {listing.chain}
+                      </span>
+                      <span className="text-[10px] px-1.5 py-0.5 bg-[#3ECF8E]/8 border border-[#3ECF8E]/20 text-[#3ECF8E]/70 rounded font-mono uppercase">
                         {listing.status}
                       </span>
                     </div>
+                    {/* Mobile: show extra info inline */}
+                    {(listing.publicMessage || listing.publicContact) && (
+                      <div className="md:hidden flex flex-col gap-1 mt-1">
+                        {listing.publicContact && (
+                          <span className="text-xs text-[#3ECF8E]/70 font-mono">
+                            {listing.publicContact}
+                            <span className="text-white/30 ml-1">via {listing.contactMethod || 'other'}</span>
+                          </span>
+                        )}
+                        {listing.publicMessage && (
+                          <span className="text-xs text-white/40 leading-relaxed">{listing.publicMessage}</span>
+                        )}
+                      </div>
+                    )}
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div className="bg-black/50 border border-white/5 rounded-xl p-4">
-                      <div className="text-xs text-white/40 mb-1 uppercase tracking-wider font-semibold">Offering</div>
-                      <div className="text-lg font-medium text-white flex items-center gap-2">
-                        {(() => {
-                          const asset = getAsset(listing.offerAsset);
-                          if (asset) {
-                            return <><Image src={asset.logoUrl} width={20} height={20} className="w-5 h-5 rounded-full" alt="" /> <span>{asset.symbol}</span> {asset.isDemo && <span className="text-xs text-white/30 bg-white/5 px-1.5 py-0.5 rounded">Demo</span>}</>;
-                          }
-                          return listing.offerAsset;
-                        })()}
-                      </div>
-                    </div>
-                    <div className="bg-black/50 border border-white/5 rounded-xl p-4">
-                      <div className="text-xs text-white/40 mb-1 uppercase tracking-wider font-semibold">Wanting</div>
-                      <div className="text-lg font-medium text-white flex items-center gap-2">
-                        {(() => {
-                          const asset = getAsset(listing.wantAsset);
-                          if (asset) {
-                            return <><Image src={asset.logoUrl} width={20} height={20} className="w-5 h-5 rounded-full" alt="" /> <span>{asset.symbol}</span> {asset.isDemo && <span className="text-xs text-white/30 bg-white/5 px-1.5 py-0.5 rounded">Demo</span>}</>;
-                          }
-                          return listing.wantAsset;
-                        })()}
-                      </div>
-                    </div>
+                  {/* Offering */}
+                  <div className="flex items-center">
+                    <AssetCell denom={listing.offerAsset} />
                   </div>
 
-                  {(listing.amountRange || listing.publicMessage || listing.publicContact) && (
-                    <div className="border-t border-white/5 pt-4 flex flex-col gap-3 text-sm">
-                      {listing.amountRange && (
-                        <div className="flex gap-2">
-                          <span className="text-white/40 w-24 shrink-0">Amount:</span>
-                          <span className="text-white/90 font-medium">{listing.amountRange}</span>
-                        </div>
-                      )}
+                  {/* Arrow + Wanting */}
+                  <div className="flex items-center gap-2">
+                    <ArrowRight size={12} className="text-white/20 shrink-0 hidden md:block" />
+                    <AssetCell denom={listing.wantAsset} />
+                  </div>
+
+                  {/* Amount */}
+                  <div className="flex items-center">
+                    <span className="text-xs text-white/50 font-mono">{listing.amountRange || '—'}</span>
+                  </div>
+
+                  {/* Date */}
+                  <div className="flex items-center">
+                    <span className="text-xs text-white/30 font-mono whitespace-nowrap">
+                      {new Date(listing.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
+
+                  {/* Desktop expanded info */}
+                  {(listing.publicMessage || listing.publicContact) && (
+                    <div className="hidden md:flex col-span-5 pt-3 border-t border-[#1c1c1c] mt-1 gap-6 text-xs">
                       {listing.publicContact && (
-                        <div className="flex gap-2">
-                          <span className="text-white/40 w-24 shrink-0">Contact:</span>
-                          <span className="text-emerald-400 font-medium">{listing.publicContact} <span className="text-white/30 text-xs">via {listing.contactMethod || 'unknown'}</span></span>
+                        <div className="flex gap-2 items-baseline">
+                          <span className="text-white/30 font-mono uppercase tracking-wide text-[10px]">Contact</span>
+                          <span className="text-[#3ECF8E]/80 font-medium">{listing.publicContact}</span>
+                          <span className="text-white/25 text-[10px]">via {listing.contactMethod || 'other'}</span>
                         </div>
                       )}
                       {listing.publicMessage && (
-                        <div className="flex gap-2">
-                          <span className="text-white/40 w-24 shrink-0">Message:</span>
-                          <span className="text-white/80 leading-relaxed">{listing.publicMessage}</span>
+                        <div className="flex gap-2 items-baseline min-w-0">
+                          <span className="text-white/30 font-mono uppercase tracking-wide text-[10px] shrink-0">Note</span>
+                          <span className="text-white/50 leading-relaxed truncate">{listing.publicMessage}</span>
                         </div>
                       )}
                     </div>
@@ -206,7 +275,6 @@ export default function BoardPage() {
               ))}
             </div>
           )}
-
         </div>
       </main>
     </div>

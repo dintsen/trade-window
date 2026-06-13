@@ -31,7 +31,7 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full bg-[#030303] py-12 border-t border-white/5 text-center">
+      <footer className="w-full bg-[#030303] py-12 border-t border-[#1c1c1c] text-center">
         <Image src="/logo-trade.svg" alt="TradeWindow" width={100} height={20} className="object-contain opacity-50 mx-auto mb-6" />
         <div className="max-w-2xl mx-auto px-6 mt-8">
           <p className="text-[10px] text-white/30 uppercase tracking-widest font-medium mb-4">
