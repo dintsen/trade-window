@@ -68,86 +68,75 @@ function TradeRoomWrapperInner() {
             {/* Supabase-style subtle bg glow */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[400px] bg-[#3ECF8E]/5 blur-[100px] rounded-full pointer-events-none" />
 
-            <div className="relative z-10 w-full max-w-lg py-8">
+            <div className="relative z-10 w-full max-w-[420px] py-10">
+
               {/* Header */}
               <div className="mb-8 text-center">
-                <div className="inline-flex items-center gap-2 bg-[#3ECF8E]/10 border border-[#3ECF8E]/20 rounded-full px-3 py-1 text-xs text-[#3ECF8E] font-medium mb-4">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#3ECF8E] animate-pulse" />
-                  MVP Demo — Gno.land Protocol
-                </div>
-                <h1 className="text-2xl font-semibold text-white tracking-tight mb-2">
-                  Connect your wallet
-                </h1>
-                <p className="text-sm text-[#9b9b9b] leading-relaxed">
-                  Choose a wallet to enter the OTC trade room. Real signing is not implemented — this is a prototype.
+                <p className="text-[10px] font-mono text-[#3ECF8E] uppercase tracking-[0.15em] mb-5">Trade Window · MVP</p>
+                <h1 className="text-xl font-semibold text-white tracking-tight mb-2">Connect wallet</h1>
+                <p className="text-sm text-white/40 leading-relaxed">
+                  Choose a wallet to enter the OTC trade room.
                 </p>
               </div>
 
-              {/* Wallet Cards */}
-              <div className="space-y-3">
-
-                {/* Mock Wallet — always active */}
-                <div className="rounded-lg border border-[#2b2b2b] bg-[#171717] hover:border-[#3ECF8E]/30 hover:bg-[#1a1a1a] transition-all group">
-                  <div className="flex items-center justify-between px-4 py-3 border-b border-[#2b2b2b]">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-md bg-[#3ECF8E]/10 border border-[#3ECF8E]/20 flex items-center justify-center">
-                        <User size={14} className="text-[#3ECF8E]" />
-                      </div>
-                      <div>
-                        <div className="text-sm font-medium text-white">Mock Wallet</div>
-                        <div className="text-[11px] text-[#9b9b9b]">Demo — no real assets</div>
-                      </div>
-                    </div>
-                    <span className="text-[10px] font-medium text-[#3ECF8E] bg-[#3ECF8E]/10 border border-[#3ECF8E]/20 rounded-full px-2 py-0.5">Active</span>
+              {/* Mock Wallet */}
+              <div className="bg-[#111111] border border-[#1c1c1c] rounded-xl p-4 mb-5">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-11 h-11 rounded-xl bg-[#3ECF8E]/10 border border-[#3ECF8E]/20 flex items-center justify-center shrink-0">
+                    <User size={20} className="text-[#3ECF8E]" />
                   </div>
-                  <div className="px-4 py-3 flex gap-2">
-                    <Button onClick={() => connect("mock", "A")} size="sm" className="flex-1 h-8 bg-[#222] hover:bg-[#2a2a2a] text-white/80 hover:text-[#3ECF8E] border border-[#2b2b2b] hover:border-[#3ECF8E]/40 text-xs transition-all">
-                      User A
-                    </Button>
-                    <Button onClick={() => connect("mock", "B")} size="sm" className="flex-1 h-8 bg-[#222] hover:bg-[#2a2a2a] text-white/80 hover:text-[#3ECF8E] border border-[#2b2b2b] hover:border-[#3ECF8E]/40 text-xs transition-all">
-                      User B
-                    </Button>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-sm font-semibold text-white">Mock Wallet</span>
+                    <div className="mt-0.5"><span className="text-xs text-white/40">No real assets — prototype only</span></div>
                   </div>
                 </div>
-
-                {/* Section label */}
-                <div className="pt-2 pb-1">
-                  <p className="text-[11px] font-medium text-[#9b9b9b] uppercase tracking-widest px-1">Real Wallets</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => connect("mock", "A")}
+                    className="py-2.5 rounded-lg bg-[#0a0a0a] border border-[#2b2b2b] text-sm font-medium text-white/70 hover:border-[#3ECF8E]/40 hover:text-white transition-all"
+                  >
+                    User A
+                  </button>
+                  <button
+                    onClick={() => connect("mock", "B")}
+                    className="py-2.5 rounded-lg bg-[#0a0a0a] border border-[#2b2b2b] text-sm font-medium text-white/70 hover:border-[#3ECF8E]/40 hover:text-white transition-all"
+                  >
+                    User B
+                  </button>
                 </div>
+              </div>
 
-                {/* Adena — Gno.land */}
+              {/* Section label */}
+              <p className="text-[10px] font-mono text-white/30 uppercase tracking-[0.15em] mb-2 px-1">Real Wallets</p>
+
+              {/* Real wallets list — compact single-row */}
+              <div className="flex flex-col gap-1.5">
+
+                {/* Wallet row helper styles shared across all three */}
+                {/* Adena */}
                 {(() => {
                   const adena = adapters.find(a => a.id === "adena");
                   const isAvailable = adena?.isAvailable();
                   return (
-                    <div className="rounded-lg border border-[#2b2b2b] bg-[#171717] hover:border-[#2b2b2b]/80 transition-all">
-                      <div className="flex items-center justify-between px-4 py-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-md bg-[#1a1a1a] border border-[#2b2b2b] flex items-center justify-center overflow-hidden">
-                            <Image src="/assets/wallets/adena.svg" alt="Adena" width={20} height={20} className="object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
-                          </div>
-                          <div>
-                            <div className="text-sm font-medium text-white">Adena</div>
-                            <div className="text-[11px] text-[#9b9b9b]">Gno.land · Read-only</div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {isAvailable ? (
-                            <span className="text-[10px] text-[#3ECF8E] bg-[#3ECF8E]/10 border border-[#3ECF8E]/20 rounded-full px-2 py-0.5">Detected</span>
-                          ) : (
-                            <span className="text-[10px] text-[#9b9b9b] bg-white/5 border border-[#2b2b2b] rounded-full px-2 py-0.5">Not detected</span>
-                          )}
-                        </div>
+                    <div className="flex items-center gap-3 bg-[#111111] border border-[#1c1c1c] hover:border-[#2b2b2b] rounded-lg px-3.5 py-3 transition-colors">
+                      <div className="w-9 h-9 rounded-lg bg-[#1a1a1a] border border-[#2b2b2b] flex items-center justify-center overflow-hidden shrink-0">
+                        <Image src="/assets/wallets/adena.svg" alt="Adena" width={24} height={24} className="object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
                       </div>
-                      <div className="px-4 pb-3">
-                        <Button
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-semibold text-white leading-none mb-0.5">Adena</div>
+                        <div className="text-[11px] text-white/35">Gno.land</div>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded border leading-none ${isAvailable ? 'text-[#3ECF8E] bg-[#3ECF8E]/10 border-[#3ECF8E]/20' : 'text-white/25 border-[#1c1c1c]'}`}>
+                          {isAvailable ? 'Detected' : 'Not found'}
+                        </span>
+                        <button
                           onClick={() => connect("adena")}
                           disabled={!isAvailable || isConnecting}
-                          size="sm"
-                          className="w-full h-8 bg-[#222] hover:bg-[#2a2a2a] text-white/70 border border-[#2b2b2b] disabled:opacity-40 text-xs transition-all"
+                          className={`text-[11px] font-medium px-3 py-1.5 rounded-md border transition-all ${isAvailable ? 'border-[#2b2b2b] bg-[#1a1a1a] text-white/60 hover:text-white hover:border-[#3ECF8E]/30' : 'border-[#1c1c1c] text-white/20 cursor-not-allowed'}`}
                         >
-                          {isConnecting && activeProvider === "adena" ? "Connecting..." : isAvailable ? "Connect" : "Not installed"}
-                        </Button>
+                          {isConnecting && activeProvider === "adena" ? "…" : isAvailable ? "Connect" : "Install"}
+                        </button>
                       </div>
                     </div>
                   );
@@ -159,35 +148,25 @@ function TradeRoomWrapperInner() {
                   if (!adapter) return null;
                   const available = adapter.isAvailable();
                   return (
-                    <div className="rounded-lg border border-[#2b2b2b] bg-[#171717] hover:border-[#2b2b2b]/80 transition-all">
-                      <div className="flex items-center justify-between px-4 py-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-md bg-[#1a1a1a] border border-[#2b2b2b] flex items-center justify-center overflow-hidden">
-                            <Image src="/assets/wallets/keplr.svg" alt="Keplr" width={20} height={20} className="object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
-                          </div>
-                          <div>
-                            <div className="text-sm font-medium text-white">Keplr</div>
-                            <div className="text-[11px] text-[#9b9b9b]">Cosmos · AtomOne · Preview</div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {available ? (
-                            <span className="text-[10px] text-[#3ECF8E] bg-[#3ECF8E]/10 border border-[#3ECF8E]/20 rounded-full px-2 py-0.5">Detected</span>
-                          ) : (
-                            <span className="text-[10px] text-[#9b9b9b] bg-white/5 border border-[#2b2b2b] rounded-full px-2 py-0.5">Not detected</span>
-                          )}
-                          <span className="text-[10px] text-[#14AFEB]/70 bg-[#14AFEB]/10 border border-[#14AFEB]/20 rounded-full px-2 py-0.5">Preview</span>
-                        </div>
+                    <div className="flex items-center gap-3 bg-[#111111] border border-[#1c1c1c] hover:border-[#2b2b2b] rounded-lg px-3.5 py-3 transition-colors">
+                      <div className="w-9 h-9 rounded-lg bg-[#1a1a1a] border border-[#2b2b2b] flex items-center justify-center overflow-hidden shrink-0">
+                        <Image src="/assets/wallets/keplr.svg" alt="Keplr" width={24} height={24} className="object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
                       </div>
-                      <div className="px-4 pb-3">
-                        <Button
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-semibold text-white leading-none mb-0.5">Keplr</div>
+                        <div className="text-[11px] text-white/35">Cosmos · AtomOne · Preview</div>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded border leading-none ${available ? 'text-[#3ECF8E] bg-[#3ECF8E]/10 border-[#3ECF8E]/20' : 'text-white/25 border-[#1c1c1c]'}`}>
+                          {available ? 'Detected' : 'Not found'}
+                        </span>
+                        <button
                           onClick={() => connect("keplr")}
                           disabled={!available || isConnecting}
-                          size="sm"
-                          className="w-full h-8 bg-[#222] hover:bg-[#2a2a2a] text-white/70 border border-[#2b2b2b] disabled:opacity-40 text-xs transition-all"
+                          className={`text-[11px] font-medium px-3 py-1.5 rounded-md border transition-all ${available ? 'border-[#2b2b2b] bg-[#1a1a1a] text-white/60 hover:text-white hover:border-[#3ECF8E]/30' : 'border-[#1c1c1c] text-white/20 cursor-not-allowed'}`}
                         >
-                          {isConnecting && activeProvider === "keplr" ? "Connecting..." : available ? "Connect" : "Not installed"}
-                        </Button>
+                          {isConnecting && activeProvider === "keplr" ? "…" : available ? "Connect" : "Install"}
+                        </button>
                       </div>
                     </div>
                   );
@@ -199,35 +178,25 @@ function TradeRoomWrapperInner() {
                   if (!adapter) return null;
                   const available = adapter.isAvailable();
                   return (
-                    <div className="rounded-lg border border-[#2b2b2b] bg-[#171717] hover:border-[#2b2b2b]/80 transition-all">
-                      <div className="flex items-center justify-between px-4 py-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-md bg-[#1a1a1a] border border-[#2b2b2b] flex items-center justify-center overflow-hidden">
-                            <Image src="/assets/wallets/cosmostation.png" alt="Cosmostation" width={20} height={20} className="object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
-                          </div>
-                          <div>
-                            <div className="text-sm font-medium text-white">Cosmostation</div>
-                            <div className="text-[11px] text-[#9b9b9b]">Cosmos · AtomOne · Preview</div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {available ? (
-                            <span className="text-[10px] text-[#3ECF8E] bg-[#3ECF8E]/10 border border-[#3ECF8E]/20 rounded-full px-2 py-0.5">Detected</span>
-                          ) : (
-                            <span className="text-[10px] text-[#9b9b9b] bg-white/5 border border-[#2b2b2b] rounded-full px-2 py-0.5">Not detected</span>
-                          )}
-                          <span className="text-[10px] text-[#8B5CF6]/70 bg-[#8B5CF6]/10 border border-[#8B5CF6]/20 rounded-full px-2 py-0.5">Preview</span>
-                        </div>
+                    <div className="flex items-center gap-3 bg-[#111111] border border-[#1c1c1c] hover:border-[#2b2b2b] rounded-lg px-3.5 py-3 transition-colors">
+                      <div className="w-9 h-9 rounded-lg bg-[#1a1a1a] border border-[#2b2b2b] flex items-center justify-center overflow-hidden shrink-0">
+                        <Image src="/assets/wallets/cosmostation.png" alt="Cosmostation" width={24} height={24} className="object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
                       </div>
-                      <div className="px-4 pb-3">
-                        <Button
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-semibold text-white leading-none mb-0.5">Cosmostation</div>
+                        <div className="text-[11px] text-white/35">Cosmos · AtomOne · Preview</div>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded border leading-none ${available ? 'text-[#3ECF8E] bg-[#3ECF8E]/10 border-[#3ECF8E]/20' : 'text-white/25 border-[#1c1c1c]'}`}>
+                          {available ? 'Detected' : 'Not found'}
+                        </span>
+                        <button
                           onClick={() => connect("cosmostation")}
                           disabled={!available || isConnecting}
-                          size="sm"
-                          className="w-full h-8 bg-[#222] hover:bg-[#2a2a2a] text-white/70 border border-[#2b2b2b] disabled:opacity-40 text-xs transition-all"
+                          className={`text-[11px] font-medium px-3 py-1.5 rounded-md border transition-all ${available ? 'border-[#2b2b2b] bg-[#1a1a1a] text-white/60 hover:text-white hover:border-[#3ECF8E]/30' : 'border-[#1c1c1c] text-white/20 cursor-not-allowed'}`}
                         >
-                          {isConnecting && activeProvider === "cosmostation" ? "Connecting..." : available ? "Connect" : "Not installed"}
-                        </Button>
+                          {isConnecting && activeProvider === "cosmostation" ? "…" : available ? "Connect" : "Install"}
+                        </button>
                       </div>
                     </div>
                   );
@@ -235,9 +204,8 @@ function TradeRoomWrapperInner() {
 
               </div>
 
-              {/* Footer note */}
-              <p className="mt-6 text-center text-[11px] text-[#666] leading-relaxed">
-                Real signing and settlement are not yet implemented. This is an MVP prototype for the AtomOne / Gno.land ecosystem.
+              <p className="mt-5 text-center text-[10px] text-white/20 font-mono">
+                MVP prototype — AtomOne / Gno.land · Real signing not implemented
               </p>
             </div>
           </div>

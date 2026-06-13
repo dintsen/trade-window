@@ -368,7 +368,7 @@ export default function NewListingPage() {
 
               <div className="bg-white/[0.02] border border-white/5 rounded-xl p-5 space-y-4">
                 <div className="flex items-start gap-3">
-                  <input required name="consentAccepted" type="checkbox" className="mt-1 w-5 h-5 rounded border-white/20 bg-black/50 text-emerald-500 focus:ring-emerald-500/50 focus:ring-offset-0 cursor-pointer shrink-0" />
+                  <input required name="consentAccepted" type="checkbox" className="mt-1 w-5 h-5 rounded cursor-pointer shrink-0 accent-[#3ECF8E]" />
                   <div className="text-sm text-white/40 leading-relaxed">
                     I understand that this is a public OTC listing. Trade Window does not provide custody, financial advice, guaranteed execution or real settlement.
                   </div>

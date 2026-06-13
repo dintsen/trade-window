@@ -29,7 +29,7 @@ export const ASSET_REGISTRY: Record<string, AssetIdentity> = {
     ecosystem: 'gno',
     source: 'native',
     decimals: 6,
-    logoUrl: '/assets/logos/gno.svg',
+    logoUrl: '/assets/logos/gnot-icon.svg',
     verificationStatus: 'demo',
     supportLevel: 'preview',
     isDemo: true,

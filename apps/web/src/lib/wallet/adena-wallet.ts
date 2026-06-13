@@ -26,7 +26,7 @@ export const adenaWalletAdapter: WalletAdapter = {
       
       return {
         address: accountInfo.address,
-        displayAddress: accountInfo.name || "Adena User",
+        displayAddress: accountInfo.address.slice(0, 10) + "…" + accountInfo.address.slice(-4),
         provider: "adena",
         isMock: false
       };
@@ -51,7 +51,7 @@ export const adenaWalletAdapter: WalletAdapter = {
 
       return {
         address: accountInfo.address,
-        displayAddress: accountInfo.name || "Adena User",
+        displayAddress: accountInfo.address.slice(0, 10) + "…" + accountInfo.address.slice(-4),
         provider: "adena",
         isMock: false
       };
