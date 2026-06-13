@@ -276,7 +276,7 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
 
   const ASSET_LOGOS: Record<string, string> = {
     ATONE: '/assets/logos/atomone.svg',
-    GNOT: '/assets/logos/gno.svg',
+    GNOT: '/assets/logos/gnot-icon.svg',
     PHOTON: '/assets/logos/photon.svg',
     ATOM: '/assets/logos/cosmos.svg',
     USDC: '/assets/logos/usdc.svg',
@@ -905,7 +905,7 @@ async function fetchStargazeNFTs(ownerAddr: string): Promise<StargazeNFT[]> {
 // ── Token logo map ───────────────────────────────────────────────────────────
 const ASSET_LOGO_MAP: Record<string, string> = {
   ATONE: '/assets/logos/atomone.svg',
-  GNOT: '/assets/logos/gno.svg',
+  GNOT: '/assets/logos/gnot-icon.svg',
   PHOTON: '/assets/logos/photon.svg',
   ATOM: '/assets/logos/cosmos.svg',
   USDC: '/assets/logos/usdc.svg',
