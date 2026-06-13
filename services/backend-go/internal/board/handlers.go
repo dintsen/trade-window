@@ -30,6 +30,10 @@ func (h *Handlers) HandleListings(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, `{"error":"internal_error"}`, http.StatusInternalServerError)
 			return
 		}
+		// Ensure empty array (not null) when there are no listings
+		if publicListings == nil {
+			publicListings = []PublicListing{}
+		}
 
 		json.NewEncoder(w).Encode(publicListings)
 		return
