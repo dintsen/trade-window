@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useTradeRoom } from '@/hooks/use-trade-room';
 import { TradeAsset, DEMO_ASSETS } from '@/lib/trade/assets';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { ShieldAlert, Info, AlertTriangle, RefreshCw, Copy, CheckCircle2, XCircle, Hexagon, User, Globe, Send, Terminal, Lock } from 'lucide-react';
+import { ShieldAlert, Info, AlertTriangle, RefreshCw, Copy, CheckCircle2, XCircle, Hexagon, User, Globe, Send, Terminal, Lock, LinkIcon } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -15,7 +16,7 @@ import { buildRoomCommitmentPayload } from '@/lib/gno/commitment-call';
 import { GnoTransactionPreview } from '@/components/trade/GnoTransactionPreview';
 import { GnoTestnetTransfer } from '@/components/trade/GnoTestnetTransfer';
 
-export default function TradeRoomWrapper() {
+function TradeRoomWrapperInner() {
   const { account, connect, disconnect, adapters, isConnecting, activeProvider } = useWalletStore();
   
   return (
@@ -146,10 +147,14 @@ export default function TradeRoomWrapper() {
                       const available = adapter.isAvailable();
                       const isThis = activeProvider === id;
                       const label = adapter.label;
+                      const logoSrc = `/assets/wallets/${id}.svg`;
                       return (
                         <div key={id} className="w-full flex flex-col items-start p-3 rounded-xl border border-white/5 bg-black/10 relative overflow-hidden">
                           <div className="flex justify-between items-start w-full mb-2">
-                            <span className="text-sm font-medium text-white/70">{label}</span>
+                            <div className="flex items-center gap-2">
+                              <Image src={logoSrc} alt={label} width={16} height={16} className="w-4 h-4 rounded object-cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                              <span className="text-sm font-medium text-white/70">{label}</span>
+                            </div>
                             <div className="flex items-center gap-1.5">
                               {available ? (
                                 <Badge variant="outline" className="text-[9px] border-emerald-500/30 text-emerald-400 bg-emerald-500/10">Detected</Badge>
@@ -188,13 +193,42 @@ export default function TradeRoomWrapper() {
   );
 }
 
+export default function TradeRoomWrapper() {
+  return (
+    <Suspense>
+      <TradeRoomWrapperInner />
+    </Suspense>
+  );
+}
+
 function TradeRoom({ walletAddress }: { walletAddress: string }) {
   const { connected, isOfflineMode, roomData, logs, countdown, intentHash, error, actions } = useTradeRoom(walletAddress);
   const [joinId, setJoinId] = useState('');
   const [chatMsg, setChatMsg] = useState('');
+  const [linkCopied, setLinkCopied] = useState(false);
   const { account } = useWalletStore();
   const [activeTab, setActiveTab] = useState<'setup'|'assets'|'chat'|'logs'|'transfer'>('setup');
   const [forceOfflineView, setForceOfflineView] = useState(false);
+  const searchParams = useSearchParams();
+
+  // Auto-join room from URL ?room=<id> when connected
+  useEffect(() => {
+    const roomParam = searchParams?.get('room');
+    if (roomParam && connected && !roomData) {
+      actions.joinRoom(roomParam);
+    }
+  }, [connected, searchParams, roomData, actions]);
+
+  const inviteLink = roomData?.id
+    ? `${typeof window !== 'undefined' ? window.location.origin : 'https://tradewindow.xyz'}/trade?room=${roomData.id}`
+    : null;
+
+  const copyInviteLink = () => {
+    if (!inviteLink) return;
+    navigator.clipboard.writeText(inviteLink);
+    setLinkCopied(true);
+    setTimeout(() => setLinkCopied(false), 2000);
+  };
 
   const isPartyA = roomData?.partyA === walletAddress;
   const isPartyB = roomData?.partyB === walletAddress;
@@ -307,17 +341,37 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
             <p className="text-white/50 text-sm max-w-sm">Use the Setup panel on the right to create a new room or join an existing one using a Room ID.</p>
           </div>
         ) : roomData.state === 'lobby' ? (
-          <div className="flex-1 flex flex-col items-center justify-center text-center">
+          <div className="flex-1 flex flex-col items-center justify-center text-center px-4">
             <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-6 animate-pulse">
               <RefreshCw className="text-emerald-400 animate-spin" size={24} style={{ animationDuration: '3s' }} />
             </div>
-            <h2 className="text-2xl font-medium text-white mb-3">Waiting for counterparty...</h2>
-            <p className="text-white/50 text-sm mb-6 max-w-md">
-              Your room is ready. Open a second browser window, select the other User identity, and join using this Room ID:
+            <h2 className="text-2xl font-medium text-white mb-3">Waiting for counterparty…</h2>
+            <p className="text-white/50 text-sm mb-8 max-w-md">
+              Room created. Share this invite link with your trading partner — they open it and land directly in this room.
             </p>
-            <div className="flex items-center gap-3 bg-[#0a0a0a] border border-white/10 rounded-xl p-4">
-              <span className="text-xl font-mono text-emerald-400">{roomData.id}</span>
-              <button onClick={copyRoomId} className="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-sm text-white/80 transition-colors">Copy ID</button>
+
+            {/* Invite link — primary CTA */}
+            <div className="w-full max-w-lg bg-[#0a0a0a] border border-emerald-500/20 rounded-2xl p-5 mb-4">
+              <div className="flex items-center gap-2 mb-3">
+                <LinkIcon size={14} className="text-emerald-400 shrink-0" />
+                <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">Invite Link</span>
+              </div>
+              <div className="flex items-center gap-3 bg-black/50 border border-white/5 rounded-xl px-4 py-3 mb-3">
+                <span className="text-sm font-mono text-white/70 flex-1 truncate">{inviteLink}</span>
+              </div>
+              <button
+                onClick={copyInviteLink}
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-sm transition-all"
+              >
+                {linkCopied ? <><CheckCircle2 size={16} /> Copied!</> : <><Copy size={16} /> Copy Invite Link</>}
+              </button>
+            </div>
+
+            {/* Room ID fallback */}
+            <div className="flex items-center gap-2 text-xs text-white/30">
+              <span>Room ID:</span>
+              <span className="font-mono text-white/50">{roomData.id}</span>
+              <button onClick={copyRoomId} className="text-white/30 hover:text-white/60 transition-colors" title="Copy Room ID"><Copy size={11}/></button>
             </div>
           </div>
         ) : (
@@ -474,8 +528,20 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
             <div className="flex flex-col gap-6">
               <div className="bg-[#111] border border-white/5 rounded-xl p-4">
                 <h3 className="text-sm font-medium text-white mb-2">Create New Trade</h3>
-                <p className="text-xs text-white/40 mb-4 leading-relaxed">Start a new P2P exchange room. You will get a Room ID to share with your counterparty.</p>
+                <p className="text-xs text-white/40 mb-4 leading-relaxed">Start a new P2P exchange room. You&apos;ll get a shareable invite link to send your counterparty.</p>
                 <Button onClick={actions.createRoom} disabled={!!roomData} className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-semibold disabled:opacity-50">Create Room</Button>
+                {inviteLink && (
+                  <div className="mt-3 space-y-2">
+                    <div className="text-[10px] text-emerald-400 font-semibold uppercase tracking-wider flex items-center gap-1"><LinkIcon size={10}/> Invite Link</div>
+                    <div className="bg-black/50 border border-white/5 rounded-lg px-3 py-2 font-mono text-[10px] text-white/50 truncate">{inviteLink}</div>
+                    <button
+                      onClick={copyInviteLink}
+                      className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-xs font-semibold border border-emerald-500/20 transition-colors"
+                    >
+                      {linkCopied ? <><CheckCircle2 size={12}/> Copied!</> : <><Copy size={12}/> Copy Link</>}
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center gap-4">
