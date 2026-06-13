@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, Send, Layers, ImageIcon, Wallet } from "lucide-react";
-import { Logo } from "@/components/layout/Logo";
+import { ChevronLeft, LayoutGrid, Send, Layers, ImageIcon, Wallet } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createListing } from "@/lib/board/api";
 import { getAllAssets, getAsset } from "@/lib/assets/asset-registry";
@@ -11,6 +10,29 @@ import { fetchBalances, formatBaseAmount, parseHumanAmount } from "@/lib/wallet/
 import { WalletBalance, WalletNft } from "@/lib/wallet/types";
 import { useWalletStore } from "@/lib/wallet/wallet-store";
 import { NftGrid } from "@/components/nfts/NftGrid";
+
+const inputCls =
+  "w-full bg-[#0a0a0a] border border-[#1c1c1c] rounded-lg px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-[#3ECF8E]/40 transition-colors text-sm";
+
+const selectCls =
+  "w-full bg-[#0a0a0a] border border-[#1c1c1c] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#3ECF8E]/40 transition-colors appearance-none text-sm";
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-3 mb-5">
+      <p className="text-[10px] font-mono text-white/30 uppercase tracking-[0.15em] shrink-0">
+        {children}
+      </p>
+      <div className="flex-1 h-px bg-[#1c1c1c]" />
+    </div>
+  );
+}
+
+function FieldLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <label className="block text-xs text-white/40 font-medium mb-1.5">{children}</label>
+  );
+}
 
 export default function NewListingPage() {
   const router = useRouter();
@@ -27,8 +49,6 @@ export default function NewListingPage() {
   const [balanceFetching, setBalanceFetching] = useState(false);
   const [amountError, setAmountError] = useState<string | null>(null);
 
-  // Fetch balances when offer denom + connected account changes.
-  // setState calls are wrapped in microtasks to satisfy react-hooks/set-state-in-effect.
   useEffect(() => {
     const asset = selectedOfferDenom ? getAsset(selectedOfferDenom) : null;
     if (!selectedOfferDenom || !account?.address || !asset?.chainId) {
@@ -65,7 +85,6 @@ export default function NewListingPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Final amount validation before submit
     const err = validateAmount(offerAmountStr);
     if (err) { setAmountError(err); return; }
 
@@ -75,7 +94,6 @@ export default function NewListingPage() {
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
 
-    // Use offerAmountStr as amountRange when the token tab is active
     const resolvedAmountRange =
       offerTab === "token" && offerAmountStr.trim()
         ? `${offerAmountStr.trim()} ${selectedAsset?.symbol ?? ""}`.trim()
@@ -105,54 +123,73 @@ export default function NewListingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-white selection:bg-emerald-500/30">
-      <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-black/50 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/board" className="flex items-center gap-2 group">
-            <ArrowLeft className="w-4 h-4 text-white/40 group-hover:-translate-x-1 transition-transform" />
-            <span className="font-medium text-white/60 group-hover:text-white transition-colors">
-              Back to Board
-            </span>
-          </Link>
-          <Logo />
-          <div className="w-24" />
+    <div className="min-h-screen bg-[#0a0a0a] text-white selection:bg-[#3ECF8E]/20">
+
+      {/* Navbar */}
+      <nav className="fixed top-0 w-full z-50 border-b border-[#1c1c1c] bg-[#0a0a0a]/80 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Link href="/board" className="text-white/30 hover:text-white/60 transition-colors p-1">
+              <ChevronLeft size={16} />
+            </Link>
+            <div className="w-px h-4 bg-[#1c1c1c]" />
+            <Link href="/board" className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-md bg-[#3ECF8E]/10 border border-[#3ECF8E]/20 flex items-center justify-center shrink-0">
+                <LayoutGrid size={12} className="text-[#3ECF8E]" />
+              </div>
+              <span className="font-semibold text-sm text-white/80">OTC Board</span>
+            </Link>
+            <span className="text-white/15 text-sm">/</span>
+            <span className="text-sm text-white/40">Post Listing</span>
+          </div>
         </div>
       </nav>
 
-      <main className="pt-32 pb-24 px-6 relative max-w-3xl mx-auto">
-        <div className="text-center space-y-4 mb-10">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-            Post an OTC Deal
-          </h1>
-          <p className="text-xl text-white/40 max-w-xl mx-auto">
-            Publish your deal intent to the public board.
-          </p>
-        </div>
+      <main className="pt-20 pb-24 px-6">
+        <div className="max-w-2xl mx-auto pt-10">
 
-        {error && (
-          <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 p-4 rounded-xl mb-6 text-sm text-center">
-            {error}
+          {/* Header */}
+          <div className="mb-8">
+            <p className="text-[10px] font-mono text-[#3ECF8E] uppercase tracking-[0.15em] mb-3">
+              OTC Board
+            </p>
+            <h1 className="text-3xl font-bold tracking-tight text-white mb-2">
+              Post an OTC Deal
+            </h1>
+            <p className="text-sm text-white/40 leading-relaxed">
+              Publish your deal intent to the public board. Your private email will not be shown publicly.
+            </p>
           </div>
-        )}
 
-        <div className="p-1 rounded-3xl bg-gradient-to-b from-white/10 to-transparent">
-          <div className="bg-[#111] rounded-[22px] p-6 md:p-10 border border-white/5 shadow-2xl">
+          {error && (
+            <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 p-4 rounded-lg mb-5 text-sm">
+              {error}
+            </div>
+          )}
+
+          {/* Form Card */}
+          <div className="bg-[#0c0c0c] border border-[#1c1c1c] rounded-xl p-6 md:p-8">
             <form onSubmit={handleSubmit} className="space-y-8">
-              
-              <div className="space-y-6">
-                <h2 className="text-xl font-semibold text-white/90 pb-2 border-b border-white/10">
-                  Deal Intent
-                </h2>
-                
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-white/60">Listing Title *</label>
-                  <input required name="title" type="text" placeholder="e.g. Looking to swap large volume of ATONE" className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:ring-2 focus:ring-emerald-500/50 outline-none" />
+
+              {/* Deal Intent */}
+              <div>
+                <SectionLabel>Deal Intent</SectionLabel>
+
+                <div className="mb-4">
+                  <FieldLabel>Listing Title *</FieldLabel>
+                  <input
+                    required
+                    name="title"
+                    type="text"
+                    placeholder="e.g. Looking to swap large volume of ATONE"
+                    className={inputCls}
+                  />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-white/60">Request Type *</label>
-                    <select required name="requestType" defaultValue="" className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-emerald-500/50 outline-none appearance-none">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <FieldLabel>Request Type *</FieldLabel>
+                    <select required name="requestType" defaultValue="" className={selectCls}>
                       <option value="" disabled hidden>Select type...</option>
                       <option value="buy">Buy</option>
                       <option value="sell">Sell</option>
@@ -162,9 +199,9 @@ export default function NewListingPage() {
                       <option value="other">Other</option>
                     </select>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-white/60">Ecosystem *</label>
-                    <select required name="chain" defaultValue="" className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-emerald-500/50 outline-none appearance-none">
+                  <div>
+                    <FieldLabel>Ecosystem *</FieldLabel>
+                    <select required name="chain" defaultValue="" className={selectCls}>
                       <option value="" disabled hidden>Select chain...</option>
                       <option value="gno">Gno.land</option>
                       <option value="atomone">AtomOne</option>
@@ -175,26 +212,29 @@ export default function NewListingPage() {
                 </div>
 
                 {/* Asset you offer — token or NFT tab */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium text-white/60">Asset you offer *</label>
-                    <div className="flex rounded-lg overflow-hidden border border-white/10">
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <FieldLabel>Asset you offer *</FieldLabel>
+                    <div className="flex rounded-lg overflow-hidden border border-[#2b2b2b]">
                       <button
                         type="button"
                         onClick={() => { setOfferTab("token"); setSelectedNft(null); }}
                         className={`flex items-center gap-1.5 px-3 py-1 text-xs font-medium transition-colors
-                          ${offerTab === "token" ? "bg-white/10 text-white" : "text-white/40 hover:text-white/60"}`}
+                          ${offerTab === "token"
+                            ? "bg-white/8 text-white"
+                            : "text-white/30 hover:text-white/50"}`}
                       >
                         <Layers className="w-3 h-3" /> Token
                       </button>
                       <button
                         type="button"
                         onClick={() => setOfferTab("nft")}
-                        className={`flex items-center gap-1.5 px-3 py-1 text-xs font-medium transition-colors border-l border-white/10
-                          ${offerTab === "nft" ? "bg-white/10 text-white" : "text-white/40 hover:text-white/60"}`}
+                        className={`flex items-center gap-1.5 px-3 py-1 text-xs font-medium transition-colors border-l border-[#2b2b2b]
+                          ${offerTab === "nft"
+                            ? "bg-white/8 text-white"
+                            : "text-white/30 hover:text-white/50"}`}
                       >
                         <ImageIcon className="w-3 h-3" /> NFT
-                        <span className="text-[9px] text-pink-400/80 ml-0.5">Preview</span>
                       </button>
                     </div>
                   </div>
@@ -210,7 +250,7 @@ export default function NewListingPage() {
                           setOfferAmountStr("");
                           setAmountError(null);
                         }}
-                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-emerald-500/50 outline-none appearance-none"
+                        className={selectCls}
                       >
                         <option value="" disabled hidden>Select asset...</option>
                         {getAllAssets().map(a => (
@@ -220,20 +260,19 @@ export default function NewListingPage() {
                         ))}
                       </select>
 
-                      {/* Amount + balance row — shown once an asset is picked */}
                       {selectedOfferDenom && (
                         <div className="space-y-1.5">
                           <div className="flex items-center justify-between text-xs">
-                            <span className="text-white/50">Offer Amount</span>
-                            <span className="text-white/40 flex items-center gap-1">
+                            <span className="text-white/40">Offer Amount</span>
+                            <span className="text-white/30 flex items-center gap-1">
                               <Wallet className="w-3 h-3" />
                               {!account
-                                ? <span className="text-white/30">Connect wallet to see balance</span>
+                                ? <span>Connect wallet to see balance</span>
                                 : balanceFetching
-                                ? <span className="text-white/30">Fetching balance…</span>
+                                ? <span>Fetching...</span>
                                 : balanceHuman !== null
-                                ? <span>Balance: <span className="text-emerald-400 font-mono">{balanceHuman} {selectedAsset?.symbol}</span></span>
-                                : <span className="text-white/30">Balance unavailable</span>
+                                ? <span>Balance: <span className="text-[#3ECF8E] font-mono">{balanceHuman} {selectedAsset?.symbol}</span></span>
+                                : <span>Balance unavailable</span>
                               }
                             </span>
                           </div>
@@ -247,10 +286,10 @@ export default function NewListingPage() {
                                 setOfferAmountStr(e.target.value);
                                 setAmountError(validateAmount(e.target.value));
                               }}
-                              className={`flex-1 bg-black/50 border rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:ring-2 outline-none font-mono
+                              className={`flex-1 bg-[#0a0a0a] border rounded-lg px-4 py-3 text-white placeholder:text-white/20 focus:outline-none transition-colors font-mono text-sm
                                 ${amountError
-                                  ? "border-rose-500/40 focus:ring-rose-500/30"
-                                  : "border-white/10 focus:ring-emerald-500/50"
+                                  ? "border-rose-500/40 focus:border-rose-500/60"
+                                  : "border-[#1c1c1c] focus:border-[#3ECF8E]/40"
                                 }`}
                             />
                             {balanceHuman !== null && (
@@ -260,7 +299,7 @@ export default function NewListingPage() {
                                   setOfferAmountStr(balanceHuman);
                                   setAmountError(validateAmount(balanceHuman));
                                 }}
-                                className="px-4 py-3 rounded-xl border border-emerald-500/30 text-emerald-400 text-xs font-semibold hover:bg-emerald-500/10 transition-colors whitespace-nowrap"
+                                className="px-4 py-3 rounded-lg border border-[#3ECF8E]/25 text-[#3ECF8E] text-xs font-semibold hover:bg-[#3ECF8E]/8 transition-colors whitespace-nowrap"
                               >
                                 Max
                               </button>
@@ -270,7 +309,7 @@ export default function NewListingPage() {
                             <p className="text-xs text-rose-400">{amountError}</p>
                           )}
                           {!amountError && offerAmountStr && (
-                            <p className="text-xs text-white/30 font-mono">
+                            <p className="text-xs text-white/20 font-mono">
                               Technical denom: {selectedOfferDenom} · {selectedAsset?.chainId}
                             </p>
                           )}
@@ -279,7 +318,6 @@ export default function NewListingPage() {
                     </div>
                   ) : (
                     <div className="space-y-3">
-                      {/* Hidden fields for NFT data */}
                       <input type="hidden" name="offerAsset" value={selectedNft ? `nft:${selectedNft.collectionAddr}:${selectedNft.tokenId}` : ""} />
                       <input type="hidden" name="offerAssetType" value="nft" />
                       <input type="hidden" name="offerAssetChain" value="stargaze-1" />
@@ -287,7 +325,7 @@ export default function NewListingPage() {
                       <input type="hidden" name="offerAssetTokenId" value={selectedNft?.tokenId ?? ""} />
 
                       {selectedNft && (
-                        <div className="flex items-center gap-3 p-3 rounded-xl border border-emerald-500/20 bg-emerald-500/5 text-sm">
+                        <div className="flex items-center gap-3 p-3 rounded-lg border border-[#3ECF8E]/20 bg-[#3ECF8E]/5 text-sm">
                           {selectedNft.imageUrl && (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img src={selectedNft.imageUrl} alt={selectedNft.name ?? ""} className="w-10 h-10 rounded-lg object-cover" />
@@ -307,55 +345,62 @@ export default function NewListingPage() {
                           onSelectNft={setSelectedNft}
                         />
                       ) : (
-                        <div className="py-6 text-center text-white/40 text-sm border border-white/5 rounded-xl bg-white/[0.02]">
-                          Connect a Cosmos wallet with a Stargaze address (<code className="text-white/30">stars1…</code>) to browse NFTs.
+                        <div className="py-6 text-center text-white/30 text-sm border border-[#1c1c1c] rounded-lg bg-[#0a0a0a]">
+                          Connect a Cosmos wallet with a Stargaze address (<code className="text-white/20">stars1…</code>) to browse NFTs.
                         </div>
                       )}
                     </div>
                   )}
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-white/60">Asset you want *</label>
-                  <select required name="wantAsset" defaultValue="" className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-emerald-500/50 outline-none appearance-none">
+                <div className="mb-4">
+                  <FieldLabel>Asset you want *</FieldLabel>
+                  <select required name="wantAsset" defaultValue="" className={selectCls}>
                     <option value="" disabled hidden>Select asset...</option>
                     {getAllAssets().map(a => (
-                      <option key={a.technicalDenom} value={a.technicalDenom}>{a.symbol} {a.isDemo ? '(Demo)' : ''}</option>
+                      <option key={a.technicalDenom} value={a.technicalDenom}>{a.symbol}{a.isDemo ? ' (Demo)' : ''}</option>
                     ))}
                   </select>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-white/60">Public Message</label>
-                  <textarea name="publicMessage" rows={3} placeholder="Add any public details about the trade..." className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:ring-2 focus:ring-emerald-500/50 outline-none resize-none" />
+                <div>
+                  <FieldLabel>Public Message</FieldLabel>
+                  <textarea
+                    name="publicMessage"
+                    rows={3}
+                    placeholder="Add any public details about the trade..."
+                    className={`${inputCls} resize-none`}
+                  />
                 </div>
               </div>
 
-              <div className="space-y-6">
-                <h2 className="text-xl font-semibold text-white/90 pb-2 border-b border-white/10">
-                  Contact Information
-                </h2>
-                
-                <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-4 text-xs text-white/60 leading-relaxed">
-                  Only your <strong className="text-emerald-400 font-medium">public contact handle</strong> may be shown on the board. Your <strong className="text-emerald-400 font-medium">private email</strong> is stored securely for manual follow-up and will not be displayed publicly.
+              {/* Contact Information */}
+              <div>
+                <SectionLabel>Contact Information</SectionLabel>
+
+                <div className="bg-[#0a0a0a] border border-[#1c1c1c] rounded-lg p-4 mb-4">
+                  <p className="text-xs text-white/40 leading-relaxed">
+                    Only your <span className="text-[#3ECF8E]">public contact handle</span> may be shown on the board.
+                    Your <span className="text-[#3ECF8E]">private email</span> is stored securely and will not be displayed publicly.
+                  </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-white/60">Private Email *</label>
-                    <input required name="privateEmail" type="email" placeholder="Hidden from public" className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:ring-2 focus:ring-emerald-500/50 outline-none" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <FieldLabel>Private Email *</FieldLabel>
+                    <input required name="privateEmail" type="email" placeholder="Hidden from public" className={inputCls} />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-white/60">Private Name / Nickname</label>
-                    <input name="privateName" type="text" placeholder="Hidden from public" className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:ring-2 focus:ring-emerald-500/50 outline-none" />
+                  <div>
+                    <FieldLabel>Private Name / Nickname</FieldLabel>
+                    <input name="privateName" type="text" placeholder="Hidden from public" className={inputCls} />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-white/60">Public Contact Handle</label>
-                    <input name="publicContact" type="text" placeholder="e.g. @username" className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:ring-2 focus:ring-emerald-500/50 outline-none" />
+                  <div>
+                    <FieldLabel>Public Contact Handle</FieldLabel>
+                    <input name="publicContact" type="text" placeholder="e.g. @username" className={inputCls} />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-white/60">Public Contact Platform</label>
-                    <select name="contactMethod" defaultValue="" className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-emerald-500/50 outline-none appearance-none">
+                  <div>
+                    <FieldLabel>Public Contact Platform</FieldLabel>
+                    <select name="contactMethod" defaultValue="" className={selectCls}>
                       <option value="" disabled hidden>Select platform...</option>
                       <option value="telegram">Telegram</option>
                       <option value="discord">Discord</option>
@@ -366,18 +411,30 @@ export default function NewListingPage() {
                 </div>
               </div>
 
-              <div className="bg-white/[0.02] border border-white/5 rounded-xl p-5 space-y-4">
+              {/* Consent */}
+              <div className="bg-[#0a0a0a] border border-[#1c1c1c] rounded-lg p-4">
                 <div className="flex items-start gap-3">
-                  <input required name="consentAccepted" type="checkbox" className="mt-1 w-5 h-5 rounded cursor-pointer shrink-0 accent-[#3ECF8E]" />
-                  <div className="text-sm text-white/40 leading-relaxed">
-                    I understand that this is a public OTC listing. Trade Window does not provide custody, financial advice, guaranteed execution or real settlement.
-                  </div>
+                  <input
+                    required
+                    name="consentAccepted"
+                    type="checkbox"
+                    className="mt-0.5 w-4 h-4 shrink-0 cursor-pointer accent-[#3ECF8E]"
+                  />
+                  <p className="text-xs text-white/40 leading-relaxed">
+                    I understand that this is a public OTC listing. Trade Window does not provide custody,
+                    financial advice, guaranteed execution or real settlement.
+                  </p>
                 </div>
               </div>
 
-              <button type="submit" disabled={isSubmitting} className="w-full h-14 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold rounded-xl flex items-center justify-center gap-2 transition-all disabled:opacity-50 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
-                {isSubmitting ? "Posting..." : <><Send size={18} /> Post to Board</>}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full h-12 bg-[#3ECF8E] hover:bg-[#4ADBA0] text-black font-semibold rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              >
+                {isSubmitting ? "Posting..." : <><Send size={16} /> Post to Board</>}
               </button>
+
             </form>
           </div>
         </div>
