@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { Header } from '@/components/layout/header';
 
 import { HeroSection } from '../components/landing/hero-section';
@@ -9,6 +10,7 @@ import { ProductPreviewSection } from '../components/landing/product-preview-sec
 import { EcosystemRoadmapSection } from '../components/landing/ecosystem-roadmap-section';
 import { OtcBoardSection } from '../components/landing/otc-board-section';
 import { FinalCtaSection } from '../components/landing/final-cta-section';
+import { DonationBanner } from '../components/support/donation-banner';
 
 export default function Home() {
   return (
@@ -25,6 +27,7 @@ export default function Home() {
         <ProductPreviewSection />
         <EcosystemRoadmapSection />
         <FinalCtaSection />
+        <DonationBanner />
       </main>
 
       {/* Footer */}
@@ -42,9 +45,11 @@ export default function Home() {
           <div className="flex items-center justify-center gap-4 mt-6 text-[11px] text-white/40 font-mono">
             <a href="https://github.com/dintsen/trade-window" target="_blank" rel="noopener noreferrer" className="hover:text-white/70 transition-colors">GitHub</a>
             <span className="text-white/10">|</span>
-            <a href="/whitepaper" className="hover:text-white/70 transition-colors">Whitepaper</a>
+            <Link href="/whitepaper" className="hover:text-white/70 transition-colors">Whitepaper</Link>
             <span className="text-white/10">|</span>
-            <a href="/history" className="hover:text-white/70 transition-colors">My Trades</a>
+            <Link href="/history" className="hover:text-white/70 transition-colors">My Trades</Link>
+            <span className="text-white/10">|</span>
+            <Link href="/#support" className="hover:text-emerald-400/80 transition-colors">Support us</Link>
           </div>
         </div>
       </footer>
