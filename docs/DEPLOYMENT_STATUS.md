@@ -39,7 +39,7 @@
 - Service: `trade-window-production`
 - URL: `https://trade-window-production.up.railway.app`
 - Language: Go
-- Storage: **Postgres (Supabase)** ✅
+- Storage: **Postgres (Supabase)** ✅ — confirmed active 2026-06-13
 
 **Environment variables (names only — no values):**
 ```
@@ -64,16 +64,18 @@ PORT
 
 ## Storage Status
 
-⚠️ **Production demo currently uses JSONL fallback until Supabase credentials are rotated.**
+✅ **Postgres (Supabase) confirmed active as of 2026-06-13.**
 
 | Driver | Status | Notes |
 |--------|--------|-------|
-| Postgres/Supabase | ⚠️ Unverified | `STORAGE_DRIVER=postgres` set in Railway env, but DATABASE_URL validity unconfirmed — credentials may need rotation |
-| JSONL | ⚠️ Possible fallback | If DATABASE_URL is invalid, Go backend falls back to JSONL at startup |
+| Postgres/Supabase | ✅ Active | `/health` returns `"storage_driver":"postgres"` — confirmed 2026-06-13 |
+| JSONL | — | Fallback only — not in use |
 
-**How to verify:** `/health` will return `"storage_driver":"postgres"` once the next Railway deploy goes live (commit `70b668a` adds this field). Until then, storage driver cannot be confirmed externally.
-
-**To fix:** Log into Railway → trade-window-production → Variables → confirm `DATABASE_URL` is a valid Supabase connection string → trigger redeploy.
+**Verification performed 2026-06-13:**
+- `GET /health` → `{"status":"ok","service":"trade-window-backend","storage_driver":"postgres"}`
+- `POST /api/board/listings` → `201` with listing ID `1df4b351-064f-48e3-b056-f3159d5f51b3`
+- `GET /api/board/listings` → listing present in response
+- Private fields (`privateEmail`, `privateName`) confirmed absent from public GET response (`ToPublic()` working)
 
 ---
 

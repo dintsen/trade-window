@@ -76,7 +76,7 @@ Backend (Railway): `https://trade-window-production.up.railway.app`
 | WebSocket room state machine | ✅ Live |
 | Auth nonce scaffold (`POST /api/auth/nonce`) | ✅ Scaffold |
 | Auth verify (`POST /api/auth/verify`) | ⚠️ 501 — ADR-036 pending |
-| Postgres storage | ⚠️ Configured — credentials need verification |
+| Postgres storage | ✅ Confirmed active — verified 2026-06-13 |
 | JSONL fallback | ✅ Active if Postgres unavailable |
 
 ### Wallet Support
@@ -189,7 +189,7 @@ The following limitations exist at proposal time and are not hidden:
 2. **No backend signing** — The backend never holds or uses private keys
 3. **No custody** — Assets are never locked in a smart contract during coordination
 4. **Wallet auth scaffolded but not complete** — `POST /api/auth/verify` returns 501 (ADR-036 planned)
-5. **Postgres unconfirmed** — Production demo may use JSONL fallback if DATABASE_URL is invalid; Railway redeploy needed to confirm
+5. **Postgres confirmed active** — `/health` returns `"storage_driver":"postgres"`; persistence verified 2026-06-13 (listing survived round-trip; private fields stripped via `ToPublic()`)
 6. **Gno.land receipt realm** — Scaffold documentation exists; on-chain deployment is a grant milestone
 7. **IBC 2.0 / Eureka** — Research direction only; no implementation claimed
 8. **Stargaze NFTs** — Discovery via GraphQL API works; selection in trade room requires real wallet connection
