@@ -273,6 +273,7 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
   const { account } = useWalletStore();
   const [activeTab, setActiveTab] = useState<'setup'|'assets'|'chat'|'logs'|'transfer'>('setup');
   const [forceOfflineView, setForceOfflineView] = useState(false);
+  const [assetQuantities, setAssetQuantities] = useState<Record<string, string>>({});
   const searchParams = useSearchParams();
 
   // Auto-join room from URL ?room=<id> when connected
@@ -307,6 +308,20 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
     if (roomData?.id) {
       navigator.clipboard.writeText(roomData.id);
     }
+  };
+
+  const ASSET_LOGOS: Record<string, string> = {
+    ATONE: '/assets/logos/atomone.svg',
+    GNOT: '/assets/logos/gno.svg',
+    PHOTON: '/assets/logos/photon.svg',
+    ATOM: '/assets/logos/cosmos.svg',
+    USDC: '/assets/logos/usdc.svg',
+  };
+
+  const getAssetLogo = (denom: string): string | null => ASSET_LOGOS[denom.toUpperCase()] ?? null;
+
+  const shareViaTelegram = (link: string) => {
+    window.open(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('Join my Trade Window room')}`, '_blank');
   };
 
   const getStatusDisplay = () => {
@@ -423,12 +438,23 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
               <div className="flex items-center gap-3 bg-black/50 border border-white/5 rounded-xl px-4 py-3 mb-3">
                 <span className="text-sm font-mono text-white/70 flex-1 truncate">{inviteLink}</span>
               </div>
-              <button
-                onClick={copyInviteLink}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-sm transition-all"
-              >
-                {linkCopied ? <><CheckCircle2 size={16} /> Copied!</> : <><Copy size={16} /> Copy Invite Link</>}
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={copyInviteLink}
+                  className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-sm transition-all"
+                >
+                  {linkCopied ? <><CheckCircle2 size={16} /> Copied!</> : <><Copy size={16} /> Copy Link</>}
+                </button>
+                <button
+                  onClick={() => inviteLink && shareViaTelegram(inviteLink)}
+                  title="Share via Telegram"
+                  className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#229ED9]/10 hover:bg-[#229ED9]/20 border border-[#229ED9]/30 text-[#229ED9] font-semibold text-sm transition-all"
+                >
+                  {/* Telegram paper-plane */}
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                  <span className="hidden sm:inline">Telegram</span>
+                </button>
+              </div>
             </div>
 
             {/* Room ID fallback */}
@@ -596,14 +622,24 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
                 <Button onClick={actions.createRoom} disabled={!!roomData} className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-semibold disabled:opacity-50">Create Room</Button>
                 {inviteLink && (
                   <div className="mt-3 space-y-2">
-                    <div className="text-[10px] text-emerald-400 font-semibold uppercase tracking-wider flex items-center gap-1"><LinkIcon size={10}/> Invite Link</div>
+                    <div className="text-[10px] text-emerald-400 font-semibold uppercase tracking-wider flex items-center gap-1"><LinkIcon size={10}/> Share Invite</div>
                     <div className="bg-black/50 border border-white/5 rounded-lg px-3 py-2 font-mono text-[10px] text-white/50 truncate">{inviteLink}</div>
-                    <button
-                      onClick={copyInviteLink}
-                      className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-xs font-semibold border border-emerald-500/20 transition-colors"
-                    >
-                      {linkCopied ? <><CheckCircle2 size={12}/> Copied!</> : <><Copy size={12}/> Copy Link</>}
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={copyInviteLink}
+                        className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-xs font-semibold border border-emerald-500/20 transition-colors"
+                      >
+                        {linkCopied ? <><CheckCircle2 size={12}/> Copied!</> : <><Copy size={12}/> Copy</>}
+                      </button>
+                      <button
+                        onClick={() => shareViaTelegram(inviteLink)}
+                        title="Share via Telegram"
+                        className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#229ED9]/10 hover:bg-[#229ED9]/20 border border-[#229ED9]/30 text-[#229ED9] text-xs font-semibold transition-colors"
+                      >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                        TG
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -635,47 +671,69 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
           {activeTab === 'assets' && (
             <div className="flex flex-col gap-4">
               <div className="text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 p-3 rounded-lg mb-2">
-                <strong>Demo Rule:</strong> Planned ecosystem assets and balances are mocked for demo purposes. Technical denom-first display ensures safety against spoofed names.
+                <strong>Demo Rule:</strong> Assets and balances are mocked. Set the quantity you want to offer, then click Add. Technical denom is always shown for safety.
               </div>
-              
+
               {DEMO_ASSETS.map((asset, i) => {
                 const isSuspicious = asset.verificationStatus === 'suspicious';
                 const isVerified = asset.verificationStatus === 'verified';
+                const logo = getAssetLogo(asset.displayDenom);
+                const qty = assetQuantities[asset.id] ?? '';
                 return (
                   <div key={i} className={`bg-[#0a0a0a] border rounded-xl p-4 flex flex-col gap-3 group relative overflow-hidden shadow-inner ${isSuspicious ? 'border-rose-500/30' : 'border-white/5'}`}>
                     {isSuspicious && <div className="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>}
                     <div className="flex justify-between items-start">
                       <div className="flex items-center gap-3 pl-1">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center border overflow-hidden relative p-1.5 ${isSuspicious ? 'bg-rose-500/10 border-rose-500/20' : 'bg-emerald-500/10 border-emerald-500/20'}`}>
-                          {asset.displayDenom === 'ATONE' && <Image src="/assets/logos/atomone.svg" alt="ATONE" width={24} height={24} className="object-contain drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]" />}
-                          {asset.displayDenom === 'GNOT' && <Image src="/assets/logos/gno.svg" alt="GNOT" width={24} height={24} className="object-contain" />}
-                          {asset.displayDenom === 'PHOTON' && <Image src="/assets/logos/photon.svg" alt="PHOTON" width={24} height={24} className="object-contain text-rose-400 drop-shadow-[0_0_8px_rgba(244,63,94,0.5)]" />}
-                          {!['ATONE', 'GNOT', 'PHOTON'].includes(asset.displayDenom) && (
-                            <span className="font-bold text-[10px]">{asset.displayDenom.slice(0,3)}</span>
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center border overflow-hidden relative p-1.5 shrink-0 ${isSuspicious ? 'bg-rose-500/10 border-rose-500/20' : 'bg-white/5 border-white/10'}`}>
+                          {logo ? (
+                            <Image src={logo} alt={asset.displayDenom} width={24} height={24} className="object-contain" />
+                          ) : (
+                            <span className="font-bold text-[10px] text-white/60">{asset.displayDenom.slice(0,3)}</span>
                           )}
                         </div>
                         <div className="flex flex-col">
-                          <div className="text-base font-bold text-white tracking-wide">{asset.amount}</div>
-                          <div className="text-[10px] text-white/40 font-mono">{asset.displayDenom}</div>
+                          <div className="text-base font-bold text-white tracking-wide">{asset.displayDenom}</div>
+                          <div className="text-[10px] text-white/40">{asset.sourceChain}</div>
                         </div>
                       </div>
                       <div className="flex flex-col items-end gap-1 mt-1">
-                        {isVerified && <Info size={14} className="text-white/20 hover:text-white/40 transition-colors cursor-help" />}
+                        {isVerified && <span className="text-[10px] text-emerald-400 flex items-center gap-1"><Info size={10} /> Verified</span>}
                         {isSuspicious && <div className="text-[10px] text-rose-400 flex items-center gap-1 font-medium"><ShieldAlert size={10} /> Suspicious</div>}
                       </div>
                     </div>
-                    
-                    <div className="bg-[#111] border border-white/5 rounded p-2 text-[9px] font-mono text-white/40 break-all mt-1">
+
+                    <div className="bg-[#111] border border-white/5 rounded p-2 text-[9px] font-mono text-white/40 break-all">
                       {asset.technicalDenom}
                     </div>
-                    
-                    <Button 
-                      onClick={() => actions.addOffer(asset)}
-                      disabled={!roomData || roomData.state !== 'active' || myLock}
+
+                    {/* Quantity input */}
+                    <div className="flex items-center gap-2">
+                      <div className="relative flex-1">
+                        <input
+                          type="number"
+                          min="0"
+                          step="any"
+                          placeholder={`Amount (demo: ${asset.amount})`}
+                          value={qty}
+                          onChange={e => setAssetQuantities(prev => ({ ...prev, [asset.id]: e.target.value }))}
+                          disabled={!roomData || roomData.state !== 'active' || !!myLock}
+                          className="w-full bg-black/60 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/20 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 focus:border-emerald-500/30 disabled:opacity-40 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        />
+                      </div>
+                      <span className="text-xs text-white/40 font-mono shrink-0">{asset.displayDenom}</span>
+                    </div>
+
+                    <Button
+                      onClick={() => {
+                        const finalQty = qty.trim() !== '' ? qty.trim() : asset.amount;
+                        actions.addOffer({ ...asset, amount: finalQty });
+                        setAssetQuantities(prev => ({ ...prev, [asset.id]: '' }));
+                      }}
+                      disabled={!roomData || roomData.state !== 'active' || !!myLock}
                       size="sm"
-                      className="w-full bg-white/5 hover:bg-white/10 text-white/80 border border-white/10 mt-1"
+                      className="w-full bg-white/5 hover:bg-white/10 text-white/80 border border-white/10"
                     >
-                      Add to Offer
+                      + Add to Offer
                     </Button>
                   </div>
                 );
@@ -749,35 +807,45 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
   );
 }
 
+const ASSET_LOGO_MAP: Record<string, string> = {
+  ATONE: '/assets/logos/atomone.svg',
+  GNOT: '/assets/logos/gno.svg',
+  PHOTON: '/assets/logos/photon.svg',
+  ATOM: '/assets/logos/cosmos.svg',
+  USDC: '/assets/logos/usdc.svg',
+};
+
 function AssetCard({ asset }: { asset: TradeAsset }) {
   const isSuspicious = asset.verificationStatus === 'suspicious';
   const isVerified = asset.verificationStatus === 'verified';
-  
+  const logo = ASSET_LOGO_MAP[asset.displayDenom.toUpperCase()] ?? null;
+
   return (
     <div className={`p-4 rounded-xl border bg-[#0a0a0a] flex flex-col gap-2 group relative overflow-hidden shadow-inner ${isSuspicious ? 'border-rose-500/30' : 'border-white/10'}`}>
       {isSuspicious && <div className="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>}
-      
+
       <div className="flex justify-between items-start">
         <div className="flex items-center gap-3 pl-1">
-          <div className={`w-10 h-10 rounded-full flex items-center justify-center border overflow-hidden relative p-1.5 ${isSuspicious ? 'bg-rose-500/10 border-rose-500/20' : 'bg-emerald-500/10 border-emerald-500/20'}`}>
-            {asset.displayDenom === 'ATONE' && <Image src="/assets/tokens/atone.svg" alt="ATONE" width={24} height={24} className="object-contain drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]" />}
-            {asset.displayDenom === 'GNOT' && <Image src="/assets/tokens/gnot.svg" alt="GNOT" width={24} height={24} className="object-contain" />}
-            {asset.displayDenom === 'PHOTON' && <Image src="/assets/tokens/photon.svg" alt="PHOTON" width={24} height={24} className="object-contain text-rose-400 drop-shadow-[0_0_8px_rgba(244,63,94,0.5)]" />}
-            {!['ATONE', 'GNOT', 'PHOTON'].includes(asset.displayDenom) && (
-              <span className="font-bold text-[10px]">{asset.displayDenom.slice(0,3)}</span>
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center border overflow-hidden relative p-1.5 shrink-0 ${isSuspicious ? 'bg-rose-500/10 border-rose-500/20' : 'bg-white/5 border-white/10'}`}>
+            {logo ? (
+              <Image src={logo} alt={asset.displayDenom} width={24} height={24} className="object-contain" />
+            ) : (
+              <span className="font-bold text-[10px] text-white/60">{asset.displayDenom.slice(0,3)}</span>
             )}
           </div>
           <div className="flex flex-col">
-            <div className="text-base font-bold text-white tracking-wide">{asset.amount}</div>
-            <div className="text-[10px] text-white/40 font-mono">{asset.displayDenom}</div>
+            <div className="text-base font-bold text-white tracking-wide">
+              {asset.amount} <span className="text-white/50 text-sm font-normal">{asset.displayDenom}</span>
+            </div>
+            <div className="text-[10px] text-white/30">{asset.sourceChain}</div>
           </div>
         </div>
         <div className="flex flex-col items-end gap-1 mt-1">
-          {isVerified && <Info size={14} className="text-white/20 hover:text-white/40 transition-colors cursor-help" />}
-          {isSuspicious && <div className="text-[10px] text-rose-400 flex items-center gap-1 font-medium"><ShieldAlert size={10} /> Suspicious denom</div>}
+          {isVerified && <span className="text-[10px] text-emerald-400 flex items-center gap-1"><Info size={10} /> Verified</span>}
+          {isSuspicious && <div className="text-[10px] text-rose-400 flex items-center gap-1 font-medium"><ShieldAlert size={10} /> Suspicious</div>}
         </div>
       </div>
-      
+
       <div className="bg-[#111] border border-white/5 rounded p-2 text-[9px] font-mono text-white/40 break-all mt-1">
         {asset.technicalDenom}
       </div>
