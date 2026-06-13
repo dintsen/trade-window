@@ -73,9 +73,14 @@ func main() {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
+		storageDriver := config.AppConfig.StorageDriver
+		if storageDriver == "" {
+			storageDriver = "jsonl"
+		}
 		json.NewEncoder(w).Encode(map[string]string{
-			"status":  "ok",
-			"service": "trade-window-backend",
+			"status":         "ok",
+			"service":        "trade-window-backend",
+			"storage_driver": storageDriver,
 		})
 	})
 
