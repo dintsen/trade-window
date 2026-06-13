@@ -8,7 +8,7 @@ import { FadeUp, Stagger, StaggerItem } from '@/components/ui/animate';
 
 const networks = [
   { icon: '/assets/logos/atomone.svg', iconAlt: 'AtomOne', title: 'AtomOne', description: 'Initial target network for secure token OTC swaps.', tag: 'Primary', tagColor: 'text-[#3ECF8E]' },
-  { icon: '/assets/logos/gno.svg', iconAlt: 'Gno.land', title: 'Gno.land', description: 'Exploratory target for deterministic smart contracts and RWA/NFT registry.', tag: 'Primary', tagColor: 'text-[#3ECF8E]' },
+  { icon: '/assets/logos/gnot-icon.svg', iconAlt: 'Gno.land', title: 'Gno.land', description: 'Exploratory target for deterministic smart contracts and RWA/NFT registry.', tag: 'Primary', tagColor: 'text-[#3ECF8E]' },
   { icon: null, iconFallback: <Rocket size={18} />, iconAlt: 'IBC 2.0', title: 'IBC 2.0 / Eureka', description: 'Research path for cross-chain packet routing and native asset visibility.', tag: 'Research', tagColor: 'text-white/40' },
   { icon: null, iconFallback: <Globe size={18} />, iconAlt: 'Other', title: 'Additional Networks', description: 'Future integrations evaluated based on safety standards.', tag: 'Roadmap', tagColor: 'text-white/40' },
 ];
