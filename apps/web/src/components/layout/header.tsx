@@ -4,8 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { ChevronDown, Menu, X, LayoutGrid, ArrowLeftRight, ShieldCheck, History, Lock } from 'lucide-react';
-import { Logo } from '@/components/layout/Logo';
+import { ChevronDown, Menu, X, LayoutGrid, ArrowLeftRight, History, Lock } from 'lucide-react';
 
 // Product definitions — icon, label, href, accent color
 const PRODUCTS = [

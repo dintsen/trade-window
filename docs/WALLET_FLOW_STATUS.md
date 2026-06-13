@@ -96,10 +96,37 @@ Balance reading is read-only. No signing. Returns `null` when unavailable; UI sh
 
 ---
 
+## Backend Auth Scaffold (MVP)
+
+**Status: Scaffold implemented — signature verification NOT yet active**
+
+Two endpoints added to `services/backend-go/cmd/server/main.go`:
+
+| Endpoint | Method | Status |
+|----------|--------|--------|
+| `/api/auth/nonce` | POST | ✅ Functional — issues 32-byte random nonce, 5-min expiry |
+| `/api/auth/verify` | POST | ⚠️ 501 Not Implemented — nonce consumed, signature check pending |
+
+Source: `services/backend-go/internal/auth/nonce.go`
+
+**Flow:**
+1. Client POSTs `{"wallet": "cosmos1..."}` → receives `{wallet, nonce, message}`
+2. Client signs `message` with wallet (UI not yet implemented)
+3. Client POSTs `{wallet, signature, pub_key}` → 501 until ADR-036 verification is wired
+
+**Notes:**
+- Nonces are in-memory only — not persisted across server restarts
+- Replay protection: nonce consumed on first verify attempt regardless of outcome
+- No private keys touch the server at any point
+
+---
+
 ## Roadmap
 
-1. Wallet signature auth for My Trades (nonce + sign)
-2. Adena signing for Gno.land receipt creation
-3. Cosmos wallet signing for AtomOne intent commitment
-4. IBC 2.0 / Eureka readiness research
-5. Hardware wallet support (Ledger via Keplr)
+1. ADR-036 / Amino signature verification in `/api/auth/verify`
+2. Frontend sign-in flow: prompt wallet sign → store session token
+3. Wallet signature auth for My Trades (replace `?wallet=` query)
+4. Adena signing for Gno.land receipt creation
+5. Cosmos wallet signing for AtomOne intent commitment
+6. IBC 2.0 / Eureka readiness research
+7. Hardware wallet support (Ledger via Keplr)

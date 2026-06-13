@@ -10,6 +10,7 @@ import (
 	"unicode"
 
 	"github.com/gorilla/websocket"
+	"github.com/tradewindow/backend-go/internal/auth"
 	"github.com/tradewindow/backend-go/internal/board"
 	"github.com/tradewindow/backend-go/internal/config"
 	"github.com/tradewindow/backend-go/internal/history"
@@ -137,6 +138,9 @@ func main() {
 			next(w, r)
 		}
 	}
+
+	http.HandleFunc("/api/auth/nonce", corsMiddleware(auth.HandleNonce))
+	http.HandleFunc("/api/auth/verify", corsMiddleware(auth.HandleVerify))
 
 	http.HandleFunc("/api/board/listings", corsMiddleware(boardHandlers.HandleListings))
 	http.HandleFunc("/api/board/listings/", corsMiddleware(boardHandlers.HandleListingByID))

@@ -56,6 +56,8 @@ PORT
 - `POST /api/board/listings` — ✅
 - `POST /api/requests` — ✅
 - `GET /api/me/trades?wallet=<address>` — ✅
+- `POST /api/auth/nonce` — ✅ (scaffold: issues 32-byte nonce, 5-min expiry)
+- `POST /api/auth/verify` — ⚠️ 501 (scaffold: ADR-036 verification pending)
 - `WebSocket /ws/room/:id` — ✅
 
 ---
