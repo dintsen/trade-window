@@ -136,22 +136,45 @@ export default function TradeRoomWrapper() {
                   })()}
                 </div>
 
-                {/* Later AtomOne */}
+                {/* Cosmos wallets — preview */}
                 <div>
-                  <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider mb-3 px-1 border-l-2 border-white/20 pl-2">Later AtomOne</h3>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="w-full flex flex-col items-start p-3 rounded-xl border border-white/5 bg-transparent opacity-60 relative overflow-hidden">
-                      <div className="flex justify-between items-start w-full">
-                        <span className="text-sm font-medium text-white/60">Keplr</span>
-                        <Badge variant="outline" className="text-[9px] border-white/10 text-white/40 bg-white/5">Planned later</Badge>
-                      </div>
-                    </div>
-                    <div className="w-full flex flex-col items-start p-3 rounded-xl border border-white/5 bg-transparent opacity-60 relative overflow-hidden">
-                      <div className="flex justify-between items-start w-full">
-                        <span className="text-sm font-medium text-white/60">Cosmostation</span>
-                        <Badge variant="outline" className="text-[9px] border-white/10 text-white/40 bg-white/5">Planned later</Badge>
-                      </div>
-                    </div>
+                  <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider mb-3 px-1 border-l-2 border-blue-500/50 pl-2">Cosmos / AtomOne</h3>
+                  <div className="flex flex-col gap-3">
+                    {(["keplr", "leap", "cosmostation"] as const).map((id) => {
+                      const adapter = adapters.find(a => a.id === id);
+                      if (!adapter) return null;
+                      const available = adapter.isAvailable();
+                      const isThis = activeProvider === id;
+                      const label = adapter.label;
+                      return (
+                        <div key={id} className="w-full flex flex-col items-start p-3 rounded-xl border border-white/5 bg-black/10 relative overflow-hidden">
+                          <div className="flex justify-between items-start w-full mb-2">
+                            <span className="text-sm font-medium text-white/70">{label}</span>
+                            <div className="flex items-center gap-1.5">
+                              {available ? (
+                                <Badge variant="outline" className="text-[9px] border-emerald-500/30 text-emerald-400 bg-emerald-500/10">Detected</Badge>
+                              ) : (
+                                <Badge variant="outline" className="text-[9px] border-white/10 text-white/40 bg-white/5">Not detected</Badge>
+                              )}
+                              <Badge variant="outline" className="text-[9px] border-blue-500/20 text-blue-400/70 bg-blue-500/5">Preview</Badge>
+                            </div>
+                          </div>
+                          <p className="text-[10px] text-white/40 mb-2 leading-relaxed">
+                            {available
+                              ? `${label} detected. Cosmos / ATOM / ATONE chain support — read-only preview.`
+                              : `${label} not detected. Install the extension to connect Cosmos / AtomOne wallets.`}
+                          </p>
+                          <Button
+                            onClick={() => connect(id)}
+                            disabled={!available || isConnecting}
+                            size="sm"
+                            className="w-full bg-white/5 hover:bg-white/10 text-white/70 border border-white/10 disabled:opacity-40 text-xs"
+                          >
+                            {isConnecting && isThis ? "Connecting..." : available ? "Connect (Preview)" : "Not installed"}
+                          </Button>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
