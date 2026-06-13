@@ -36,7 +36,6 @@ function TradeRoomWrapperInner() {
             </div>
             <span className="text-sm font-semibold text-white/80">OTC Trading</span>
           </div>
-          <span className="text-[10px] font-mono text-[#3ECF8E] bg-[#3ECF8E]/8 border border-[#3ECF8E]/20 px-2 py-0.5 rounded-full">Preview</span>
         </div>
 
         <div className="flex items-center gap-3 text-sm font-medium">
@@ -120,7 +119,8 @@ function TradeRoomWrapperInner() {
                   return (
                     <div className="flex items-center gap-3 bg-[#111111] border border-[#1c1c1c] hover:border-[#2b2b2b] rounded-lg px-3.5 py-3 transition-colors">
                       <div className="w-9 h-9 rounded-lg bg-[#1a1a1a] border border-[#2b2b2b] flex items-center justify-center overflow-hidden shrink-0">
-                        <Image src="/assets/wallets/adena.svg" alt="Adena" width={24} height={24} className="object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src="/assets/wallets/adena.svg" alt="Adena" width={24} height={24} className="object-contain" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-semibold text-white leading-none mb-0.5">Adena</div>
@@ -150,11 +150,12 @@ function TradeRoomWrapperInner() {
                   return (
                     <div className="flex items-center gap-3 bg-[#111111] border border-[#1c1c1c] hover:border-[#2b2b2b] rounded-lg px-3.5 py-3 transition-colors">
                       <div className="w-9 h-9 rounded-lg bg-[#1a1a1a] border border-[#2b2b2b] flex items-center justify-center overflow-hidden shrink-0">
-                        <Image src="/assets/wallets/keplr.svg" alt="Keplr" width={24} height={24} className="object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src="/assets/wallets/keplr.svg" alt="Keplr" width={24} height={24} className="object-contain" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-semibold text-white leading-none mb-0.5">Keplr</div>
-                        <div className="text-[11px] text-white/35">Cosmos · AtomOne · Preview</div>
+                        <div className="text-[11px] text-white/35">Cosmos · AtomOne</div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded border leading-none ${available ? 'text-[#3ECF8E] bg-[#3ECF8E]/10 border-[#3ECF8E]/20' : 'text-white/25 border-[#1c1c1c]'}`}>
@@ -180,11 +181,12 @@ function TradeRoomWrapperInner() {
                   return (
                     <div className="flex items-center gap-3 bg-[#111111] border border-[#1c1c1c] hover:border-[#2b2b2b] rounded-lg px-3.5 py-3 transition-colors">
                       <div className="w-9 h-9 rounded-lg bg-[#1a1a1a] border border-[#2b2b2b] flex items-center justify-center overflow-hidden shrink-0">
-                        <Image src="/assets/wallets/cosmostation.png" alt="Cosmostation" width={24} height={24} className="object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src="/assets/wallets/cosmostation.png" alt="Cosmostation" width={24} height={24} className="object-contain" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-semibold text-white leading-none mb-0.5">Cosmostation</div>
-                        <div className="text-[11px] text-white/35">Cosmos · AtomOne · Preview</div>
+                        <div className="text-[11px] text-white/35">Cosmos · AtomOne</div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded border leading-none ${available ? 'text-[#3ECF8E] bg-[#3ECF8E]/10 border-[#3ECF8E]/20' : 'text-white/25 border-[#1c1c1c]'}`}>

@@ -140,9 +140,41 @@ export function ProductsSection() {
 
               <div className="flex-1">
                 <h3 className="text-xl font-bold text-white mb-3 tracking-tight">OTC Trade Room</h3>
-                <p className="text-sm text-white/50 leading-relaxed mb-6">
+                <p className="text-sm text-white/50 leading-relaxed mb-5">
                   Real-time P2P trade room. Both parties add assets, inspect each other&apos;s bundles, lock and review the final intent before signing. All actions are logged. No silent changes.
                 </p>
+
+                {/* Mini trade window demo */}
+                <div className="bg-[#080808] border border-[#1c1c1c] rounded-lg p-3 mb-5 grid grid-cols-2 gap-2">
+                  {[
+                    {
+                      user: 'User A', items: [
+                        { emoji: '⚔', name: 'Dragon Sword', id: '#4821', gradient: 'linear-gradient(135deg,#f59e0b,#d97706)', badge: 'RARE', badgeClass: 'text-amber-400' },
+                        { emoji: '🛡', name: 'Shadow Knight', id: '#099', gradient: 'linear-gradient(135deg,#6366f1,#7c3aed)', badge: 'EPIC', badgeClass: 'text-violet-400' },
+                      ]
+                    },
+                    {
+                      user: 'User B', items: [
+                        { emoji: '🔮', name: 'Void Mage', id: '#213', gradient: 'linear-gradient(135deg,#8b5cf6,#ec4899)', badge: 'LEGENDARY', badgeClass: 'text-pink-400' },
+                        { emoji: '🐉', name: 'Inferno Drake', id: '#07', gradient: 'linear-gradient(135deg,#ef4444,#b45309)', badge: 'EPIC', badgeClass: 'text-red-400' },
+                      ]
+                    },
+                  ].map((side) => (
+                    <div key={side.user} className="flex flex-col gap-1.5">
+                      <div className="flex items-center justify-between mb-0.5">
+                        <span className="text-[9px] font-mono text-white/30 uppercase">{side.user}</span>
+                        <span className="text-[8px] text-[#3ECF8E] font-mono">Locked ✓</span>
+                      </div>
+                      {side.items.map((item) => (
+                        <div key={item.name} className="flex items-center gap-1.5 bg-[#111] border border-[#1c1c1c] rounded px-2 py-1.5">
+                          <div className="w-5 h-5 rounded shrink-0 flex items-center justify-center text-[10px]" style={{ background: item.gradient }}>{item.emoji}</div>
+                          <span className="text-[9px] text-white/55 truncate flex-1">{item.name} <span className="text-white/20">{item.id}</span></span>
+                          <span className={`text-[7px] font-mono shrink-0 ${item.badgeClass}`}>{item.badge}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
 
                 {/* Mini step flow */}
                 <div className="flex items-center gap-2 flex-wrap">

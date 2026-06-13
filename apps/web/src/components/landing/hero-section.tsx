@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { ArrowRight, ShieldAlert, Lock, Info } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Lock, Info, Sword, Zap, Star } from 'lucide-react';
 import { AnimatedTag } from './animated-tag';
 
 const ease = [0.21, 0.47, 0.32, 0.98] as const;
@@ -178,79 +178,130 @@ export function HeroSection() {
               </div>
 
               {/* Mockup Body */}
-              <div className="flex-1 p-4 grid grid-cols-2 gap-4 relative">
-                {/* User A Panel */}
+              <div className="flex-1 p-3 grid grid-cols-2 gap-3 relative overflow-hidden">
+
+                {/* User A Panel — ATONE + 2 weapon NFTs */}
                 <motion.div
-                  className="bg-[#111111] border border-[#1c1c1c] rounded-lg p-4 flex flex-col relative"
+                  className="bg-[#111111] border border-[#1c1c1c] rounded-lg p-3 flex flex-col gap-2 relative"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6, duration: 0.4 }}
                 >
                   <div className="absolute inset-0 border border-[#3ECF8E]/20 rounded-lg pointer-events-none" />
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="text-sm text-white/70 font-medium">User A</span>
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-[11px] text-white/60 font-medium">User A</span>
                     <motion.div
-                      className="flex items-center gap-1 text-[10px] text-[#3ECF8E] bg-[#3ECF8E]/10 px-2 py-0.5 rounded border border-[#3ECF8E]/20"
+                      className="flex items-center gap-1 text-[9px] text-[#3ECF8E] bg-[#3ECF8E]/10 px-1.5 py-0.5 rounded border border-[#3ECF8E]/20"
                       animate={{ borderColor: ['rgba(62,207,142,0.2)', 'rgba(62,207,142,0.5)', 'rgba(62,207,142,0.2)'] }}
                       transition={{ duration: 3, repeat: Infinity }}
                     >
-                      <Lock size={9} /> Locked
+                      <Lock size={7} /> Locked
                     </motion.div>
                   </div>
-                  <div className="bg-[#0a0a0a] rounded-lg p-3.5 flex items-center justify-between mb-2 border border-[#1c1c1c]">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-md bg-[#1a1a1a] flex items-center justify-center p-1.5 border border-[#2b2b2b]">
-                        <Image src="/assets/logos/atomone.svg" alt="AtomOne" width={22} height={22} className="object-contain" />
-                      </div>
-                      <div className="flex flex-col">
-                        <div className="text-sm font-bold text-white">1,500.00</div>
-                        <div className="text-[10px] text-white/40 font-mono">uatone</div>
-                      </div>
+
+                  {/* Token row */}
+                  <div className="bg-[#0a0a0a] rounded-md px-2.5 py-2 flex items-center gap-2 border border-[#1c1c1c]">
+                    <div className="w-7 h-7 rounded-md bg-[#1a1a1a] flex items-center justify-center p-1 border border-[#2b2b2b] shrink-0">
+                      <Image src="/assets/logos/atomone.svg" alt="AtomOne" width={18} height={18} className="object-contain" />
                     </div>
-                    <Info size={13} className="text-white/20" />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs font-bold text-white leading-none">1,500.00</div>
+                      <div className="text-[9px] text-white/35 font-mono mt-0.5">uatone</div>
+                    </div>
+                    <ShieldCheck size={10} className="text-[#3ECF8E]/50 shrink-0" />
+                  </div>
+
+                  {/* NFT — Dragon Sword */}
+                  <div className="bg-[#0a0a0a] rounded-md px-2.5 py-2 flex items-center gap-2 border border-[#1c1c1c]">
+                    <div className="w-7 h-7 rounded-md shrink-0 flex items-center justify-center text-[13px]"
+                      style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}>
+                      ⚔
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[10px] font-semibold text-white leading-none truncate">Dragon Sword <span className="text-white/40">#4821</span></div>
+                      <div className="text-[9px] text-white/30 mt-0.5">Pixel Realm</div>
+                    </div>
+                    <span className="text-[8px] font-mono px-1 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-400 shrink-0">RARE</span>
+                  </div>
+
+                  {/* NFT — Shadow Knight */}
+                  <div className="bg-[#0a0a0a] rounded-md px-2.5 py-2 flex items-center gap-2 border border-[#1c1c1c]">
+                    <div className="w-7 h-7 rounded-md shrink-0 flex items-center justify-center text-[13px]"
+                      style={{ background: 'linear-gradient(135deg, #6366f1, #7c3aed)' }}>
+                      🛡
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[10px] font-semibold text-white leading-none truncate">Shadow Knight <span className="text-white/40">#099</span></div>
+                      <div className="text-[9px] text-white/30 mt-0.5">Dark Guild</div>
+                    </div>
+                    <span className="text-[8px] font-mono px-1 py-0.5 rounded bg-violet-500/10 border border-violet-500/20 text-violet-400 shrink-0">EPIC</span>
                   </div>
                 </motion.div>
 
-                {/* User B Panel */}
+                {/* User B Panel — GNOT + character NFT */}
                 <motion.div
-                  className="bg-[#111111] border border-[#1c1c1c] rounded-lg p-4 flex flex-col relative"
+                  className="bg-[#111111] border border-[#1c1c1c] rounded-lg p-3 flex flex-col gap-2 relative"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.75, duration: 0.4 }}
                 >
                   <div className="absolute inset-0 border border-[#3ECF8E]/20 rounded-lg pointer-events-none" />
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="text-sm text-white/70 font-medium">User B</span>
-                    <div className="flex items-center gap-1 text-[10px] text-[#3ECF8E] bg-[#3ECF8E]/10 px-2 py-0.5 rounded border border-[#3ECF8E]/20">
-                      <Lock size={9} /> Locked
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-[11px] text-white/60 font-medium">User B</span>
+                    <div className="flex items-center gap-1 text-[9px] text-[#3ECF8E] bg-[#3ECF8E]/10 px-1.5 py-0.5 rounded border border-[#3ECF8E]/20">
+                      <Lock size={7} /> Locked
                     </div>
                   </div>
-                  <div className="bg-[#0a0a0a] rounded-lg p-3.5 flex items-center justify-between mb-2 border border-rose-500/20 relative overflow-hidden">
-                    <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-rose-500" />
-                    <div className="flex items-center gap-3 pl-1">
-                      <div className="w-9 h-9 rounded-md bg-[#1a1a1a] flex items-center justify-center p-1.5 border border-rose-500/20">
-                        <Image src="/assets/logos/usdc.svg" alt="USDC" width={22} height={22} className="object-contain" />
-                      </div>
-                      <div className="flex flex-col">
-                        <div className="text-sm font-bold text-white">5,000.00</div>
-                        <div className="text-[10px] text-rose-400 flex items-center gap-1 font-medium mt-0.5">
-                          <ShieldAlert size={9} /> Suspicious
-                        </div>
-                      </div>
+
+                  {/* Token row — GNOT */}
+                  <div className="bg-[#0a0a0a] rounded-md px-2.5 py-2 flex items-center gap-2 border border-[#1c1c1c]">
+                    <div className="w-7 h-7 rounded-md bg-[#1a1a1a] flex items-center justify-center p-1 border border-[#2b2b2b] shrink-0">
+                      <Image src="/assets/logos/gnot-icon.svg" alt="GNOT" width={18} height={18} className="object-contain" />
                     </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs font-bold text-white leading-none">500.00</div>
+                      <div className="text-[9px] text-white/35 font-mono mt-0.5">ugnot</div>
+                    </div>
+                    <ShieldCheck size={10} className="text-[#3ECF8E]/50 shrink-0" />
+                  </div>
+
+                  {/* NFT — Void Mage character */}
+                  <div className="bg-[#0a0a0a] rounded-md px-2.5 py-2 flex items-center gap-2 border border-[#1c1c1c]">
+                    <div className="w-7 h-7 rounded-md shrink-0 flex items-center justify-center text-[13px]"
+                      style={{ background: 'linear-gradient(135deg, #8b5cf6, #ec4899)' }}>
+                      🔮
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[10px] font-semibold text-white leading-none truncate">Void Mage <span className="text-white/40">#213</span></div>
+                      <div className="text-[9px] text-white/30 mt-0.5">Mystic Order</div>
+                    </div>
+                    <span className="text-[8px] font-mono px-1 py-0.5 rounded bg-pink-500/10 border border-pink-500/20 text-pink-400 shrink-0">LEGENDARY</span>
+                  </div>
+
+                  {/* NFT — Inferno Drake */}
+                  <div className="bg-[#0a0a0a] rounded-md px-2.5 py-2 flex items-center gap-2 border border-[#1c1c1c]">
+                    <div className="w-7 h-7 rounded-md shrink-0 flex items-center justify-center text-[13px]"
+                      style={{ background: 'linear-gradient(135deg, #ef4444, #b45309)' }}>
+                      🐉
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[10px] font-semibold text-white leading-none truncate">Inferno Drake <span className="text-white/40">#07</span></div>
+                      <div className="text-[9px] text-white/30 mt-0.5">Dragon Kin</div>
+                    </div>
+                    <span className="text-[8px] font-mono px-1 py-0.5 rounded bg-red-500/10 border border-red-500/20 text-red-400 shrink-0">EPIC</span>
                   </div>
                 </motion.div>
 
                 {/* Intent Hash preview */}
                 <motion.div
-                  className="absolute bottom-4 left-4 right-4 bg-[#0a0a0a] border border-[#3ECF8E]/25 rounded-lg p-4 shadow-2xl flex flex-col gap-3"
+                  className="absolute bottom-3 left-3 right-3 bg-[#0a0a0a] border border-[#3ECF8E]/25 rounded-lg p-3 shadow-2xl flex flex-col gap-2"
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.95, duration: 0.45 }}
                 >
                   <div className="flex justify-between items-center">
-                    <span className="text-xs font-medium text-white/50">Final Intent Hash</span>
-                    <span className="text-[10px] text-[#3ECF8E] font-mono flex items-center gap-1">
+                    <span className="text-[10px] font-medium text-white/50">Final Intent Hash</span>
+                    <span className="text-[9px] text-[#3ECF8E] font-mono flex items-center gap-1">
                       <motion.div
                         className="w-1 h-1 rounded-full bg-[#3ECF8E]"
                         animate={{ opacity: [1, 0, 1] }}
@@ -259,10 +310,10 @@ export function HeroSection() {
                       <CountdownDisplay />
                     </span>
                   </div>
-                  <div className="text-xs font-mono text-[#3ECF8E] bg-[#3ECF8E]/8 px-3 py-2.5 rounded-md break-all border border-[#3ECF8E]/20 text-center">
+                  <div className="text-[10px] font-mono text-[#3ECF8E] bg-[#3ECF8E]/8 px-2.5 py-2 rounded-md border border-[#3ECF8E]/20 text-center">
                     0x8f2a7b931dc240...9c4e21
                   </div>
-                  <div className="w-full bg-white/[0.04] text-white/30 text-xs py-2.5 rounded-md text-center border border-[#1c1c1c] font-medium">
+                  <div className="w-full bg-white/[0.04] text-white/30 text-[10px] py-2 rounded-md text-center border border-[#1c1c1c] font-medium">
                     Sign &amp; Settle (Disabled in Demo)
                   </div>
                 </motion.div>
@@ -284,7 +335,7 @@ export function HeroSection() {
           <div className="flex flex-wrap items-center justify-center gap-10 md:gap-16">
             {[
               { src: '/assets/logos/atomone.svg', alt: 'AtomOne', label: 'AtomOne', w: 22 },
-              { src: '/assets/logos/gno.svg', alt: 'Gno.land', label: null, w: 100 },
+              { src: '/assets/logos/gnot-icon.svg', alt: 'Gno.land', label: 'Gno.land', w: 22 },
               { src: '/assets/logos/cosmos.svg', alt: 'Cosmos', label: 'Cosmos', w: 22 },
             ].map((eco, i) => (
               <motion.div
