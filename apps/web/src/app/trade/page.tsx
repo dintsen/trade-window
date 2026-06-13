@@ -57,132 +57,197 @@ function TradeRoomWrapperInner() {
       {/* Main App Container */}
       <main className="flex-1 flex overflow-hidden">
         {!account ? (
-          <div className="w-full h-full flex items-center justify-center p-6 relative">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/10 blur-[120px] rounded-full pointer-events-none" />
-            
-            <div className="relative z-10 max-w-2xl w-full bg-[#0a0a0a] border border-white/10 rounded-2xl p-10 text-center shadow-2xl">
-              <div className="mx-auto mb-6 w-12 h-12 flex items-center justify-center rounded-full bg-emerald-500/10 border border-emerald-500/20 relative">
-                <div className="absolute inset-0 rounded-full bg-emerald-500/20 blur-md animate-pulse"></div>
-                <Hexagon className="text-emerald-400 animate-spin relative z-10" size={24} style={{ animationDuration: '4s' }} />
+          <div className="w-full h-full flex items-center justify-center p-6 relative overflow-y-auto">
+            {/* Supabase-style subtle bg glow */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[400px] bg-[#3ECF8E]/5 blur-[100px] rounded-full pointer-events-none" />
+
+            <div className="relative z-10 w-full max-w-lg py-8">
+              {/* Header */}
+              <div className="mb-8 text-center">
+                <div className="inline-flex items-center gap-2 bg-[#3ECF8E]/10 border border-[#3ECF8E]/20 rounded-full px-3 py-1 text-xs text-[#3ECF8E] font-medium mb-4">
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#3ECF8E] animate-pulse" />
+                  MVP Demo — Gno.land Protocol
+                </div>
+                <h1 className="text-2xl font-semibold text-white tracking-tight mb-2">
+                  Connect your wallet
+                </h1>
+                <p className="text-sm text-[#9b9b9b] leading-relaxed">
+                  Choose a wallet to enter the OTC trade room. Real signing is not implemented — this is a prototype.
+                </p>
               </div>
-              
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tighter mb-4 text-white">
-                OTC Trade Room for AtomOne & Gno.land
-              </h1>
-              
-              <div className="text-white/50 text-sm mb-8 leading-relaxed font-light flex flex-col gap-2">
-                <p>Current demo uses backend-authoritative mock rooms.</p>
-                <p className="text-emerald-400/80 font-medium">The Gno.land protocol layer (Gno commitment layer) is currently in progress. Future finalized commitments are planned for Gno smart contracts.</p>
-              </div>
-              
-              <div className="text-left w-full mb-3 px-1">
-                <span className="text-xs font-medium text-white/40 uppercase tracking-wider">Step 1 — Choose wallet provider</span>
-              </div>
-              
-              <div className="flex flex-col gap-6 text-left">
-                {/* Active Section */}
-                <div>
-                  <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider mb-3 px-1 border-l-2 border-emerald-500 pl-2">Active</h3>
-                  <div className="w-full flex flex-col items-start p-4 rounded-xl border border-white/10 bg-white/5 transition-all relative overflow-hidden">
-                    <div className="flex justify-between items-start w-full mb-2">
-                      <div className="flex items-center gap-2">
-                        <User className="text-emerald-400" size={16} />
-                        <span className="font-medium text-white">Mock Wallet (Demo)</span>
+
+              {/* Wallet Cards */}
+              <div className="space-y-3">
+
+                {/* Mock Wallet — always active */}
+                <div className="rounded-lg border border-[#2b2b2b] bg-[#171717] hover:border-[#3ECF8E]/30 hover:bg-[#1a1a1a] transition-all group">
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-[#2b2b2b]">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-md bg-[#3ECF8E]/10 border border-[#3ECF8E]/20 flex items-center justify-center">
+                        <User size={14} className="text-[#3ECF8E]" />
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium text-white">Mock Wallet</div>
+                        <div className="text-[11px] text-[#9b9b9b]">Demo — no real assets</div>
                       </div>
                     </div>
-                    <div className="flex gap-2 mt-2 w-full">
-                      <Button onClick={() => connect("mock", "A")} size="sm" className="flex-1 bg-white/10 hover:bg-emerald-500/20 text-white/80 hover:text-emerald-400 border border-white/10 hover:border-emerald-500/30">User A</Button>
-                      <Button onClick={() => connect("mock", "B")} size="sm" className="flex-1 bg-white/10 hover:bg-emerald-500/20 text-white/80 hover:text-emerald-400 border border-white/10 hover:border-emerald-500/30">User B</Button>
-                    </div>
+                    <span className="text-[10px] font-medium text-[#3ECF8E] bg-[#3ECF8E]/10 border border-[#3ECF8E]/20 rounded-full px-2 py-0.5">Active</span>
+                  </div>
+                  <div className="px-4 py-3 flex gap-2">
+                    <Button onClick={() => connect("mock", "A")} size="sm" className="flex-1 h-8 bg-[#222] hover:bg-[#2a2a2a] text-white/80 hover:text-[#3ECF8E] border border-[#2b2b2b] hover:border-[#3ECF8E]/40 text-xs transition-all">
+                      User A
+                    </Button>
+                    <Button onClick={() => connect("mock", "B")} size="sm" className="flex-1 h-8 bg-[#222] hover:bg-[#2a2a2a] text-white/80 hover:text-[#3ECF8E] border border-[#2b2b2b] hover:border-[#3ECF8E]/40 text-xs transition-all">
+                      User B
+                    </Button>
                   </div>
                 </div>
 
-                {/* Gno.land priority */}
-                <div>
-                  <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider mb-3 px-1 border-l-2 border-emerald-500 pl-2">Gno.land priority</h3>
-                  {(() => {
-                    const adena = adapters.find(a => a.id === "adena");
-                    const isAvailable = adena?.isAvailable();
-                    return (
-                      <div className="w-full flex flex-col items-start p-4 rounded-xl border border-white/5 bg-black/20 transition-all relative overflow-hidden group hover:border-white/10">
-                        <div className="flex justify-between items-start w-full mb-2">
-                          <div className="flex items-center gap-2">
-                            <Image src="/assets/wallets/adena.svg" alt="Adena" width={16} height={16} className="w-4 h-4 rounded-full bg-white/10 object-cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
-                            <span className="font-medium text-white/80">Adena Wallet</span>
+                {/* Section label */}
+                <div className="pt-2 pb-1">
+                  <p className="text-[11px] font-medium text-[#9b9b9b] uppercase tracking-widest px-1">Real Wallets</p>
+                </div>
+
+                {/* Adena — Gno.land */}
+                {(() => {
+                  const adena = adapters.find(a => a.id === "adena");
+                  const isAvailable = adena?.isAvailable();
+                  return (
+                    <div className="rounded-lg border border-[#2b2b2b] bg-[#171717] hover:border-[#2b2b2b]/80 transition-all">
+                      <div className="flex items-center justify-between px-4 py-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-md bg-[#1a1a1a] border border-[#2b2b2b] flex items-center justify-center overflow-hidden">
+                            <Image src="/assets/wallets/adena.svg" alt="Adena" width={20} height={20} className="object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
                           </div>
+                          <div>
+                            <div className="text-sm font-medium text-white">Adena</div>
+                            <div className="text-[11px] text-[#9b9b9b]">Gno.land · Read-only</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
                           {isAvailable ? (
-                            <Badge variant="outline" className="text-[9px] border-emerald-500/30 text-emerald-400 bg-emerald-500/10">Detected</Badge>
+                            <span className="text-[10px] text-[#3ECF8E] bg-[#3ECF8E]/10 border border-[#3ECF8E]/20 rounded-full px-2 py-0.5">Detected</span>
                           ) : (
-                            <Badge variant="outline" className="text-[9px] border-rose-500/30 text-rose-400 bg-rose-500/10">Not detected</Badge>
+                            <span className="text-[10px] text-[#9b9b9b] bg-white/5 border border-[#2b2b2b] rounded-full px-2 py-0.5">Not detected</span>
                           )}
                         </div>
-                        <p className="text-[10px] text-white/40 mb-3 leading-relaxed">
-                          {isAvailable 
-                            ? "Adena detected. Read-only prototype available / planned."
-                            : "Adena not detected. Mock Wallet remains active for the demo."}
-                        </p>
-                        <p className="text-[10px] text-emerald-400/80 mb-3 leading-relaxed border-l border-emerald-500/30 pl-2">
-                          Adena is the first real wallet path for the Gno.land smart-contract layer. This phase only checks availability / read-only connection. Real signing and settlement are not implemented yet.
-                        </p>
-                        <Button 
-                          onClick={() => connect("adena")} 
-                          disabled={!isAvailable || isConnecting} 
-                          size="sm" 
-                          className="w-full bg-white/5 hover:bg-white/10 text-white/80 border border-white/10 disabled:opacity-50"
+                      </div>
+                      <div className="px-4 pb-3">
+                        <Button
+                          onClick={() => connect("adena")}
+                          disabled={!isAvailable || isConnecting}
+                          size="sm"
+                          className="w-full h-8 bg-[#222] hover:bg-[#2a2a2a] text-white/70 border border-[#2b2b2b] disabled:opacity-40 text-xs transition-all"
                         >
-                          {isConnecting && activeProvider === "adena" ? "Connecting..." : "Connect (Read-only)"}
+                          {isConnecting && activeProvider === "adena" ? "Connecting..." : isAvailable ? "Connect" : "Not installed"}
                         </Button>
                       </div>
-                    );
-                  })()}
-                </div>
+                    </div>
+                  );
+                })()}
 
-                {/* Cosmos wallets — preview */}
-                <div>
-                  <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider mb-3 px-1 border-l-2 border-blue-500/50 pl-2">Cosmos / AtomOne</h3>
-                  <div className="flex flex-col gap-3">
-                    {(["keplr", "leap", "cosmostation"] as const).map((id) => {
-                      const adapter = adapters.find(a => a.id === id);
-                      if (!adapter) return null;
-                      const available = adapter.isAvailable();
-                      const isThis = activeProvider === id;
-                      const label = adapter.label;
-                      const logoSrc = `/assets/wallets/${id}.svg`;
-                      return (
-                        <div key={id} className="w-full flex flex-col items-start p-3 rounded-xl border border-white/5 bg-black/10 relative overflow-hidden">
-                          <div className="flex justify-between items-start w-full mb-2">
-                            <div className="flex items-center gap-2">
-                              <Image src={logoSrc} alt={label} width={16} height={16} className="w-4 h-4 rounded object-cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
-                              <span className="text-sm font-medium text-white/70">{label}</span>
-                            </div>
-                            <div className="flex items-center gap-1.5">
-                              {available ? (
-                                <Badge variant="outline" className="text-[9px] border-emerald-500/30 text-emerald-400 bg-emerald-500/10">Detected</Badge>
-                              ) : (
-                                <Badge variant="outline" className="text-[9px] border-white/10 text-white/40 bg-white/5">Not detected</Badge>
-                              )}
-                              <Badge variant="outline" className="text-[9px] border-blue-500/20 text-blue-400/70 bg-blue-500/5">Preview</Badge>
-                            </div>
+                {/* Keplr */}
+                {(() => {
+                  const adapter = adapters.find(a => a.id === "keplr");
+                  if (!adapter) return null;
+                  const available = adapter.isAvailable();
+                  return (
+                    <div className="rounded-lg border border-[#2b2b2b] bg-[#171717] hover:border-[#2b2b2b]/80 transition-all">
+                      <div className="flex items-center justify-between px-4 py-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-md bg-[#1a1a1a] border border-[#2b2b2b] flex items-center justify-center overflow-hidden">
+                            <Image src="/assets/wallets/keplr.svg" alt="Keplr" width={20} height={20} className="object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
                           </div>
-                          <p className="text-[10px] text-white/40 mb-2 leading-relaxed">
-                            {available
-                              ? `${label} detected. Cosmos / ATOM / ATONE chain support — read-only preview.`
-                              : `${label} not detected. Install the extension to connect Cosmos / AtomOne wallets.`}
-                          </p>
-                          <Button
-                            onClick={() => connect(id)}
-                            disabled={!available || isConnecting}
-                            size="sm"
-                            className="w-full bg-white/5 hover:bg-white/10 text-white/70 border border-white/10 disabled:opacity-40 text-xs"
-                          >
-                            {isConnecting && isThis ? "Connecting..." : available ? "Connect (Preview)" : "Not installed"}
-                          </Button>
+                          <div>
+                            <div className="text-sm font-medium text-white">Keplr</div>
+                            <div className="text-[11px] text-[#9b9b9b]">Cosmos · AtomOne · Preview</div>
+                          </div>
                         </div>
-                      );
-                    })}
+                        <div className="flex items-center gap-2">
+                          {available ? (
+                            <span className="text-[10px] text-[#3ECF8E] bg-[#3ECF8E]/10 border border-[#3ECF8E]/20 rounded-full px-2 py-0.5">Detected</span>
+                          ) : (
+                            <span className="text-[10px] text-[#9b9b9b] bg-white/5 border border-[#2b2b2b] rounded-full px-2 py-0.5">Not detected</span>
+                          )}
+                          <span className="text-[10px] text-[#14AFEB]/70 bg-[#14AFEB]/10 border border-[#14AFEB]/20 rounded-full px-2 py-0.5">Preview</span>
+                        </div>
+                      </div>
+                      <div className="px-4 pb-3">
+                        <Button
+                          onClick={() => connect("keplr")}
+                          disabled={!available || isConnecting}
+                          size="sm"
+                          className="w-full h-8 bg-[#222] hover:bg-[#2a2a2a] text-white/70 border border-[#2b2b2b] disabled:opacity-40 text-xs transition-all"
+                        >
+                          {isConnecting && activeProvider === "keplr" ? "Connecting..." : available ? "Connect" : "Not installed"}
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* Cosmostation */}
+                {(() => {
+                  const adapter = adapters.find(a => a.id === "cosmostation");
+                  if (!adapter) return null;
+                  const available = adapter.isAvailable();
+                  return (
+                    <div className="rounded-lg border border-[#2b2b2b] bg-[#171717] hover:border-[#2b2b2b]/80 transition-all">
+                      <div className="flex items-center justify-between px-4 py-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-md bg-[#1a1a1a] border border-[#2b2b2b] flex items-center justify-center overflow-hidden">
+                            <Image src="/assets/wallets/cosmostation.svg" alt="Cosmostation" width={20} height={20} className="object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                          </div>
+                          <div>
+                            <div className="text-sm font-medium text-white">Cosmostation</div>
+                            <div className="text-[11px] text-[#9b9b9b]">Cosmos · AtomOne · Preview</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {available ? (
+                            <span className="text-[10px] text-[#3ECF8E] bg-[#3ECF8E]/10 border border-[#3ECF8E]/20 rounded-full px-2 py-0.5">Detected</span>
+                          ) : (
+                            <span className="text-[10px] text-[#9b9b9b] bg-white/5 border border-[#2b2b2b] rounded-full px-2 py-0.5">Not detected</span>
+                          )}
+                          <span className="text-[10px] text-[#8B5CF6]/70 bg-[#8B5CF6]/10 border border-[#8B5CF6]/20 rounded-full px-2 py-0.5">Preview</span>
+                        </div>
+                      </div>
+                      <div className="px-4 pb-3">
+                        <Button
+                          onClick={() => connect("cosmostation")}
+                          disabled={!available || isConnecting}
+                          size="sm"
+                          className="w-full h-8 bg-[#222] hover:bg-[#2a2a2a] text-white/70 border border-[#2b2b2b] disabled:opacity-40 text-xs transition-all"
+                        >
+                          {isConnecting && activeProvider === "cosmostation" ? "Connecting..." : available ? "Connect" : "Not installed"}
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* Leap — sunset notice */}
+                <div className="rounded-lg border border-[#2b2b2b]/60 bg-[#141414] opacity-60">
+                  <div className="flex items-center justify-between px-4 py-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-md bg-[#1a1a1a] border border-[#2b2b2b] flex items-center justify-center overflow-hidden">
+                        <Image src="/assets/wallets/leap.svg" alt="Leap" width={20} height={20} className="object-contain grayscale" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium text-white/50 line-through">Leap</div>
+                        <div className="text-[11px] text-[#9b9b9b]">Sunset May 28, 2026</div>
+                      </div>
+                    </div>
+                    <span className="text-[10px] text-orange-400/70 bg-orange-500/10 border border-orange-500/20 rounded-full px-2 py-0.5">Sunset</span>
                   </div>
                 </div>
+
               </div>
+
+              {/* Footer note */}
+              <p className="mt-6 text-center text-[11px] text-[#666] leading-relaxed">
+                Real signing and settlement are not yet implemented. This is an MVP prototype for the AtomOne / Gno.land ecosystem.
+              </p>
             </div>
           </div>
         ) : (
