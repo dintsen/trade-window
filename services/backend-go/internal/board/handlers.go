@@ -32,7 +32,7 @@ func (h *Handlers) HandleListings(w http.ResponseWriter, r *http.Request) {
 		}
 		// Ensure empty array (not null) when there are no listings
 		if publicListings == nil {
-			publicListings = []PublicListing{}
+			publicListings = []PublicBoardListing{}
 		}
 
 		json.NewEncoder(w).Encode(publicListings)
