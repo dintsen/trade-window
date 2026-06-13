@@ -1,89 +1,146 @@
-# Wallet Signature Authentication Plan & Audit Note
+# Wallet Authentication Plan
 
-This document outlines the cryptographic signature authentication design for Trade Window and documents the blockers preventing safe production implementation in this environment.
-
----
-
-## 1. Authentication Design & Architecture
-
-To replace the spoofable query parameter wallet filtering (`GET /api/me/trades?wallet=<address>`), Trade Window requires a nonce-based cryptographic authentication flow.
-
-### A. Nonce Generation Flow
-1. The user clicks **"Sign In with Wallet"** in the frontend (without auto-popup on page load).
-2. The frontend requests a one-time nonce from the backend:
-   ```http
-   POST /api/auth/nonce
-   Content-Type: application/json
-
-   {
-     "wallet": "g1jg8mtu5upuzwepzth9kvl6nv970n5v42k0t7t3",
-     "network": "gno-testnet"
-   }
-   ```
-3. The backend generates a random UUID/nonce, stores it in `auth_nonces` table with an expiration (e.g., 5 minutes), and returns the formatted sign-in message:
-   ```json
-   {
-     "nonce": "c0fb6e02-4d26-444c-9f89-c454e99f1da0",
-     "message": "Trade Window Sign-In\n\nDomain: tradewindow.xyz\nWallet: g1jg8mtu5upuzwepzth9kvl6nv970n5v42k0t7t3\nNetwork: gno-testnet\nNonce: c0fb6e02-4d26-444c-9f89-c454e99f1da0\nIssued At: 2026-06-12T18:40:00Z\nExpires At: 2026-06-12T18:45:00Z\n\nThis signature proves wallet ownership. It does not authorize a transaction or transfer.",
-     "expiresAt": "2026-06-12T18:45:00Z"
-   }
-   ```
-
-### B. Signature Verification Flow
-1. The user signs the exact message with their wallet.
-2. The frontend sends the signature to the backend:
-   ```http
-   POST /api/auth/verify
-   Content-Type: application/json
-
-   {
-     "wallet": "g1jg8mtu5upuzwepzth9kvl6nv970n5v42k0t7t3",
-     "publicKey": "025a7f9b8c...",
-     "signature": "r_s_compact_bytes_hex_or_base64",
-     "message": "...",
-     "nonce": "c0fb6e02-4d26-444c-9f89-c454e99f1da0"
-   }
-   ```
-3. The backend verifies:
-   * Nonce exists, is not expired, and has not been used.
-   * Nonce is marked as used immediately (preventing replay attacks).
-   * Message is verified to match the generated format.
-   * Public key is hashed (`ripemd160(sha256(pubkey))`) and Bech32 decoded to verify it derives the wallet address.
-   * Signature is cryptographically verified against the SHA256 of the message and the public key using secp256k1.
-   * Network matches expected settings.
-
-### C. Session & Cookie Model
-* **Session Generation**: If signature verification succeeds, the backend generates a cryptographically secure random session token (e.g., 32 bytes).
-* **Security Model**: The backend stores ONLY the SHA-256 hash of the session token in the `auth_sessions` table (with an expiry, e.g., 24 hours), avoiding database leak risks.
-* **Cross-Site Cookies**: The backend returns the session token in a secure HttpOnly cookie:
-  * `HttpOnly` (prevents XSS retrieval)
-  * `Secure` (requires HTTPS)
-  * `SameSite=None` (allows cross-site cookies, since frontend is on `tradewindow.xyz` and backend is on `trade-window-production.up.railway.app`)
-  * `Path=/`
-* **CORS Settings**: Wildcard `Access-Control-Allow-Origin: *` must be disabled on all authenticated endpoints. CORS must explicitly allow credentials (`Access-Control-Allow-Credentials: true`) only for:
-  * `https://tradewindow.xyz`
-  * `https://www.tradewindow.xyz`
+**Last updated:** 2026-06-13
 
 ---
 
-## 2. Technical Audit & Blocker Report
+## Current State (MVP — Honest Summary)
 
-We have stopped the implementation phase due to the following critical blockers:
+The current MVP uses **unsigned wallet filtering** for trade history:
 
-### Blocker 1: Absence of Adena Message Signing API
-* **Finding**: The Adena wallet extension does not expose a standard off-chain message-signing API (such as Cosmos' ADR-036 `signArbitrary` or Ethereum's `signMessage`). 
-* **Impact**: The only signature method supported by Adena is `adena.Sign(tx)`, which requires constructing a mock Gno.land transaction object. Asking users to sign a full mock transaction to sign-in displays a scary warning to users that they are authorizing a blockchain transaction, which violates the security principles of signature-based authentication.
-* **Resolution Required**: Wait for Adena/Gno.land to implement standard off-chain message signing or establish a formal GnoConnect sign-in specification.
+```
+GET /api/me/trades?wallet=<address>
+```
 
-### Blocker 2: Missing Go/Docker Compiler in Agent Environment
-* **Finding**: The agent environment lacks the Go compiler (`go` command) and the Docker daemon (`docker` command).
-* **Impact**: Adding a cryptographic signature verification implementation (secp256k1 and Bech32 decoding) cannot be compiled, run, or tested locally to verify mathematical correctness or logic flow.
-* **Risk**: Pushing uncompiled signature verification code directly to production introduces high risks of compilation failure in CI or runtime mathematical bugs that could compromise the authentication layer.
+This is **not authenticated**. Any caller who knows or guesses a wallet address can fetch its trade history. This is acceptable for the current demo/grant phase because:
+
+- No sensitive financial data is returned (listings are already public)
+- No mainnet transactions are involved
+- The board is explicitly described as an intent coordination layer, not settlement
+
+All UI surfaces this limitation honestly — the `/history` page is labeled "My Trades (Preview)" and does not claim any ownership proof.
 
 ---
 
-## 3. Recommended Remediation & Next Steps
+## Planned Authentication Architecture
 
-1. **Keep Wallet History Disabled/Insecure in Dev**: Document that query-param filtering is strictly for development and mock mode.
-2. **Standardize the Gno Toolchain**: Once Gno.land provides a standardized message signing library for browser extensions, proceed to implement the backend database migrations and endpoints.
-3. **Provision Go compiler in the Agent Environment**: Enable local compilation checks to verify the security and arithmetic validity of the cryptographic backend libraries.
+### Phase 1 — Cosmos Wallet Signature Auth (ADR-036)
+
+Cosmos wallets (Keplr, Leap, Cosmostation) support **ADR-036 off-chain message signing** via `signArbitrary`:
+
+```ts
+// Keplr / Leap / Cosmostation (via keplr-compat mode)
+const sig = await window.keplr.signArbitrary(chainId, address, message);
+```
+
+This returns a `StdSignature` with `signature` (base64) and `pub_key`.
+
+**Flow:**
+
+1. User clicks "Sign in with Wallet" (no auto-popup on page load)
+2. Frontend calls `POST /api/auth/nonce` with wallet address + chainId
+3. Backend returns a deterministic sign-in message + one-time nonce (5-min expiry)
+4. Frontend passes message to wallet `signArbitrary`
+5. Frontend sends `{ wallet, pubKey, signature, nonce }` to `POST /api/auth/verify`
+6. Backend verifies: nonce not expired, nonce not replayed, pubKey hashes to wallet address (secp256k1 / RIPEMD-160 / SHA-256 / Bech32), signature valid
+7. Backend issues an HttpOnly Secure SameSite=None session cookie (32-byte random token, SHA-256 hashed before storage)
+
+**Signing message format:**
+
+```
+Trade Window Sign-In
+
+Domain: tradewindow.xyz
+Wallet: <bech32_address>
+Chain: <chainId>
+Nonce: <uuid>
+Issued At: <ISO8601>
+Expires At: <ISO8601>
+
+This signature proves wallet ownership.
+It does not authorize a transaction or transfer of any asset.
+```
+
+### Phase 2 — Gno.land / Adena
+
+Adena does not expose a standard off-chain `signArbitrary` equivalent. The only current signing path is `adena.DoContract()` which constructs a Gno.land transaction — this is inappropriate for a sign-in flow because users see a transaction warning.
+
+**Blocker:** Adena / Gno.land does not yet have a standardized browser message signing API.
+
+**Resolution path:** Wait for Gno.land to publish a GnoConnect sign-in spec, or use a minimal Gno realm `SignIn` message that is deterministically non-executable (verifiable by the realm as a no-op).
+
+---
+
+## Backend Requirements (not yet implemented)
+
+```sql
+-- Required migrations (not yet applied)
+CREATE TABLE auth_nonces (
+  nonce      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  wallet     TEXT NOT NULL,
+  chain_id   TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  expires_at TIMESTAMPTZ NOT NULL,
+  used_at    TIMESTAMPTZ
+);
+
+CREATE TABLE auth_sessions (
+  session_hash TEXT PRIMARY KEY,  -- SHA-256 of the random token
+  wallet       TEXT NOT NULL,
+  chain_id     TEXT NOT NULL,
+  created_at   TIMESTAMPTZ DEFAULT NOW(),
+  expires_at   TIMESTAMPTZ NOT NULL
+);
+```
+
+**Required Go endpoints (not yet implemented):**
+- `POST /api/auth/nonce` — generate + return sign-in nonce
+- `POST /api/auth/verify` — verify signature, issue session cookie
+- `POST /api/auth/logout` — clear session cookie
+- Auth middleware for `GET /api/me/trades` — validate session cookie before filtering
+
+**Crypto libraries needed:**
+- `github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1` for pubkey recovery
+- `github.com/cosmos/cosmos-sdk/types/bech32` for address derivation
+- Standard `crypto/sha256` + `crypto/rand` (stdlib)
+
+---
+
+## Security Rules (always apply)
+
+- No auto-popup on page load — sign-in is always user-initiated
+- Session cookie: `HttpOnly`, `Secure`, `SameSite=None`, 24h expiry
+- Nonce: single-use, 5-minute expiry, marked used on first verify attempt
+- CORS: `Allow-Credentials: true` only for `tradewindow.xyz` and `www.tradewindow.xyz`
+- Backend never logs or stores raw session tokens — only SHA-256 hashes
+- Frontend never stores session token — cookie only
+- No private keys, no signing keys on server
+
+---
+
+## Frontend Copy Guidelines (honest MVP language)
+
+Use this copy for current MVP UI:
+
+| Location | Copy |
+|----------|------|
+| `/history` page header | `My Trades (Preview)` |
+| History filter note | `Showing listings by wallet address. Wallet ownership is not cryptographically verified in this preview.` |
+| `/board/new` wallet section | `Connect wallet to pre-fill your address. Wallet signature auth coming in a future update.` |
+| `/trade` page wallet panel | `Preview — connect to read address only. No signing or transactions in this build.` |
+
+Do not write copy that implies the wallet is authenticated or that the user has proven ownership.
+
+---
+
+## Roadmap
+
+| Step | Status |
+|------|--------|
+| `?wallet=` query filtering (unsigned) | ✅ Live |
+| Cosmos wallet detection + connect (read-only) | ✅ Live (Preview) |
+| Adena wallet detection + connect (read-only) | ✅ Live (Preview) |
+| ADR-036 Cosmos sign-in + session cookies | 📋 Planned |
+| `/api/auth/nonce` + `/api/auth/verify` backend | 📋 Planned |
+| Gno.land / Adena off-chain sign-in | 🔬 Blocked (no API) |
+| Hardware wallet (Ledger via Keplr) | 📋 Future |

@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, Send, Layers, ImageIcon } from "lucide-react";
+import { ArrowLeft, Send, Layers, ImageIcon, Wallet } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createListing } from "@/lib/board/api";
-import { getAllAssets } from "@/lib/assets/asset-registry";
+import { getAllAssets, getAsset } from "@/lib/assets/asset-registry";
+import { fetchBalances, formatBaseAmount, parseHumanAmount } from "@/lib/wallet/balances";
+import { WalletBalance, WalletNft } from "@/lib/wallet/types";
 import { useWalletStore } from "@/lib/wallet/wallet-store";
 import { NftGrid } from "@/components/nfts/NftGrid";
-import { WalletNft } from "@/lib/wallet/types";
 
 export default function NewListingPage() {
   const router = useRouter();
@@ -18,13 +19,66 @@ export default function NewListingPage() {
   const [offerTab, setOfferTab] = useState<"token" | "nft">("token");
   const [selectedNft, setSelectedNft] = useState<WalletNft | null>(null);
 
+  // Balance state for token offer
+  const [selectedOfferDenom, setSelectedOfferDenom] = useState<string>("");
+  const [offerAmountStr, setOfferAmountStr] = useState<string>("");
+  const [balances, setBalances] = useState<WalletBalance[] | null>(null);
+  const [balanceFetching, setBalanceFetching] = useState(false);
+  const [amountError, setAmountError] = useState<string | null>(null);
+
+  // Fetch balances when offer denom + connected account changes.
+  // setState calls are wrapped in microtasks to satisfy react-hooks/set-state-in-effect.
+  useEffect(() => {
+    const asset = selectedOfferDenom ? getAsset(selectedOfferDenom) : null;
+    if (!selectedOfferDenom || !account?.address || !asset?.chainId) {
+      Promise.resolve().then(() => { setBalances(null); setBalanceFetching(false); });
+      return;
+    }
+    let cancelled = false;
+    const chainId = asset.chainId;
+    const address = account.address;
+    Promise.resolve().then(() => { if (!cancelled) setBalanceFetching(true); });
+    fetchBalances(address, chainId).then((result) => {
+      if (cancelled) return;
+      setBalances(result);
+      setBalanceFetching(false);
+    });
+    return () => { cancelled = true; };
+  }, [selectedOfferDenom, account?.address]);
+
+  const selectedAsset = selectedOfferDenom ? getAsset(selectedOfferDenom) : null;
+  const tokenBalance = balances?.find((b) => b.denom === selectedOfferDenom) ?? null;
+  const decimals = tokenBalance?.decimals ?? selectedAsset?.decimals ?? 6;
+  const balanceHuman = tokenBalance ? formatBaseAmount(tokenBalance.amount, decimals) : null;
+
+  const validateAmount = (value: string): string | null => {
+    if (!value.trim()) return null;
+    const parsed = parseHumanAmount(value, decimals);
+    if (parsed === null) return "Invalid amount — use digits and one decimal point";
+    if (parsed <= BigInt(0)) return "Amount must be greater than zero";
+    if (tokenBalance && parsed > BigInt(tokenBalance.amount)) {
+      return `Exceeds available balance (${balanceHuman} ${selectedAsset?.symbol ?? ""})`;
+    }
+    return null;
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // Final amount validation before submit
+    const err = validateAmount(offerAmountStr);
+    if (err) { setAmountError(err); return; }
+
     setIsSubmitting(true);
     setError(null);
 
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
+
+    // Use offerAmountStr as amountRange when the token tab is active
+    const resolvedAmountRange =
+      offerTab === "token" && offerAmountStr.trim()
+        ? `${offerAmountStr.trim()} ${selectedAsset?.symbol ?? ""}`.trim()
+        : (data.amountRange as string) || "";
 
     try {
       const listing = await createListing({
@@ -32,7 +86,7 @@ export default function NewListingPage() {
         requestType: data.requestType as string,
         offerAsset: data.offerAsset as string,
         wantAsset: data.wantAsset as string,
-        amountRange: data.amountRange as string,
+        amountRange: resolvedAmountRange,
         chain: data.chain as string,
         publicMessage: data.publicMessage as string,
         publicContact: data.publicContact as string,
@@ -148,12 +202,83 @@ export default function NewListingPage() {
                   </div>
 
                   {offerTab === "token" ? (
-                    <select required name="offerAsset" defaultValue="" className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-emerald-500/50 outline-none appearance-none">
-                      <option value="" disabled hidden>Select asset...</option>
-                      {getAllAssets().map(a => (
-                        <option key={a.technicalDenom} value={a.technicalDenom}>{a.symbol} {a.isDemo ? '(Demo)' : ''}</option>
-                      ))}
-                    </select>
+                    <div className="space-y-3">
+                      <select
+                        required
+                        name="offerAsset"
+                        value={selectedOfferDenom}
+                        onChange={(e) => {
+                          setSelectedOfferDenom(e.target.value);
+                          setOfferAmountStr("");
+                          setAmountError(null);
+                        }}
+                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-emerald-500/50 outline-none appearance-none"
+                      >
+                        <option value="" disabled hidden>Select asset...</option>
+                        {getAllAssets().map(a => (
+                          <option key={a.technicalDenom} value={a.technicalDenom}>
+                            {a.symbol}{a.isDemo ? ' (Demo)' : ''}
+                          </option>
+                        ))}
+                      </select>
+
+                      {/* Amount + balance row — shown once an asset is picked */}
+                      {selectedOfferDenom && (
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="text-white/50">Offer Amount</span>
+                            <span className="text-white/40 flex items-center gap-1">
+                              <Wallet className="w-3 h-3" />
+                              {!account
+                                ? <span className="text-white/30">Connect wallet to see balance</span>
+                                : balanceFetching
+                                ? <span className="text-white/30">Fetching balance…</span>
+                                : balanceHuman !== null
+                                ? <span>Balance: <span className="text-emerald-400 font-mono">{balanceHuman} {selectedAsset?.symbol}</span></span>
+                                : <span className="text-white/30">Balance unavailable</span>
+                              }
+                            </span>
+                          </div>
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              inputMode="decimal"
+                              placeholder={`0.00${selectedAsset?.symbol ? ` ${selectedAsset.symbol}` : ""}`}
+                              value={offerAmountStr}
+                              onChange={(e) => {
+                                setOfferAmountStr(e.target.value);
+                                setAmountError(validateAmount(e.target.value));
+                              }}
+                              className={`flex-1 bg-black/50 border rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:ring-2 outline-none font-mono
+                                ${amountError
+                                  ? "border-rose-500/40 focus:ring-rose-500/30"
+                                  : "border-white/10 focus:ring-emerald-500/50"
+                                }`}
+                            />
+                            {balanceHuman !== null && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setOfferAmountStr(balanceHuman);
+                                  setAmountError(validateAmount(balanceHuman));
+                                }}
+                                className="px-4 py-3 rounded-xl border border-emerald-500/30 text-emerald-400 text-xs font-semibold hover:bg-emerald-500/10 transition-colors whitespace-nowrap"
+                              >
+                                Max
+                              </button>
+                            )}
+                          </div>
+                          {amountError && (
+                            <p className="text-xs text-rose-400">{amountError}</p>
+                          )}
+                          {!amountError && offerAmountStr && (
+                            <p className="text-xs text-white/30 font-mono">
+                              Technical denom: {selectedOfferDenom} · {selectedAsset?.chainId}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   ) : (
                     <div className="space-y-3">
                       {/* Hidden fields for NFT data */}
@@ -200,11 +325,6 @@ export default function NewListingPage() {
                       <option key={a.technicalDenom} value={a.technicalDenom}>{a.symbol} {a.isDemo ? '(Demo)' : ''}</option>
                     ))}
                   </select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-white/60">Amount Range</label>
-                  <input name="amountRange" type="text" placeholder="e.g. $10k - $50k" className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:ring-2 focus:ring-emerald-500/50 outline-none" />
                 </div>
 
                 <div className="space-y-2">

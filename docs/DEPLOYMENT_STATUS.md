@@ -25,11 +25,11 @@
 **Pages deployed:**
 - `/` — Landing + donation banner
 - `/board` — Public OTC listings
-- `/board/new` — Post listing (Token + NFT tab)
+- `/board/new` — Post listing (Token + NFT tab, balance fetch + Max button)
 - `/request` — Private deal request
 - `/trade` — Trade room (wallet connect + room state)
-- `/history` — My Trades history
-- `/trades` — Trade history (alias)
+- `/history` — My Trades (preview)
+- `/trades` — My Trades (alias)
 
 ---
 
@@ -39,12 +39,12 @@
 - Service: `trade-window-production`
 - URL: `https://trade-window-production.up.railway.app`
 - Language: Go
-- Storage: JSONL (temporary) / Postgres (when Supabase credentials are fixed)
+- Storage: **Postgres (Supabase)** ✅
 
 **Environment variables (names only — no values):**
 ```
-STORAGE_DRIVER      # "jsonl" (temporary) or "postgres"
-DATABASE_URL        # Supabase connection string (blocked: 28P01 auth error)
+STORAGE_DRIVER      # "postgres" (active)
+DATABASE_URL        # Supabase connection string (confirmed working)
 ALLOWED_ORIGINS     # https://tradewindow.xyz,https://www.tradewindow.xyz,http://localhost:3000
 MAX_WS_MESSAGE_BYTES
 PORT
@@ -64,10 +64,8 @@ PORT
 
 | Driver | Status | Notes |
 |--------|--------|-------|
-| JSONL | ✅ Active (temporary) | Data may not survive redeploy |
-| Postgres/Supabase | ❌ Blocked | `28P01` auth error — credentials need rotation |
-
-**Action required:** Rotate Supabase DB password and update `DATABASE_URL` in Railway to enable durable storage.
+| Postgres/Supabase | ✅ Active | All 4 migrations applied, confirmed working |
+| JSONL | — | Disabled — `STORAGE_DRIVER=postgres` |
 
 ---
 
@@ -75,10 +73,10 @@ PORT
 
 | Migration | Status |
 |-----------|--------|
-| `001_create_trade_window_tables.sql` | Applied |
-| `001_create_board_and_requests.sql` | Applied |
-| `002_add_wallet_history.sql` | Applied |
-| `003_add_wallet_assets_and_nfts.sql` | Pending (will apply on next Postgres startup) |
+| `001_create_trade_window_tables.sql` | ✅ Applied |
+| `001_create_board_and_requests.sql` | ✅ Applied |
+| `002_add_wallet_history.sql` | ✅ Applied |
+| `003_add_wallet_assets_and_nfts.sql` | ✅ Applied |
 
 ---
 
@@ -93,8 +91,11 @@ Do not switch `NEXT_PUBLIC_BACKEND_URL` to `api.tradewindow.xyz` until DNS CNAME
 
 ---
 
-## Known Blockers
+## Known Limitations
 
-1. **Supabase 28P01**: DB password rejected. Data is ephemeral on JSONL. Fix: rotate password in Supabase dashboard → update `DATABASE_URL` in Railway.
+1. **`api.tradewindow.xyz`**: DNS not yet configured. Backend reachable at Railway URL only.
 2. **SWC binary in sandbox**: `npm run build` cannot run in isolated sandbox (no npm registry access). Build runs correctly on Vercel CI.
-3. **api.tradewindow.xyz**: DNS not yet configured. Backend reachable at Railway URL only.
+3. **Wallet history (unsigned)**: `?wallet=` filtering is not cryptographically authenticated. See `docs/WALLET_AUTH_PLAN.md`.
+4. **Cosmos wallet signing**: Keplr/Leap/Cosmostation connect is read-only (address only). ADR-036 sign-in planned.
+5. **Adena signing**: Disabled in MVP. Adena lacks off-chain message signing API.
+6. **Mainnet settlement**: Disabled. No transactions are broadcast. Preview only.
