@@ -4,6 +4,7 @@ import { Header } from '@/components/layout/header';
 
 import { HeroSection } from '../components/landing/hero-section';
 import { ProblemSection } from '../components/landing/problem-section';
+import { ProductsSection } from '../components/landing/products-section';
 import { AssetClassesSection } from '../components/landing/asset-classes-section';
 import { SafetyMechanicsSection } from '../components/landing/safety-mechanics-section';
 import { ProductPreviewSection } from '../components/landing/product-preview-section';
@@ -21,6 +22,7 @@ export default function Home() {
       <main className="relative flex-1 flex flex-col w-full">
         <HeroSection />
         <ProblemSection />
+        <ProductsSection />
         <AssetClassesSection />
         <OtcBoardSection />
         <SafetyMechanicsSection />
