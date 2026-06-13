@@ -64,10 +64,16 @@ PORT
 
 ## Storage Status
 
+⚠️ **Production demo currently uses JSONL fallback until Supabase credentials are rotated.**
+
 | Driver | Status | Notes |
 |--------|--------|-------|
-| Postgres/Supabase | ✅ Active | All 4 migrations applied, confirmed working |
-| JSONL | — | Disabled — `STORAGE_DRIVER=postgres` |
+| Postgres/Supabase | ⚠️ Unverified | `STORAGE_DRIVER=postgres` set in Railway env, but DATABASE_URL validity unconfirmed — credentials may need rotation |
+| JSONL | ⚠️ Possible fallback | If DATABASE_URL is invalid, Go backend falls back to JSONL at startup |
+
+**How to verify:** `/health` will return `"storage_driver":"postgres"` once the next Railway deploy goes live (commit `70b668a` adds this field). Until then, storage driver cannot be confirmed externally.
+
+**To fix:** Log into Railway → trade-window-production → Variables → confirm `DATABASE_URL` is a valid Supabase connection string → trigger redeploy.
 
 ---
 
@@ -75,10 +81,12 @@ PORT
 
 | Migration | Status |
 |-----------|--------|
-| `001_create_trade_window_tables.sql` | ✅ Applied |
-| `001_create_board_and_requests.sql` | ✅ Applied |
-| `002_add_wallet_history.sql` | ✅ Applied |
-| `003_add_wallet_assets_and_nfts.sql` | ✅ Applied |
+| `001_create_trade_window_tables.sql` | Applied when Postgres is active |
+| `001_create_board_and_requests.sql` | Applied when Postgres is active |
+| `002_add_wallet_history.sql` | Applied when Postgres is active |
+| `003_add_wallet_assets_and_nfts.sql` | Applied when Postgres is active |
+
+Migrations run automatically on startup via `storage.RunMigrations()` — no manual SQL needed.
 
 ---
 
