@@ -165,9 +165,28 @@ export default function BoardPage() {
 
           {/* States */}
           {loading ? (
-            <div className="flex-1 flex flex-col items-center justify-center py-20 text-white/30">
-              <RefreshCw className="animate-spin mb-3" size={20} />
-              <span className="text-sm font-mono">Loading listings…</span>
+            <div className="bg-[#0c0c0c] border border-[#1c1c1c] rounded-xl overflow-hidden">
+              {/* skeleton header */}
+              <div className="hidden md:grid grid-cols-[2fr_1fr_1fr_auto_auto] gap-4 px-5 py-2.5 border-b border-[#1c1c1c] bg-[#0a0a0a]">
+                {['Title','Offering','Wanting','Amount','Date'].map(h => (
+                  <div key={h} className="h-2.5 w-12 rounded bg-[#1a1a1a] animate-pulse" />
+                ))}
+              </div>
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className={`flex gap-4 px-5 py-4 ${i < 5 ? 'border-b border-[#1c1c1c]' : ''}`}>
+                  <div className="flex-[2] flex flex-col gap-2">
+                    <div className="h-3.5 w-3/4 rounded bg-[#1a1a1a] animate-pulse" style={{ animationDelay: `${i * 60}ms` }} />
+                    <div className="flex gap-1.5">
+                      <div className="h-2.5 w-14 rounded bg-[#161616] animate-pulse" style={{ animationDelay: `${i * 60 + 40}ms` }} />
+                      <div className="h-2.5 w-10 rounded bg-[#161616] animate-pulse" style={{ animationDelay: `${i * 60 + 80}ms` }} />
+                    </div>
+                  </div>
+                  <div className="flex-1 flex items-center"><div className="h-3 w-14 rounded bg-[#1a1a1a] animate-pulse" style={{ animationDelay: `${i * 60 + 20}ms` }} /></div>
+                  <div className="flex-1 flex items-center"><div className="h-3 w-14 rounded bg-[#1a1a1a] animate-pulse" style={{ animationDelay: `${i * 60 + 30}ms` }} /></div>
+                  <div className="flex items-center"><div className="h-3 w-10 rounded bg-[#161616] animate-pulse" style={{ animationDelay: `${i * 60 + 50}ms` }} /></div>
+                  <div className="flex items-center"><div className="h-3 w-16 rounded bg-[#161616] animate-pulse" style={{ animationDelay: `${i * 60 + 70}ms` }} /></div>
+                </div>
+              ))}
             </div>
           ) : error ? (
             <div className="flex flex-col items-center justify-center py-20 text-rose-400/70 bg-rose-500/5 border border-rose-500/10 rounded-xl">
