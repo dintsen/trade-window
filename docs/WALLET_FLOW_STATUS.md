@@ -1,28 +1,105 @@
 # Wallet Flow & Authentication Status
 
-## Current Wallet Support Status
-- **Supported Wallet**: Adena (Gno.land)
-- **Implementation Level**: Read-only prototype and testnet transaction preview functionality.
-- **Auto-connect**: Disabled (No automatic wallet popup on load; requires user click).
-- **Authentication**: **Blocked / Pending**. Query-parameter filtering (`?wallet=<address>`) remains active in production as an MVP-only filter over public activity data. It is deprecated as an authentication mechanism and will be replaced by signature auth. It never exposes private contact data.
+**Last updated:** 2026-06-13
 
-## Enabled Feature Flags
-- `NEXT_PUBLIC_ENABLE_ADENA=true`
-- `NEXT_PUBLIC_ENABLE_GNO_TX_PREVIEW=true`
+---
 
-## Disabled Feature Flags
-- `NEXT_PUBLIC_ENABLE_GNO_TESTNET_TRANSFERS=false`
-- `NEXT_PUBLIC_ENABLE_GNO_MAINNET_TRANSFERS=false`
+## Wallet Support Matrix
 
-## Critical Security Limitations
-1. **No Production Authentication**:
-   * The query parameter `?wallet=<address>` used in MVP mode is **deprecated**. It is strictly a developer fallback and must not be used as secure authentication.
-   * Cryptographic signature verification is currently blocked (see [WALLET_AUTH_PLAN.md](file:///Users/dmitriydintsen/ai-tools/trade/docs/WALLET_AUTH_PLAN.md)).
-2. **Non-Custodial Architecture**:
-   * No user private keys are ever stored or transmitted to the backend.
-   * No backend wallet signing is performed on behalf of the user.
-   * Real mainnet transfers are strictly disabled.
+| Wallet | Ecosystem | Status | Notes |
+|--------|-----------|--------|-------|
+| Mock Wallet | Gno.land | ✅ Live | Demo A/B users, always available |
+| Adena | Gno.land | 👁 Preview | Extension detection + read-only connect |
+| Keplr | Cosmos / AtomOne | 👁 Preview | isAvailable detection + connect button |
+| Leap | Cosmos / AtomOne | 👁 Preview | isAvailable detection + connect button |
+| Cosmostation | Cosmos / AtomOne | 👁 Preview | isAvailable detection + connect button |
 
-## Technical Blockers for Production Auth
-1. **Adena API Constraints**: Adena lacks a standard `signMessage` or `signArbitrary` method for browser dApps, supporting only Gno transaction signing (`adena.Sign(tx)`).
-2. **Missing Local Compiler**: The local agent environment lacks Go/Docker, preventing verification of secp256k1 cryptographic verification routines before shipping to CI.
+**Status key:**
+- ✅ Live — functional, used for demo
+- 👁 Preview — adapter exists, connect flow works, signing disabled
+- 📋 Planned — not yet implemented
+
+---
+
+## Architecture
+
+All wallets share a common `WalletAdapter` interface:
+
+```ts
+interface WalletAdapter {
+  id: WalletProviderId;
+  label: string;
+  ecosystem: "gno" | "cosmos";
+  supportLevel: "live" | "preview" | "planned" | "disabled";
+  isAvailable(): boolean;
+  connect(chainId?: string): Promise<WalletAccount>;
+  getAccount(chainId?: string): Promise<WalletAccount | null>;
+  disconnect(): Promise<void>;
+}
+```
+
+Cosmos wallets (Keplr, Leap, Cosmostation) share a `KeplrLike` provider interface:
+
+```ts
+interface KeplrLikeProvider {
+  enable(chainIds: string | string[]): Promise<void>;
+  getKey(chainId: string): Promise<{ name: string; bech32Address: string }>;
+}
+```
+
+---
+
+## Safety Rules (enforced)
+
+- ✅ No wallet auto-popup on page load
+- ✅ Connect only on user click
+- ✅ Rejected connection handled gracefully
+- ✅ Disconnect/reset supported
+- ✅ Mainnet transfers disabled
+- ✅ No private key storage
+- ✅ No backend signing
+- ✅ Transaction preview only — no broadcast
+
+---
+
+## Balance Reading
+
+Token balances are fetched from public LCD REST endpoints (cosmos.directory proxy):
+
+| Chain | LCD Endpoint | Status |
+|-------|-------------|--------|
+| Cosmos Hub (cosmoshub-4) | rest.cosmos.directory/cosmoshub | 👁 Preview |
+| AtomOne (atomone-1) | rest.cosmos.directory/atomone | 👁 Preview |
+| Stargaze (stargaze-1) | rest.cosmos.directory/stargaze | 👁 Preview |
+
+Balance reading is read-only. No signing. Returns `null` when unavailable; UI shows honest fallback.
+
+---
+
+## NFT Reading (Stargaze)
+
+- Stargaze NFTs fetched from public GraphQL: `https://graphql.mainnet.stargaze-apis.com/graphql`
+- Browser-side only — no server proxy
+- Returns `null` when unavailable — no fake data shown
+- Selection in `/board/new` NFT tab (preview)
+
+---
+
+## Known Limitations
+
+1. Cosmos wallet signing not implemented — connect reads address only
+2. Adena signing available but mainnet disabled in MVP
+3. Balance reading requires connected wallet with matching chain address
+4. Stargaze NFTs only accessible with `stars1...` address
+5. Wallet session not persisted — reconnect required on page refresh
+6. No wallet signature authentication for trade history — `?wallet=<address>` query only
+
+---
+
+## Roadmap
+
+1. Wallet signature auth for My Trades (nonce + sign)
+2. Adena signing for Gno.land receipt creation
+3. Cosmos wallet signing for AtomOne intent commitment
+4. IBC 2.0 / Eureka readiness research
+5. Hardware wallet support (Ledger via Keplr)
