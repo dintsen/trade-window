@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Send } from "lucide-react";
+import { Logo } from "@/components/layout/Logo";
 import { useRouter } from "next/navigation";
 import { useWalletStore } from "@/lib/wallet/wallet-store";
 
@@ -56,11 +57,8 @@ export default function RequestPage() {
               Back
             </span>
           </Link>
-          <div className="flex items-center gap-2 font-bold text-xl tracking-tight">
-            <span className="text-white">Trade</span>
-            <span className="text-emerald-500">Window</span>
-          </div>
-          <div className="w-16" /> {/* Spacer for centering */}
+          <Logo />
+          <div className="w-16" />
         </div>
       </nav>
 

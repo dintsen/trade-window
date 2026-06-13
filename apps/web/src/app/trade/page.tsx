@@ -11,6 +11,7 @@ import { ShieldAlert, Info, AlertTriangle, RefreshCw, Copy, CheckCircle2, XCircl
 import Link from 'next/link';
 import Image from 'next/image';
 
+import { Logo } from '@/components/layout/Logo';
 import { useWalletStore } from '@/lib/wallet/wallet-store';
 import { buildRoomCommitmentPayload } from '@/lib/gno/commitment-call';
 import { GnoTransactionPreview } from '@/components/trade/GnoTransactionPreview';
@@ -24,9 +25,7 @@ function TradeRoomWrapperInner() {
       {/* Top Navigation */}
       <header className="w-full h-16 flex justify-between items-center px-6 border-b border-white/5 bg-[#0a0a0a] z-50">
         <div className="flex items-center gap-4">
-          <Link href="/" className="flex items-center gap-2">
-            <Image src="/logo-trade.svg" alt="TradeWindow" width={120} height={24} className="object-contain" priority />
-          </Link>
+          <Logo href="/" />
           <div className="w-px h-4 bg-white/10 mx-2"></div>
           <span className="text-sm font-medium text-white/80">Trade Window Demo</span>
           <Badge variant="outline" className="text-[10px] font-mono text-emerald-400 border-emerald-500/30 bg-emerald-500/10 ml-2">Mocked MVP</Badge>
@@ -234,7 +233,7 @@ function TradeRoomWrapperInner() {
                         <Image src="/assets/wallets/leap.svg" alt="Leap" width={20} height={20} className="object-contain grayscale" onError={(e) => (e.currentTarget.style.display = 'none')} />
                       </div>
                       <div>
-                        <div className="text-sm font-medium text-white/50 line-through">Leap</div>
+                        <div className="text-sm font-medium text-white/50">Leap</div>
                         <div className="text-[11px] text-[#9b9b9b]">Sunset May 28, 2026</div>
                       </div>
                     </div>

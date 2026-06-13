@@ -1,36 +1,119 @@
 # Trade Window Architecture
 
-## System Components
-1. **Gno.land Smart Contracts / Realms (Protocol Layer)**: The ultimate authority. Stores protocol commitments, fee logic, registry, and future OTC board.
-2. **Backend (`services/backend-go`)**: A Go WebSocket server using Gorilla WebSockets. This forms the coordination layer across two disparate P2P browsers for live, temporary room state. It is authoritative *only* for live room state in the mocked MVP; Gno contracts are the planned protocol commitment layer.
-3. **Frontend (`apps/web`)**: A Next.js 14+ React frontend tailored with Tailwind CSS. It handles user interface, asset inspection display, trade-room UX, and final intent preview.
-
-## Data Flow
-- **Lobby Phase**: Users generate intent on the Frontend and open a WebSocket channel. The Backend establishes their connection in a thread-safe Hub map.
-- **Negotiation Phase**: JSON payloads (`offer:add`, `trade:lock`, `chat:message`) are synchronized strictly through the Go Hub to prevent tampering. Temporary UI room state and Chat remain off-chain.
-- **Commitment Phase (Gno.land)**: The backend coordinates an Intent Hash. The Frontend will interact with the Gno smart contract to store trade intent commitments, finalized trade hash, party addresses, status, and fee accounting.
-- **Settlement Phase (Future)**: Real asset settlement is a later phase and must be researched before claiming support. Future utility token logic and OTC board listings will be handled by the Gno realm.
-
-## In-Memory Constraints
-For MVP agility, the backend heavily leverages `sync.Mutex` and native Go Maps to hold session rooms dynamically. Persistence (DB) is deliberately ignored because P2P negotiations are ephemeral by nature. If the trade cancels or completes, the state should vanish from memory.
-
-## Concurrency Design
-- **One Goroutine per Room Countdown**: When both parties emit `trade:lock`, an atomic check `StartCountdown()` guarantees only a single `runCountdown` goroutine is spawned for the room.
-- **Client Read/Write Pumps**: Standard asynchronous non-blocking Gorilla read and write channels per client.
-- **Graceful Cleanup**: A central Hub polling mechanism (`RunCleanup`) guarantees no memory leaks from abandoned connections.
-
-
-### Gno.land Architecture Note
-* **Gno.land Protocol Layer**: Gno smart contracts / realms are the planned authoritative protocol layer.
-* **Go Backend**: Coordinates realtime state and acts as a mock room for the current demo.
-* **Frontend**: Next.js UI that renders state and will later call wallet/contract APIs directly.
-* **Current State**: The Gno layer currently stores commitments and registry placeholders.
-* **Limitations**: Real settlement is not implemented yet. No actual token, NFT, or RWA transfers are claimed to work in this MVP.
-
+_Last updated: 2026-06-13_
 
 ---
-### Current Architectural Positioning
-* **Core Definition**: Trade Window = Gno.land smart-contract commitment layer + Go coordination backend + Next.js trade UI.
-* **Adena Priority**: Adena is the priority wallet path. The current implementation is a read-only/detection prototype only.
-* **Limitations**: There is no real signing and no real settlement implemented yet.
-* **Gno Contracts**: The Gno contracts are a local validated commitment scaffold. Deployment is not implemented.
+
+## System Overview
+
+Trade Window is a three-layer system:
+
+```
+[Next.js Frontend]  ←WebSocket→  [Go Backend]  ←SQL→  [Supabase Postgres]
+        ↓                                                        
+  [Wallet Layer]                                                  
+  Adena / Keplr / Cosmostation (read-only, MVP)                  
+        ↓  (future)                                              
+  [Gno.land Realm Layer]                                         
+  Intent commitments, fee logic, verified registry               
+```
+
+---
+
+## Layer 1 — Frontend (`apps/web`)
+
+- **Stack**: Next.js 14+ App Router, TypeScript, Tailwind CSS, shadcn/ui-compatible
+- **Deployed**: Vercel project `trade-window-final` (auto-deploy from GitHub `main`)
+- **Key pages**:
+  - `/` — Landing page (hero, product preview, ecosystem roadmap)
+  - `/trade` — Trade room (wallet connect → live P2P room)
+  - `/board` — OTC board (public deal listings)
+  - `/board/new` — Post a listing (asset selector, balance fetch, amount validation)
+  - `/history` — Trade history
+  - `/request` — Submit private OTC deal request
+  - `/thank-you` — Post-submit confirmation
+  - `/whitepaper` — Project whitepaper
+  - `/ecosystem` — Ecosystem overview
+- **Design language**: Supabase-style dark UI (`#0A0A0A` bg, `#171717` cards, `#2b2b2b` borders, `#3ECF8E` green accents)
+- **Wallet support**:
+  - Mock wallet (demo, always available)
+  - Adena (Gno.land, read-only detection)
+  - Keplr (Cosmos/AtomOne, read-only preview)
+  - Cosmostation (Cosmos/AtomOne, read-only preview)
+  - Leap: **removed** — sunset May 28, 2026
+
+## Layer 2 — Go Backend (`services/backend-go`)
+
+- **Stack**: Go, Gorilla WebSockets
+- **Deployed**: Railway with `STORAGE_DRIVER=postgres`
+- **Responsibilities**:
+  - WebSocket room state machine (hub pattern)
+  - Offer management (append-only)
+  - Trade lock / 10-second countdown / intent hash
+  - Temporary chat broadcast
+  - System log events
+  - Deal request persistence to Postgres
+  - OTC board listing persistence
+- **Not responsible for**: settlement, asset custody, signing
+- **Concurrency**: `sync.Mutex` per room, single countdown goroutine per room, graceful cleanup via `RunCleanup`
+
+## Layer 3 — Supabase Postgres
+
+- **Project ref**: `szdhljgchxrkaosmcoxy`
+- **Migrations applied**: 4 (initial schema, deal_requests, otc_board, stargaze_nfts)
+- **Tables**: `deal_requests`, `otc_listings`, `trade_rooms` (ephemeral metadata)
+- **Used by**: Railway backend via `DATABASE_URL`
+
+## Layer 4 — Gno.land Realm (Planned Protocol Layer)
+
+- **Stack**: Gno language, Gno.land realms
+- **Location**: `gno/realms/tradewindow/`
+- **Current state**: Local scaffold only — not deployed
+- **Planned**: Intent commitments, fee logic, verified asset registry, OTC board (on-chain)
+- **Blocked on**: `gnoland` dev node setup, Adena signing (ADR-036)
+
+---
+
+## Data Flow
+
+### Trade Room Session
+1. User connects wallet (mock/Adena/Keplr) → frontend stores account in wallet store
+2. User creates room → POST `/rooms` → backend creates room UUID → WebSocket upgrade
+3. Counterparty joins via shareable link `tradewindow.xyz/trade?room=<id>` → auto-join
+4. Both sides add offers via `offer:add` WebSocket messages (append-only)
+5. Each side locks → backend tracks lock state
+6. Both locked → countdown starts (10s, cancellable)
+7. Countdown complete → intent hash computed → final intent preview displayed
+8. Future: Adena signs ADR-036 commitment → Gno realm stores intent
+
+### OTC Board Listing
+1. User selects offer asset → frontend fetches balance via cosmos.directory LCD (read-only)
+2. User enters amount (validated against balance) → submits form
+3. Backend persists listing to Supabase Postgres
+4. `/board` fetches and displays listings with filters
+
+---
+
+## Security Boundaries
+
+| Boundary | Rule |
+|---|---|
+| Frontend | Not trusted — cannot set server state unilaterally |
+| Backend | Not settlement authority — only coordinates room state |
+| Wallet | Read-only in MVP — no signing, no broadcasting |
+| Gno realm | Future authority for committed intents |
+| Unknown assets | Always marked as unverified in UI |
+| Final intent | Must be previewed before any future signing step |
+| Technical denom | Always shown alongside display name |
+
+---
+
+## Deployment Stack
+
+| Service | Provider | Status |
+|---|---|---|
+| Frontend | Vercel | ✅ Live, auto-deploys from GitHub `main` |
+| Backend | Railway | ✅ Live, `STORAGE_DRIVER=postgres` |
+| Database | Supabase Postgres | ✅ Active, 4 migrations |
+| Domain | `tradewindow.xyz` (planned) | ⏳ Not yet configured |
+| Gno testnet | Gno.land | ❌ Not deployed |

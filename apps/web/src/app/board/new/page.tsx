@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, Send, Layers, ImageIcon, Wallet } from "lucide-react";
+import { Logo } from "@/components/layout/Logo";
 import { useRouter } from "next/navigation";
 import { createListing } from "@/lib/board/api";
 import { getAllAssets, getAsset } from "@/lib/assets/asset-registry";
@@ -113,10 +114,7 @@ export default function NewListingPage() {
               Back to Board
             </span>
           </Link>
-          <div className="flex items-center gap-2 font-bold text-xl tracking-tight">
-            <span className="text-white">Trade</span>
-            <span className="text-emerald-500">Window</span>
-          </div>
+          <Logo />
           <div className="w-24" />
         </div>
       </nav>

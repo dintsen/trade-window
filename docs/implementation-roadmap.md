@@ -1,49 +1,111 @@
 # Implementation Roadmap
 
-## Phase 1 — Gno protocol architecture
-* Docs and realm structure
-
-## Phase 2 — Gno intent commitment MVP
-* Create/cancel/expire/commit intent
-
-## Phase 3 — Adena / GnoConnect research
-* Wallet connection and realm calls
-
-## Phase 4 — Frontend calls Gno realm
-* Read-only or testnet prototype
-
-## Phase 5 — Fee logic / utility token placeholder
-* No investment language
-
-## Phase 6 — AtomOne / Cosmos wallet path
-* Keplr and Cosmostation
-
-## Phase 7 — IBC 2.0 research
-* No unsupported execution claims
-
-
-### Gno.land Architecture Note
-* **Gno.land Protocol Layer**: Gno smart contracts / realms are the planned authoritative protocol layer.
-* **Go Backend**: Coordinates realtime state and acts as a mock room for the current demo.
-* **Frontend**: Next.js UI that renders state and will later call wallet/contract APIs directly.
-* **Current State**: The Gno layer currently stores commitments and registry placeholders.
-* **Limitations**: Real settlement is not implemented yet. No actual token, NFT, or RWA transfers are claimed to work in this MVP.
-
+_Last updated: 2026-06-13_
 
 ---
-### Current Architectural Positioning
-* **Core Definition**: Trade Window = Gno.land smart-contract commitment layer + Go coordination backend + Next.js trade UI.
-* **Adena Priority**: Adena is the priority wallet path. The current implementation is a read-only/detection prototype only.
-* **Limitations**: There is no real signing and no real settlement implemented yet.
-* **Gno Contracts**: The Gno contracts are a local validated commitment scaffold. Deployment is not implemented.
 
-### Current State: Adena Read-Only Prototype
-- Adena detection and connection are implemented (read-only).
-- Mock Wallet remains default.
-- Signing, Gno deployment, and settlement are **NOT** implemented yet.
+## Current State Summary
 
-### Current State: Gno Local Deployment Dry Run Blocked
-- `gno` and `gnokey` tooling is installed.
-- `gnoland` dev node is missing, blocking local deployment.
-- Frontend intent preview is functional.
-- Adena signing, public deployment, and IBC transfers are NOT implemented.
+The MVP foundation is built and deployed. The project is in a grant-ready state with a running demo.
+
+| Layer | Status |
+|---|---|
+| Next.js frontend | ✅ Deployed (Vercel, `trade-window-final`) |
+| Go backend | ✅ Deployed (Railway, `STORAGE_DRIVER=postgres`) |
+| Supabase Postgres | ✅ Active (4 migrations applied) |
+| GitHub → Vercel auto-deploy | ✅ Connected |
+| WebSocket room state machine | ✅ Running |
+| Shareable trade room invite links | ✅ Implemented |
+| OTC board (`/board/new`) | ✅ With asset select, balance fetch, Max, validation |
+| Deal request form (`/request`) | ✅ Email draft flow |
+| History page | ✅ Built |
+| Wallet: Mock (demo) | ✅ Active |
+| Wallet: Adena (Gno.land) | ✅ Detection + read-only connect |
+| Wallet: Keplr (Cosmos) | ✅ Detection + read-only preview |
+| Wallet: Cosmostation (Cosmos) | ✅ Detection + read-only preview |
+| Leap wallet | ❌ Removed — sunset May 28, 2026 |
+| Gno contract deployment | ⏳ Scaffold only, not deployed |
+| Real signing / settlement | ❌ Not implemented |
+| IBC 2.0 / Eureka | ❌ Research phase |
+| AtomOne RPC (live balances) | ❌ Not implemented |
+
+---
+
+## Phase 1 — Foundation ✅ Complete
+
+- Clean Next.js + TypeScript + Tailwind + shadcn-compatible structure
+- Go WebSocket backend with room state machine
+- Supabase Postgres storage layer
+- Shared asset and trade intent model
+- Technical asset tooltips (denom, chain ID, IBC trace)
+- System logs
+
+## Phase 2 — Trade Room ✅ Complete
+
+- P2P trade room with offer append-only state
+- Lock / 10-second countdown / intent hash
+- Chat (temporary)
+- Shareable invite link (`/trade?room=<id>`)
+- Auto-join via URL param `?room=`
+- Final intent preview before signing
+
+## Phase 3 — OTC Board ✅ Complete
+
+- `/board/new` — post a listing with asset selector
+- Balance fetch from cosmos.directory LCD (read-only)
+- Max button + amount validation
+- Asset verification flags (unverified / risky markers)
+- `/board` — board listing page
+- `/history` — trade history
+
+## Phase 4 — Wallet Integration ✅ Partial
+
+- Mock wallet (demo, always works)
+- Adena: detection + read-only connection (Gno.land path)
+- Keplr: detection + read-only (Cosmos/AtomOne path)
+- Cosmostation: detection + read-only (Cosmos/AtomOne path)
+- ADR-036 off-chain signing: planned, not yet implemented
+- Real signing requires Gno contract deployment (Phase 6)
+
+## Phase 5 — Gno Contract Scaffold ✅ Partial
+
+- Gno realm scaffold: `gno/realms/tradewindow/`
+- Intent commitment types defined
+- Local validation tested
+- **Blocked**: `gnoland` dev node setup required for local deployment
+- **Not deployed** to testnet or mainnet
+
+## Phase 6 — Gno Contract Deployment ⏳ Next Priority
+
+- Set up `gnoland` local dev node
+- Deploy tradewindow realm to Gno testnet
+- Wire Adena `signArbitrary` (ADR-036) to commit intents
+- Test intent create / lock / cancel flow end-to-end
+- Research AtomOne chain IDs and RPC endpoints
+
+## Phase 7 — AtomOne / IBC Integration ⏳ Research
+
+- AtomOne chain integration research
+- IBC 2.0 / Eureka readiness study
+- IBC denom trace lookup
+- Do not claim cross-chain atomic settlement until confirmed feasible
+
+## Phase 8 — Utility Token & Grant ⏳ Planned
+
+- Token utility design document (see `docs/token-utility.md`)
+- Grant proposal (see `docs/grant-proposal.md`)
+- Demo script (see `docs/demo-script.md`)
+- No investment language, no production launch claims
+
+---
+
+## What Is Explicitly Out of Scope (MVP)
+
+- Real mainnet settlement
+- Production token launch
+- Cross-chain atomic swap
+- Custodial escrow
+- Complex DAO governance
+- NFT transfer unless confirmed by Gno contract support
+- Real fee collection
+- Any investment or speculative tokenomics

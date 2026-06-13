@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, Plus, RefreshCw, AlertTriangle, Filter } from "lucide-react";
+import { Plus, RefreshCw, AlertTriangle, Filter } from "lucide-react";
+import { Logo } from "@/components/layout/Logo";
 import { PublicBoardListing } from "@/lib/board/types";
 import { fetchListings } from "@/lib/board/api";
 import { getAsset } from "@/lib/assets/asset-registry";
@@ -45,16 +46,7 @@ export default function BoardPage() {
       {/* Navbar Minimal */}
       <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-black/50 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group">
-            <ArrowLeft className="w-4 h-4 text-white/40 group-hover:-translate-x-1 transition-transform" />
-            <span className="font-medium text-white/60 group-hover:text-white transition-colors">
-              Back
-            </span>
-          </Link>
-          <div className="flex items-center gap-2 font-bold text-xl tracking-tight">
-            <span className="text-white">Trade</span>
-            <span className="text-emerald-500">Window</span>
-          </div>
+          <Logo href="/" />
           <div className="w-16 flex justify-end">
             <Link href="/board/new" className="hidden sm:flex text-xs font-semibold bg-emerald-500 hover:bg-emerald-400 text-black px-3 py-1.5 rounded-full items-center gap-1 transition-colors">
               <Plus size={14} /> Post
