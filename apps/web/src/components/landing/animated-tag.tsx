@@ -25,16 +25,14 @@ export function AnimatedTag() {
   }, []);
 
   return (
-    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#3ECF8E]/10 border border-[#3ECF8E]/20 mb-6">
-      <div className="w-1.5 h-1.5 rounded-full bg-[#3ECF8E] shrink-0" />
-      <span
-        className={`text-xs font-mono text-[#3ECF8E] transition-all duration-250 whitespace-nowrap ${
+    <div className="h-5 mb-6 overflow-hidden">
+      <p
+        className={`text-xs font-mono text-[#3ECF8E] uppercase tracking-[0.15em] transition-all duration-250 ${
           fading ? 'opacity-0 translate-y-1' : 'opacity-100 translate-y-0'
         }`}
-        style={{ minWidth: '200px' }}
       >
         {LABELS[index]}
-      </span>
+      </p>
     </div>
   );
 }
