@@ -8,6 +8,8 @@ function getAdenaProvider() {
 export const adenaWalletAdapter: WalletAdapter = {
   id: "adena",
   label: "Adena Wallet",
+  ecosystem: "gno",
+  supportLevel: "preview",
   isAvailable: () => getAdenaProvider() !== null,
   
   connect: async (): Promise<GnoWalletAccount> => {

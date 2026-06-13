@@ -27,6 +27,8 @@ export function setNextMockUser(user: "A" | "B") {
 export const mockWalletAdapter: WalletAdapter = {
   id: "mock",
   label: "Mock Wallet",
+  ecosystem: "gno",
+  supportLevel: "live",
   isAvailable: () => true,
   connect: async () => {
     // Determine which demo user to assign
