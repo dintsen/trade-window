@@ -7,7 +7,7 @@ import { TradeAsset, DEMO_ASSETS } from '@/lib/trade/assets';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { ShieldAlert, Info, AlertTriangle, RefreshCw, Copy, CheckCircle2, XCircle, Hexagon, User, Globe, Send, Terminal, Lock, LinkIcon } from 'lucide-react';
+import { ShieldAlert, Info, AlertTriangle, RefreshCw, Copy, CheckCircle2, XCircle, Hexagon, User, Globe, Send, Terminal, Lock, LinkIcon, ImageIcon } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -258,6 +258,10 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
   const [activeTab, setActiveTab] = useState<'setup'|'assets'|'chat'|'logs'|'transfer'>('setup');
   const [forceOfflineView, setForceOfflineView] = useState(false);
   const [assetQuantities, setAssetQuantities] = useState<Record<string, string>>({});
+  const [starsAddress, setStarsAddress] = useState('');
+  const [nfts, setNfts] = useState<StargazeNFT[]>([]);
+  const [nftLoading, setNftLoading] = useState(false);
+  const [nftError, setNftError] = useState<string | null>(null);
   const searchParams = useSearchParams();
 
   // Auto-join room from URL ?room=<id> when connected
@@ -697,7 +701,7 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
                           type="number"
                           min="0"
                           step="any"
-                          placeholder={`Amount (demo: ${asset.amount})`}
+                          placeholder={`Enter amount (e.g. ${asset.amount})`}
                           value={qty}
                           onChange={e => setAssetQuantities(prev => ({ ...prev, [asset.id]: e.target.value }))}
                           disabled={!roomData || roomData.state !== 'active' || !!myLock}
@@ -709,19 +713,111 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
 
                     <Button
                       onClick={() => {
-                        const finalQty = qty.trim() !== '' ? qty.trim() : asset.amount;
-                        actions.addOffer({ ...asset, amount: finalQty });
+                        const parsedQty = parseFloat(qty.trim());
+                        if (!qty.trim() || isNaN(parsedQty) || parsedQty <= 0) return;
+                        actions.addOffer({ ...asset, amount: qty.trim() });
                         setAssetQuantities(prev => ({ ...prev, [asset.id]: '' }));
                       }}
-                      disabled={!roomData || roomData.state !== 'active' || !!myLock}
+                      disabled={!roomData || roomData.state !== 'active' || !!myLock || !qty.trim() || parseFloat(qty.trim()) <= 0}
                       size="sm"
-                      className="w-full bg-white/5 hover:bg-white/10 text-white/80 border border-white/10"
+                      className="w-full bg-white/5 hover:bg-white/10 text-white/80 border border-white/10 disabled:opacity-30"
                     >
                       + Add to Offer
                     </Button>
                   </div>
                 );
               })}
+
+              {/* ── Stargaze NFTs ─────────────────────────────────────── */}
+              <div className="mt-2 border-t border-white/5 pt-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <ImageIcon size={13} className="text-violet-400" />
+                  <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">NFTs via Stargaze</span>
+                </div>
+
+                <div className="flex gap-2 mb-3">
+                  <input
+                    type="text"
+                    placeholder="stars1… address"
+                    value={starsAddress}
+                    onChange={e => setStarsAddress(e.target.value)}
+                    className="flex-1 bg-black/60 border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder:text-white/20 focus:outline-none focus:ring-1 focus:ring-violet-500/50 focus:border-violet-500/30 transition-all font-mono"
+                  />
+                  <button
+                    onClick={async () => {
+                      const addr = starsAddress.trim();
+                      if (!addr.startsWith('stars1')) { setNftError('Address must start with stars1'); return; }
+                      setNftLoading(true); setNftError(null); setNfts([]);
+                      try { setNfts(await fetchStargazeNFTs(addr)); }
+                      catch (e) { setNftError(e instanceof Error ? e.message : 'Failed to load NFTs'); }
+                      finally { setNftLoading(false); }
+                    }}
+                    disabled={nftLoading || !starsAddress.trim()}
+                    className="px-3 py-2 rounded-lg bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/30 text-violet-400 text-xs font-semibold transition-colors disabled:opacity-40"
+                  >
+                    {nftLoading ? '…' : 'Load'}
+                  </button>
+                </div>
+
+                {nftError && (
+                  <div className="text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2 mb-3">
+                    {nftError}
+                  </div>
+                )}
+
+                {nfts.length === 0 && !nftLoading && !nftError && (
+                  <div className="text-[11px] text-white/20 text-center py-4 italic">
+                    Enter a Stargaze address and click Load to see NFTs.
+                  </div>
+                )}
+
+                {nfts.length > 0 && (
+                  <div className="grid grid-cols-2 gap-2">
+                    {nfts.map(nft => (
+                      <div key={`${nft.collectionAddr}-${nft.tokenId}`} className="bg-[#0a0a0a] border border-white/5 rounded-xl overflow-hidden hover:border-violet-500/30 transition-colors group">
+                        <div className="aspect-square bg-[#111] relative overflow-hidden">
+                          {nft.imageUrl ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={nft.imageUrl} alt={nft.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <ImageIcon size={24} className="text-white/10" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="p-2">
+                          <div className="text-[11px] font-semibold text-white truncate">{nft.name}</div>
+                          <div className="text-[9px] text-white/30 truncate mb-2">{nft.collectionName}</div>
+                          <button
+                            onClick={() => {
+                              const nftAsset: TradeAsset = {
+                                id: `nft-${nft.collectionAddr}-${nft.tokenId}`,
+                                type: 'nft',
+                                chainId: 'stargaze-1',
+                                sourceChain: 'Stargaze',
+                                displayDenom: nft.name,
+                                baseDenom: `${nft.collectionAddr}:${nft.tokenId}`,
+                                technicalDenom: `nft:${nft.collectionAddr}:${nft.tokenId}`,
+                                amount: '1',
+                                decimals: 0,
+                                ibcTrace: '',
+                                verificationStatus: 'unverified',
+                                verificationReason: 'NFT from Stargaze — verify collection contract before accepting',
+                                metadata: JSON.stringify({ collectionAddr: nft.collectionAddr, tokenId: nft.tokenId, imageUrl: nft.imageUrl }),
+                              };
+                              actions.addOffer(nftAsset);
+                            }}
+                            disabled={!roomData || roomData.state !== 'active' || !!myLock}
+                            className="w-full text-[10px] py-1 rounded-md bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/20 text-violet-400 font-semibold transition-colors disabled:opacity-30"
+                          >
+                            + Add NFT
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
@@ -791,6 +887,46 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
   );
 }
 
+// ── Stargaze NFT types & fetch ──────────────────────────────────────────────
+interface StargazeNFT {
+  tokenId: string;
+  name: string;
+  imageUrl: string;
+  collectionAddr: string;
+  collectionName: string;
+}
+
+async function fetchStargazeNFTs(ownerAddr: string): Promise<StargazeNFT[]> {
+  const query = `
+    query NftsByOwner($ownerAddr: String!) {
+      tokens(ownerAddr: $ownerAddr, limit: 24) {
+        tokens {
+          tokenId
+          name
+          imageUrl
+          collection { contractAddress name }
+        }
+      }
+    }
+  `;
+  const res = await fetch('https://graphql.mainnet.stargaze-apis.com/graphql', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query, variables: { ownerAddr } }),
+  });
+  if (!res.ok) throw new Error(`Stargaze API error: ${res.status}`);
+  const json = await res.json();
+  const tokens = json?.data?.tokens?.tokens ?? [];
+  return tokens.map((t: { tokenId: string; name: string; imageUrl: string; collection: { contractAddress: string; name: string } }) => ({
+    tokenId: t.tokenId,
+    name: t.name ?? `#${t.tokenId}`,
+    imageUrl: t.imageUrl ?? '',
+    collectionAddr: t.collection?.contractAddress ?? '',
+    collectionName: t.collection?.name ?? 'Unknown Collection',
+  }));
+}
+
+// ── Token logo map ───────────────────────────────────────────────────────────
 const ASSET_LOGO_MAP: Record<string, string> = {
   ATONE: '/assets/logos/atomone.svg',
   GNOT: '/assets/logos/gno.svg',
