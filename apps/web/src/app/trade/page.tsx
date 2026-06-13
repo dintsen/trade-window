@@ -7,11 +7,10 @@ import { TradeAsset, DEMO_ASSETS } from '@/lib/trade/assets';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { ShieldAlert, Info, AlertTriangle, RefreshCw, Copy, CheckCircle2, XCircle, Hexagon, User, Globe, Send, Terminal, Lock, LinkIcon, ImageIcon } from 'lucide-react';
+import { ShieldAlert, Info, AlertTriangle, RefreshCw, Copy, CheckCircle2, XCircle, Hexagon, User, Globe, Send, Terminal, Lock, LinkIcon, ImageIcon, ArrowLeftRight, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-import { Logo } from '@/components/layout/Logo';
 import { useWalletStore } from '@/lib/wallet/wallet-store';
 import { buildRoomCommitmentPayload } from '@/lib/gno/commitment-call';
 import { GnoTransactionPreview } from '@/components/trade/GnoTransactionPreview';
@@ -23,32 +22,41 @@ function TradeRoomWrapperInner() {
   return (
     <div className="min-h-screen bg-[#030303] text-white font-sans selection:bg-emerald-500/30 flex flex-col">
       {/* Top Navigation */}
-      <header className="w-full h-16 flex justify-between items-center px-6 border-b border-white/5 bg-[#0a0a0a] z-50">
-        <div className="flex items-center gap-4">
-          <Logo href="/" />
-          <div className="w-px h-4 bg-white/10 mx-2"></div>
-          <span className="text-sm font-medium text-white/80">Trade Window Demo</span>
-          <Badge variant="outline" className="text-[10px] font-mono text-emerald-400 border-emerald-500/30 bg-emerald-500/10 ml-2">Mocked MVP</Badge>
+      <header className="w-full h-14 flex justify-between items-center px-6 border-b border-[#1c1c1c] bg-[#0a0a0a] z-50">
+        <div className="flex items-center gap-3">
+          {/* Back to home */}
+          <Link href="/" className="text-white/30 hover:text-white/60 transition-colors p-1">
+            <ChevronLeft size={16} />
+          </Link>
+          <div className="w-px h-4 bg-[#1c1c1c]" />
+          {/* Product name */}
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-md bg-sky-500/10 border border-sky-500/20 flex items-center justify-center shrink-0">
+              <ArrowLeftRight size={11} className="text-sky-400" />
+            </div>
+            <span className="text-sm font-semibold text-white/80">OTC Trading</span>
+          </div>
+          <span className="text-[10px] font-mono text-[#3ECF8E] bg-[#3ECF8E]/8 border border-[#3ECF8E]/20 px-2 py-0.5 rounded-full">Preview</span>
         </div>
 
-        <div className="flex items-center gap-4 text-sm font-medium">
+        <div className="flex items-center gap-3 text-sm font-medium">
           <div className="hidden sm:flex items-center gap-2">
-            <Link href="/board/new" className="px-4 py-1.5 rounded-full border border-white/10 text-white/80 hover:bg-white/5 transition-colors text-xs font-semibold">
+            <Link href="/board/new" className="px-3.5 py-1.5 rounded-md border border-[#2b2b2b] text-white/60 hover:bg-white/[0.04] hover:text-white/80 transition-colors text-xs font-medium">
               Post OTC Listing
             </Link>
-            <Link href="/request" className="px-4 py-1.5 rounded-full border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 transition-colors text-xs font-semibold">
+            <Link href="/request" className="px-3.5 py-1.5 rounded-md border border-[#3ECF8E]/25 text-[#3ECF8E]/80 hover:bg-[#3ECF8E]/8 transition-colors text-xs font-medium">
               Request OTC Deal
             </Link>
           </div>
           {account ? (
-            <div className="flex items-center gap-3 bg-black/50 border border-white/5 rounded-full px-4 py-1.5">
-              <span className="text-emerald-400 flex items-center gap-1.5 text-xs"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_5px_#10b981]"></div> Active: {account.displayAddress}</span>
-              <div className="w-px h-3 bg-white/10"></div>
-              <span className="text-white/40 font-mono text-xs">{account.address.slice(0, 10)}...</span>
-              <button onClick={() => disconnect()} className="ml-2 text-white/40 hover:text-white transition-colors"><XCircle size={14}/></button>
+            <div className="flex items-center gap-2.5 bg-[#111111] border border-[#1c1c1c] rounded-lg px-3 py-1.5">
+              <div className="w-1.5 h-1.5 rounded-full bg-[#3ECF8E]" />
+              <span className="text-[#3ECF8E] text-xs font-medium">{account.displayAddress}</span>
+              <div className="w-px h-3 bg-[#2b2b2b]" />
+              <button onClick={() => disconnect()} className="text-white/30 hover:text-white/60 transition-colors"><XCircle size={13}/></button>
             </div>
           ) : (
-            <span className="text-white/40 text-xs">No wallet selected</span>
+            <span className="text-white/30 text-xs font-mono">No wallet</span>
           )}
         </div>
       </header>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Plus, RefreshCw, AlertTriangle, LayoutGrid, ArrowRight } from "lucide-react";
+import { Plus, RefreshCw, AlertTriangle, LayoutGrid, ArrowRight, ChevronLeft } from "lucide-react";
 import { PublicBoardListing } from "@/lib/board/types";
 import { fetchListings } from "@/lib/board/api";
 import { getAsset } from "@/lib/assets/asset-registry";
@@ -64,12 +64,18 @@ export default function BoardPage() {
       {/* Navbar */}
       <nav className="fixed top-0 w-full z-50 border-b border-[#1c1c1c] bg-[#0a0a0a]/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
-          <Link href="/board" className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-[#3ECF8E]/10 border border-[#3ECF8E]/20 flex items-center justify-center shrink-0">
-              <LayoutGrid size={12} className="text-[#3ECF8E]" />
-            </div>
-            <span className="font-semibold text-sm text-white/80">OTC Board</span>
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link href="/" className="text-white/30 hover:text-white/60 transition-colors p-1">
+              <ChevronLeft size={16} />
+            </Link>
+            <div className="w-px h-4 bg-[#1c1c1c]" />
+            <Link href="/board" className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-md bg-[#3ECF8E]/10 border border-[#3ECF8E]/20 flex items-center justify-center shrink-0">
+                <LayoutGrid size={12} className="text-[#3ECF8E]" />
+              </div>
+              <span className="font-semibold text-sm text-white/80">OTC Board</span>
+            </Link>
+          </div>
           <Link
             href="/board/new"
             className="hidden sm:flex items-center gap-1.5 text-xs font-semibold bg-[#3ECF8E] hover:bg-[#4ADBA0] text-black px-3.5 py-1.5 rounded-md transition-colors"

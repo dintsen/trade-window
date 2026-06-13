@@ -23,14 +23,7 @@ export function HeroSection() {
 
         {/* Left: Text Content */}
         <div className="flex flex-col items-start text-left z-10">
-          <div className="flex flex-col items-start mb-8">
-            <AnimatedTag />
-          </div>
-
-          {/* Section label */}
-          <p className="text-xs font-mono text-[#3ECF8E] uppercase tracking-[0.15em] mb-4">
-            Safety-first OTC · AtomOne / Gno.land
-          </p>
+          <AnimatedTag />
 
           <h1 className="text-5xl md:text-7xl font-bold tracking-tighter leading-[1.05] mb-6 text-white">
             OTC trading room for{' '}
