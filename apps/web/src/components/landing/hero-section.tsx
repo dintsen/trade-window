@@ -292,7 +292,7 @@ export function HeroSection() {
                       <div className="flex items-center">
                         <div className="w-12 h-12 shrink-0 overflow-hidden bg-[#111]">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src="https://ipfs-gw.stargaze-apis.com/ipfs/QmbGvE3wmxex8KiBbbvMjR8f9adR28s3XkiZSTuGmHoMHV/42.jpg" alt="Bad Kid #42" className="w-full h-full object-cover" />
+                          <img src="https://ipfs.io/ipfs/QmbGvE3wmxex8KiBbbvMjR8f9adR28s3XkiZSTuGmHoMHV/42.jpg" alt="Bad Kid #42" className="w-full h-full object-cover" />
                         </div>
                         <div className="flex-1 min-w-0 px-2.5 py-2">
                           <div className="flex items-center justify-between gap-1 mb-0.5">
@@ -309,7 +309,7 @@ export function HeroSection() {
                       <div className="flex items-center">
                         <div className="w-12 h-12 shrink-0 overflow-hidden bg-[#111]">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src="https://ipfs-gw.stargaze-apis.com/ipfs/QmbGvE3wmxex8KiBbbvMjR8f9adR28s3XkiZSTuGmHoMHV/1000.jpg" alt="Bad Kid #1000" className="w-full h-full object-cover" />
+                          <img src="https://ipfs.io/ipfs/QmbGvE3wmxex8KiBbbvMjR8f9adR28s3XkiZSTuGmHoMHV/1000.jpg" alt="Bad Kid #1000" className="w-full h-full object-cover" />
                         </div>
                         <div className="flex-1 min-w-0 px-2.5 py-2">
                           <div className="flex items-center justify-between gap-1 mb-0.5">
@@ -362,7 +362,7 @@ export function HeroSection() {
                       <div className="flex items-center">
                         <div className="w-12 h-12 shrink-0 overflow-hidden bg-[#111]">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src="https://ipfs-gw.stargaze-apis.com/ipfs/QmbGvE3wmxex8KiBbbvMjR8f9adR28s3XkiZSTuGmHoMHV/5000.jpg" alt="Bad Kid #5000" className="w-full h-full object-cover" />
+                          <img src="https://ipfs.io/ipfs/QmbGvE3wmxex8KiBbbvMjR8f9adR28s3XkiZSTuGmHoMHV/5000.jpg" alt="Bad Kid #5000" className="w-full h-full object-cover" />
                         </div>
                         <div className="flex-1 min-w-0 px-2.5 py-2">
                           <div className="flex items-center justify-between gap-1 mb-0.5">
@@ -379,7 +379,7 @@ export function HeroSection() {
                       <div className="flex items-center">
                         <div className="w-12 h-12 shrink-0 overflow-hidden bg-[#111]">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src="https://ipfs-gw.stargaze-apis.com/ipfs/QmbGvE3wmxex8KiBbbvMjR8f9adR28s3XkiZSTuGmHoMHV/9000.jpg" alt="Bad Kid #9000" className="w-full h-full object-cover" />
+                          <img src="https://ipfs.io/ipfs/QmbGvE3wmxex8KiBbbvMjR8f9adR28s3XkiZSTuGmHoMHV/9000.jpg" alt="Bad Kid #9000" className="w-full h-full object-cover" />
                         </div>
                         <div className="flex-1 min-w-0 px-2.5 py-2">
                           <div className="flex items-center justify-between gap-1 mb-0.5">

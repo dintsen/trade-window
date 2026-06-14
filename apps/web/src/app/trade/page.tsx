@@ -18,6 +18,48 @@ import { GnoTestnetTransfer } from '@/components/trade/GnoTestnetTransfer';
 import { signAndBroadcast } from '@/lib/wallet/signing';
 import { toast, updateToast } from '@/hooks/use-toasts';
 import { useWalletBalances } from '@/hooks/use-wallet-balances';
+import { WalletBalance } from '@/lib/wallet/types';
+import { getAsset } from '@/lib/assets/asset-registry';
+import { formatBaseAmount } from '@/lib/wallet/balances';
+
+// ── Live balance → TradeAsset ─────────────────────────────────────────────────
+const CHAIN_DISPLAY: Record<string, string> = {
+  'cosmoshub-4': 'Cosmos Hub',
+  'stargaze-1': 'Stargaze',
+  'atomone-1': 'AtomOne',
+  'gno-testnet': 'Gno.land',
+};
+
+function walletBalancesToTradeAssets(balances: WalletBalance[]): TradeAsset[] {
+  return balances.map((b, i) => {
+    const reg = getAsset(b.denom);
+    const human = formatBaseAmount(b.amount, b.decimals ?? reg?.decimals ?? 6);
+    const regStatus = reg?.verificationStatus;
+    // 'demo' in registry means it's a known testnet token — show as verified
+    const status: TradeAsset['verificationStatus'] =
+      regStatus === 'verified' || regStatus === 'demo' ? 'verified' :
+      regStatus === 'suspicious' ? 'suspicious' :
+      regStatus === 'unverified' ? 'unverified' : 'unknown';
+
+    return {
+      id: `live-${i}-${b.denom}`,
+      type: 'coin' as const,
+      chainId: b.chainId,
+      sourceChain: CHAIN_DISPLAY[b.chainId] ?? b.chainId,
+      displayDenom: reg?.displayDenom ?? b.symbol ?? b.denom.toUpperCase(),
+      baseDenom: b.denom,
+      technicalDenom: b.denom,
+      amount: human,   // used as placeholder; user types actual qty
+      decimals: b.decimals ?? reg?.decimals ?? 6,
+      ibcTrace: '',
+      verificationStatus: status,
+      verificationReason: reg
+        ? `Known token — ${reg.name}`
+        : 'Unknown denom — verify carefully before trading',
+      metadata: '{}',
+    };
+  });
+}
 
 function TradeRoomWrapperInner() {
   const { account, connect, disconnect, adapters, isConnecting, activeProvider, error } = useWalletStore();
@@ -150,28 +192,45 @@ function TradeRoomWrapperInner() {
                   const adapter = adapters.find(a => a.id === "keplr");
                   if (!adapter) return null;
                   const available = adapter.isAvailable();
+                  const chains = [
+                    { id: 'cosmoshub-4', label: 'Cosmos' },
+                    { id: 'atomone-1', label: 'AtomOne' },
+                    { id: 'stargaze-1', label: 'Stargaze' },
+                  ];
                   return (
-                    <div className="flex items-center gap-3 bg-[#111111] border border-[#1c1c1c] hover:border-[#2b2b2b] rounded-lg px-3.5 py-3 transition-colors">
-                      <div className="w-9 h-9 rounded-lg bg-[#1a1a1a] border border-[#2b2b2b] flex items-center justify-center overflow-hidden shrink-0">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src="/assets/wallets/keplr.svg" alt="Keplr" width={24} height={24} className="object-contain" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-semibold text-white leading-none mb-0.5">Keplr</div>
-                        <div className="text-[11px] text-white/35">Cosmos · AtomOne</div>
-                      </div>
-                      <div className="flex items-center gap-2 shrink-0">
+                    <div className="bg-[#111111] border border-[#1c1c1c] hover:border-[#2b2b2b] rounded-lg px-3.5 py-3 transition-colors">
+                      <div className="flex items-center gap-3 mb-2.5">
+                        <div className="w-9 h-9 rounded-lg bg-[#1a1a1a] border border-[#2b2b2b] flex items-center justify-center overflow-hidden shrink-0">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src="/assets/wallets/keplr.svg" alt="Keplr" width={24} height={24} className="object-contain" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-semibold text-white leading-none mb-0.5">Keplr</div>
+                          <div className="text-[11px] text-white/35">Cosmos · AtomOne · Stargaze</div>
+                        </div>
                         <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded border leading-none ${available ? 'text-[#3ECF8E] bg-[#3ECF8E]/10 border-[#3ECF8E]/20' : 'text-white/25 border-[#1c1c1c]'}`}>
                           {available ? 'Detected' : 'Not found'}
                         </span>
-                        <button
-                          onClick={() => connect("keplr")}
-                          disabled={!available || isConnecting}
-                          className={`text-[11px] font-medium px-3 py-1.5 rounded-md border transition-all ${available ? 'border-[#2b2b2b] bg-[#1a1a1a] text-white/60 hover:text-white hover:border-[#3ECF8E]/30' : 'border-[#1c1c1c] text-white/20 cursor-not-allowed'}`}
-                        >
-                          {isConnecting && activeProvider === "keplr" ? "…" : available ? "Connect" : "Install"}
-                        </button>
                       </div>
+                      {available ? (
+                        <div className="flex gap-1.5">
+                          {chains.map(c => (
+                            <button
+                              key={c.id}
+                              onClick={() => connect("keplr", c.id)}
+                              disabled={isConnecting}
+                              className="flex-1 text-[10px] font-medium py-1.5 rounded-md border border-[#2b2b2b] bg-[#0a0a0a] text-white/50 hover:text-white hover:border-[#3ECF8E]/30 transition-all disabled:opacity-40"
+                            >
+                              {isConnecting && activeProvider === "keplr" ? "…" : c.label}
+                            </button>
+                          ))}
+                        </div>
+                      ) : (
+                        <a href="https://www.keplr.app/download" target="_blank" rel="noopener noreferrer"
+                          className="block w-full text-center text-[11px] font-medium py-1.5 rounded-md border border-[#1c1c1c] text-white/20">
+                          Install Keplr →
+                        </a>
+                      )}
                     </div>
                   );
                 })()}
@@ -181,28 +240,44 @@ function TradeRoomWrapperInner() {
                   const adapter = adapters.find(a => a.id === "cosmostation");
                   if (!adapter) return null;
                   const available = adapter.isAvailable();
+                  const chains = [
+                    { id: 'cosmoshub-4', label: 'Cosmos' },
+                    { id: 'atomone-1', label: 'AtomOne' },
+                  ];
                   return (
-                    <div className="flex items-center gap-3 bg-[#111111] border border-[#1c1c1c] hover:border-[#2b2b2b] rounded-lg px-3.5 py-3 transition-colors">
-                      <div className="w-9 h-9 rounded-lg bg-[#1a1a1a] border border-[#2b2b2b] flex items-center justify-center overflow-hidden shrink-0">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src="/assets/wallets/cosmostation.png" alt="Cosmostation" width={24} height={24} className="object-contain" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-semibold text-white leading-none mb-0.5">Cosmostation</div>
-                        <div className="text-[11px] text-white/35">Cosmos · AtomOne</div>
-                      </div>
-                      <div className="flex items-center gap-2 shrink-0">
+                    <div className="bg-[#111111] border border-[#1c1c1c] hover:border-[#2b2b2b] rounded-lg px-3.5 py-3 transition-colors">
+                      <div className="flex items-center gap-3 mb-2.5">
+                        <div className="w-9 h-9 rounded-lg bg-[#1a1a1a] border border-[#2b2b2b] flex items-center justify-center overflow-hidden shrink-0">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src="/assets/wallets/cosmostation.png" alt="Cosmostation" width={24} height={24} className="object-contain" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-semibold text-white leading-none mb-0.5">Cosmostation</div>
+                          <div className="text-[11px] text-white/35">Cosmos · AtomOne</div>
+                        </div>
                         <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded border leading-none ${available ? 'text-[#3ECF8E] bg-[#3ECF8E]/10 border-[#3ECF8E]/20' : 'text-white/25 border-[#1c1c1c]'}`}>
                           {available ? 'Detected' : 'Not found'}
                         </span>
-                        <button
-                          onClick={() => connect("cosmostation")}
-                          disabled={!available || isConnecting}
-                          className={`text-[11px] font-medium px-3 py-1.5 rounded-md border transition-all ${available ? 'border-[#2b2b2b] bg-[#1a1a1a] text-white/60 hover:text-white hover:border-[#3ECF8E]/30' : 'border-[#1c1c1c] text-white/20 cursor-not-allowed'}`}
-                        >
-                          {isConnecting && activeProvider === "cosmostation" ? "…" : available ? "Connect" : "Install"}
-                        </button>
                       </div>
+                      {available ? (
+                        <div className="flex gap-1.5">
+                          {chains.map(c => (
+                            <button
+                              key={c.id}
+                              onClick={() => connect("cosmostation", c.id)}
+                              disabled={isConnecting}
+                              className="flex-1 text-[10px] font-medium py-1.5 rounded-md border border-[#2b2b2b] bg-[#0a0a0a] text-white/50 hover:text-white hover:border-[#3ECF8E]/30 transition-all disabled:opacity-40"
+                            >
+                              {isConnecting && activeProvider === "cosmostation" ? "…" : c.label}
+                            </button>
+                          ))}
+                        </div>
+                      ) : (
+                        <a href="https://www.cosmostation.io/wallet" target="_blank" rel="noopener noreferrer"
+                          className="block w-full text-center text-[11px] font-medium py-1.5 rounded-md border border-[#1c1c1c] text-white/20">
+                          Install Cosmostation →
+                        </a>
+                      )}
                     </div>
                   );
                 })()}
@@ -251,7 +326,16 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
   const [nftError, setNftError] = useState<string | null>(null);
   const [isSigning, setIsSigning] = useState(false);
   const [signedTxHash, setSignedTxHash] = useState<string | null>(null);
-  const { balances } = useWalletBalances();
+  const { balances, loading: balancesLoading, refresh: refreshBalances } = useWalletBalances();
+
+  // Decide which asset list to show in the picker:
+  // – Real wallet (Keplr/Adena): live balances from chain
+  // – Mock wallet: DEMO_ASSETS with explicit label
+  const isRealWallet = account && !account.isMock;
+  const liveTradeAssets = isRealWallet && balances.length > 0
+    ? walletBalancesToTradeAssets(balances)
+    : null;
+  const assetsToShow: TradeAsset[] = liveTradeAssets ?? DEMO_ASSETS;
   const searchParams = useSearchParams();
 
   // Auto-join room from URL ?room=<id> when connected
@@ -763,11 +847,37 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
           {/* Assets Tab */}
           {activeTab === 'assets' && (
             <div className="flex flex-col gap-4">
-              <div className="text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 p-3 rounded-lg mb-2">
-                <strong>Demo Rule:</strong> Assets and balances are mocked. Set the quantity you want to offer, then click Add. Technical denom is always shown for safety.
-              </div>
+              {/* Banner: real wallet vs demo mode */}
+              {isRealWallet ? (
+                <div className="flex items-center justify-between text-xs bg-[#0a0a0a] border border-white/5 p-3 rounded-lg">
+                  <span className="text-white/50">
+                    {balancesLoading
+                      ? 'Fetching balances…'
+                      : liveTradeAssets
+                        ? `${liveTradeAssets.length} token${liveTradeAssets.length !== 1 ? 's' : ''} from your wallet`
+                        : 'No balances found on this chain'}
+                  </span>
+                  <button
+                    onClick={() => refreshBalances()}
+                    className="text-white/30 hover:text-emerald-400 transition-colors"
+                    title="Refresh balances"
+                  >
+                    <RefreshCw size={12} className={balancesLoading ? 'animate-spin' : ''} />
+                  </button>
+                </div>
+              ) : (
+                <div className="text-xs text-amber-400 bg-amber-500/10 border border-amber-500/20 p-3 rounded-lg mb-2">
+                  <strong>Demo mode:</strong> Assets are mocked. Connect Keplr or Adena to use real wallet balances.
+                </div>
+              )}
 
-              {DEMO_ASSETS.map((asset, i) => {
+              {assetsToShow.length === 0 && isRealWallet && !balancesLoading && (
+                <div className="text-xs text-white/30 text-center py-6 italic">
+                  No tokens found. Make sure your wallet is connected to the right chain.
+                </div>
+              )}
+
+              {assetsToShow.map((asset, i) => {
                 const isSuspicious = asset.verificationStatus === 'suspicious';
                 const isVerified = asset.verificationStatus === 'verified';
                 const logo = getAssetLogo(asset.displayDenom);
@@ -820,7 +930,8 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
                       onClick={() => {
                         const parsedQty = parseFloat(qty.trim());
                         if (!qty.trim() || isNaN(parsedQty) || parsedQty <= 0) return;
-                        actions.addOffer({ ...asset, amount: qty.trim() });
+                        // Unique ID per add so duplicate offers of the same token are distinct
+                        actions.addOffer({ ...asset, id: `${asset.id}-${Date.now()}`, amount: qty.trim() });
                         setAssetQuantities(prev => ({ ...prev, [asset.id]: '' }));
                       }}
                       disabled={!roomData || roomData.state !== 'active' || !!myLock || !qty.trim() || parseFloat(qty.trim()) <= 0}
@@ -1004,7 +1115,7 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
 
 /** Real Bad Kids NFTs from Stargaze mainnet (IPFS gateway confirmed). */
 const BAD_KIDS_CONTRACT = 'stars19jq6mj84cnt9p7sagjxqf8hxtczwc8wlpuwe4sh62w45aheseues57n420';
-const IPFS_GW = 'https://ipfs-gw.stargaze-apis.com/ipfs/QmbGvE3wmxex8KiBbbvMjR8f9adR28s3XkiZSTuGmHoMHV/';
+const IPFS_GW = 'https://ipfs.io/ipfs/QmbGvE3wmxex8KiBbbvMjR8f9adR28s3XkiZSTuGmHoMHV/';
 
 const SAMPLE_STARGAZE_NFTS: StargazeNFT[] = [
   { tokenId: '42',   name: 'Bad Kid #42',   imageUrl: IPFS_GW + '42.jpg',   collectionAddr: BAD_KIDS_CONTRACT, collectionName: 'Bad Kids' },
