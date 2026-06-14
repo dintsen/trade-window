@@ -20,7 +20,7 @@ import { toast, updateToast } from '@/hooks/use-toasts';
 import { useWalletBalances } from '@/hooks/use-wallet-balances';
 
 function TradeRoomWrapperInner() {
-  const { account, connect, disconnect, adapters, isConnecting, activeProvider } = useWalletStore();
+  const { account, connect, disconnect, adapters, isConnecting, activeProvider, error } = useWalletStore();
   
   return (
     <div className="min-h-screen bg-[#030303] text-white font-sans selection:bg-emerald-500/30 flex flex-col">
@@ -208,6 +208,12 @@ function TradeRoomWrapperInner() {
                 })()}
 
               </div>
+
+              {error && (
+                <div className="mt-4 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-xs text-center leading-relaxed">
+                  {error}
+                </div>
+              )}
 
               <p className="mt-5 text-center text-[10px] text-white/20 font-mono">
                 MVP prototype — AtomOne / Gno.land · Trust-based P2P settlement
