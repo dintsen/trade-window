@@ -4,59 +4,8 @@ import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 
-/* ── Pixel-art SVG NFT thumbnails ── */
-function SwordSvg() {
-  return (
-    <svg viewBox="0 0 28 28" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
-      <rect x="13" y="2" width="2" height="16" fill="#f59e0b"/>
-      <rect x="13.5" y="3" width="1" height="10" fill="#fde68a" opacity="0.55"/>
-      <rect x="7" y="16" width="14" height="2.5" rx="0.5" fill="#d97706"/>
-      <rect x="12" y="18.5" width="4" height="5.5" fill="#92400e"/>
-      <rect x="10.5" y="23.5" width="7" height="2" rx="0.5" fill="#78350f"/>
-    </svg>
-  );
-}
-function KnightSvg() {
-  return (
-    <svg viewBox="0 0 28 28" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
-      <rect x="9" y="4" width="10" height="2" rx="1" fill="#5b21b6"/>
-      <rect x="8" y="6" width="12" height="13" rx="1" fill="#4c1d95"/>
-      <rect x="9" y="13" width="10" height="4" fill="#2d1b69"/>
-      <rect x="10" y="14" width="3" height="1.5" rx="0.5" fill="#7c3aed"/>
-      <rect x="15" y="14" width="3" height="1.5" rx="0.5" fill="#7c3aed"/>
-      <rect x="5" y="18" width="6" height="5" rx="1" fill="#3b0764"/>
-      <rect x="17" y="18" width="6" height="5" rx="1" fill="#3b0764"/>
-      <rect x="10" y="19" width="8" height="5" rx="1" fill="#2d1b69"/>
-    </svg>
-  );
-}
-function MageSvg() {
-  return (
-    <svg viewBox="0 0 28 28" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
-      <polygon points="14,3 10,16 18,16" fill="#7c3aed"/>
-      <rect x="7" y="15.5" width="14" height="2.5" rx="0.5" fill="#6d28d9"/>
-      <polygon points="14,6 14.7,8.5 17,8.5 15.1,10 15.8,12.5 14,11 12.2,12.5 12.9,10 11,8.5 13.3,8.5" fill="#f0abfc" opacity="0.9"/>
-      <rect x="9" y="18" width="10" height="8" rx="2" fill="#c4b5fd"/>
-      <rect x="11" y="20" width="2" height="2" fill="#4c1d95"/>
-      <rect x="15" y="20" width="2" height="2" fill="#4c1d95"/>
-    </svg>
-  );
-}
-function DrakeSvg() {
-  return (
-    <svg viewBox="0 0 28 28" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
-      <polygon points="6,18 2,9 11,15" fill="#7f1d1d" opacity="0.9"/>
-      <polygon points="22,18 26,9 17,15" fill="#7f1d1d" opacity="0.9"/>
-      <ellipse cx="14" cy="20" rx="8" ry="6" fill="#991b1b"/>
-      <rect x="10" y="10" width="8" height="10" fill="#b91c1c"/>
-      <rect x="8" y="6" width="12" height="8" rx="2" fill="#dc2626"/>
-      <rect x="18" y="9" width="5" height="3" rx="1" fill="#b91c1c"/>
-      <rect x="10" y="8" width="2.5" height="2.5" fill="#fbbf24"/>
-      <ellipse cx="23" cy="9" rx="2" ry="3" fill="#f97316" opacity="0.8"/>
-      <ellipse cx="23" cy="8" rx="1" ry="1.5" fill="#fde047" opacity="0.9"/>
-    </svg>
-  );
-}
+/* ── Real ecosystem assets used in mini demo ── */
+const DEMO_IPFS_BASE = 'https://ipfs.io/ipfs/QmbGvE3wmxex8KiBbbvMjR8f9adR28s3XkiZSTuGmHoMHV';
 import {
   ArrowLeftRight,
   LayoutGrid,
@@ -198,47 +147,65 @@ export function ProductsSection() {
                   Real-time P2P trade room. Both parties add assets, inspect each other&apos;s bundles, lock and review the final intent before signing. All actions are logged. No silent changes.
                 </p>
 
-                {/* Mini trade window demo */}
+                {/* Mini trade window demo — real ecosystem assets */}
                 <div className="bg-[#080808] border border-[#1c1c1c] rounded-lg p-3 mb-5 grid grid-cols-2 gap-2">
-                  {/* User A */}
+                  {/* User A: Bad Kid NFT + ATONE */}
                   <div className="flex flex-col gap-1.5">
                     <div className="flex items-center justify-between mb-0.5">
                       <span className="text-[9px] font-mono text-white/30 uppercase">User A</span>
                       <span className="text-[8px] text-[#3ECF8E] font-mono">Locked ✓</span>
                     </div>
-                    <div className="flex items-center gap-0 rounded overflow-hidden border" style={{ borderColor: 'rgba(245,158,11,0.22)', background: '#0d0a04' }}>
-                      <div className="w-8 h-8 shrink-0 flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#422006,#1a0a00)' }}><SwordSvg /></div>
-                      <div className="flex-1 min-w-0 px-1.5 py-1">
-                        <div className="text-[9px] font-semibold text-white leading-none">Dragon Sword <span className="text-white/30">#4821</span></div>
-                        <div className="text-[7px] font-mono mt-0.5" style={{ color: '#f59e0b' }}>RARE</div>
+                    {/* Bad Kid #42 */}
+                    <div className="flex items-center gap-0 rounded overflow-hidden border" style={{ borderColor: 'rgba(139,92,246,0.3)', background: '#0a0814' }}>
+                      <div className="w-8 h-8 shrink-0 overflow-hidden">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={`${DEMO_IPFS_BASE}/42.jpg`} alt="Bad Kid #42" className="w-full h-full object-cover object-center" />
                       </div>
-                    </div>
-                    <div className="flex items-center gap-0 rounded overflow-hidden border" style={{ borderColor: 'rgba(124,58,237,0.22)', background: '#060410' }}>
-                      <div className="w-8 h-8 shrink-0 flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#1e1040,#0a0520)' }}><KnightSvg /></div>
                       <div className="flex-1 min-w-0 px-1.5 py-1">
-                        <div className="text-[9px] font-semibold text-white leading-none">Shadow Knight <span className="text-white/30">#099</span></div>
-                        <div className="text-[7px] font-mono mt-0.5" style={{ color: '#a78bfa' }}>EPIC</div>
+                        <div className="text-[9px] font-semibold text-white leading-none">Bad Kid <span className="text-white/40">#42</span></div>
+                        <div className="text-[7px] font-mono mt-0.5 text-white/30">Bad Kids · stargaze-1</div>
+                      </div>
+                      <span className="text-[7px] font-mono mr-1.5 shrink-0 px-1 py-0.5 rounded" style={{ background:'rgba(139,92,246,0.12)', color:'#a78bfa', border:'1px solid rgba(139,92,246,0.2)' }}>NFT</span>
+                    </div>
+                    {/* 50 ATONE */}
+                    <div className="flex items-center gap-0 rounded overflow-hidden border" style={{ borderColor: 'rgba(62,207,142,0.2)', background: '#040d08' }}>
+                      <div className="w-8 h-8 shrink-0 flex items-center justify-center bg-[#3ECF8E]/10">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src="/assets/logos/atomone.svg" alt="ATONE" className="w-4 h-4 object-contain" />
+                      </div>
+                      <div className="flex-1 min-w-0 px-1.5 py-1">
+                        <div className="text-[9px] font-semibold text-white leading-none">50 <span className="text-white/40">ATONE</span></div>
+                        <div className="text-[7px] font-mono mt-0.5 text-white/30">atomone-1 · uatone</div>
                       </div>
                     </div>
                   </div>
-                  {/* User B */}
+                  {/* User B: Bad Kid NFT + STARS */}
                   <div className="flex flex-col gap-1.5">
                     <div className="flex items-center justify-between mb-0.5">
                       <span className="text-[9px] font-mono text-white/30 uppercase">User B</span>
                       <span className="text-[8px] text-[#3ECF8E] font-mono">Locked ✓</span>
                     </div>
-                    <div className="flex items-center gap-0 rounded overflow-hidden border" style={{ borderColor: 'rgba(236,72,153,0.22)', background: '#0b0510' }}>
-                      <div className="w-8 h-8 shrink-0 flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#2d1040,#1a0828)' }}><MageSvg /></div>
-                      <div className="flex-1 min-w-0 px-1.5 py-1">
-                        <div className="text-[9px] font-semibold text-white leading-none">Void Mage <span className="text-white/30">#213</span></div>
-                        <div className="text-[7px] font-mono mt-0.5" style={{ color: '#f472b6' }}>LEGENDARY</div>
+                    {/* Bad Kid #5000 */}
+                    <div className="flex items-center gap-0 rounded overflow-hidden border" style={{ borderColor: 'rgba(139,92,246,0.3)', background: '#0a0814' }}>
+                      <div className="w-8 h-8 shrink-0 overflow-hidden">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={`${DEMO_IPFS_BASE}/5000.jpg`} alt="Bad Kid #5000" className="w-full h-full object-cover object-center" />
                       </div>
-                    </div>
-                    <div className="flex items-center gap-0 rounded overflow-hidden border" style={{ borderColor: 'rgba(239,68,68,0.22)', background: '#0f0404' }}>
-                      <div className="w-8 h-8 shrink-0 flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#3f0808,#1a0404)' }}><DrakeSvg /></div>
                       <div className="flex-1 min-w-0 px-1.5 py-1">
-                        <div className="text-[9px] font-semibold text-white leading-none">Inferno Drake <span className="text-white/30">#07</span></div>
-                        <div className="text-[7px] font-mono mt-0.5" style={{ color: '#f87171' }}>EPIC</div>
+                        <div className="text-[9px] font-semibold text-white leading-none">Bad Kid <span className="text-white/40">#5000</span></div>
+                        <div className="text-[7px] font-mono mt-0.5 text-white/30">Bad Kids · stargaze-1</div>
+                      </div>
+                      <span className="text-[7px] font-mono mr-1.5 shrink-0 px-1 py-0.5 rounded" style={{ background:'rgba(139,92,246,0.12)', color:'#a78bfa', border:'1px solid rgba(139,92,246,0.2)' }}>NFT</span>
+                    </div>
+                    {/* 2000 STARS */}
+                    <div className="flex items-center gap-0 rounded overflow-hidden border" style={{ borderColor: 'rgba(244,114,182,0.2)', background: '#0b0409' }}>
+                      <div className="w-8 h-8 shrink-0 flex items-center justify-center bg-pink-500/10">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src="/assets/tokens/stars.svg" alt="STARS" className="w-4 h-4 object-contain" />
+                      </div>
+                      <div className="flex-1 min-w-0 px-1.5 py-1">
+                        <div className="text-[9px] font-semibold text-white leading-none">2000 <span className="text-white/40">STARS</span></div>
+                        <div className="text-[7px] font-mono mt-0.5 text-white/30">stargaze-1 · ustars</div>
                       </div>
                     </div>
                   </div>
