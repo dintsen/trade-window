@@ -4,8 +4,68 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { ArrowRight, ShieldCheck, Lock, Info, Sword, Zap, Star } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Lock, Info } from 'lucide-react';
 import { AnimatedTag } from './animated-tag';
+
+/* ── Pixel-art SVG NFT thumbnails (28×28) ── */
+function SwordSvg() {
+  return (
+    <svg viewBox="0 0 28 28" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+      <rect x="13" y="2" width="2" height="16" fill="#f59e0b"/>
+      <rect x="13.5" y="3" width="1" height="10" fill="#fde68a" opacity="0.55"/>
+      <rect x="7" y="16" width="14" height="2.5" rx="0.5" fill="#d97706"/>
+      <rect x="12" y="18.5" width="4" height="5.5" fill="#92400e"/>
+      <rect x="10.5" y="23.5" width="7" height="2" rx="0.5" fill="#78350f"/>
+    </svg>
+  );
+}
+
+function KnightSvg() {
+  return (
+    <svg viewBox="0 0 28 28" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+      <rect x="9" y="4" width="10" height="2" rx="1" fill="#5b21b6"/>
+      <rect x="8" y="6" width="12" height="13" rx="1" fill="#4c1d95"/>
+      <rect x="9" y="13" width="10" height="4" fill="#2d1b69"/>
+      <rect x="10" y="14" width="3" height="1.5" rx="0.5" fill="#7c3aed"/>
+      <rect x="15" y="14" width="3" height="1.5" rx="0.5" fill="#7c3aed"/>
+      <rect x="5" y="18" width="6" height="5" rx="1" fill="#3b0764"/>
+      <rect x="17" y="18" width="6" height="5" rx="1" fill="#3b0764"/>
+      <rect x="10" y="19" width="8" height="5" rx="1" fill="#2d1b69"/>
+      <rect x="12" y="20" width="4" height="3" fill="#1e1040"/>
+    </svg>
+  );
+}
+
+function MageSvg() {
+  return (
+    <svg viewBox="0 0 28 28" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="14,3 10,16 18,16" fill="#7c3aed"/>
+      <rect x="7" y="15.5" width="14" height="2.5" rx="0.5" fill="#6d28d9"/>
+      <polygon points="14,6 14.7,8.5 17,8.5 15.1,10 15.8,12.5 14,11 12.2,12.5 12.9,10 11,8.5 13.3,8.5" fill="#f0abfc" opacity="0.9"/>
+      <rect x="9" y="18" width="10" height="8" rx="2" fill="#c4b5fd"/>
+      <rect x="11" y="20" width="2" height="2" fill="#4c1d95"/>
+      <rect x="15" y="20" width="2" height="2" fill="#4c1d95"/>
+      <rect x="12" y="23" width="4" height="1" rx="0.5" fill="#7c3aed" opacity="0.6"/>
+    </svg>
+  );
+}
+
+function DrakeSvg() {
+  return (
+    <svg viewBox="0 0 28 28" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="6,18 2,9 11,15" fill="#7f1d1d" opacity="0.9"/>
+      <polygon points="22,18 26,9 17,15" fill="#7f1d1d" opacity="0.9"/>
+      <ellipse cx="14" cy="20" rx="8" ry="6" fill="#991b1b"/>
+      <rect x="10" y="10" width="8" height="10" fill="#b91c1c"/>
+      <rect x="8" y="6" width="12" height="8" rx="2" fill="#dc2626"/>
+      <rect x="18" y="9" width="5" height="3" rx="1" fill="#b91c1c"/>
+      <rect x="10" y="8" width="2.5" height="2.5" fill="#fbbf24"/>
+      <rect x="15.5" y="8" width="2" height="2" fill="#fbbf24"/>
+      <ellipse cx="23" cy="9" rx="2" ry="3" fill="#f97316" opacity="0.8"/>
+      <ellipse cx="23" cy="8" rx="1" ry="1.5" fill="#fde047" opacity="0.9"/>
+    </svg>
+  );
+}
 
 const ease = [0.21, 0.47, 0.32, 0.98] as const;
 
@@ -212,29 +272,35 @@ export function HeroSection() {
                   </div>
 
                   {/* NFT — Dragon Sword */}
-                  <div className="bg-[#0a0a0a] rounded-md px-2.5 py-2 flex items-center gap-2 border border-[#1c1c1c]">
-                    <div className="w-7 h-7 rounded-md shrink-0 flex items-center justify-center text-[13px]"
-                      style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}>
-                      ⚔
+                  <div className="rounded-md flex items-center gap-2 border overflow-hidden shrink-0"
+                    style={{ background: '#0d0a04', borderColor: 'rgba(245,158,11,0.25)' }}>
+                    <div className="w-9 h-9 shrink-0 flex items-center justify-center"
+                      style={{ background: 'linear-gradient(135deg, #422006 0%, #1a0a00 100%)' }}>
+                      <SwordSvg />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-[10px] font-semibold text-white leading-none truncate">Dragon Sword <span className="text-white/40">#4821</span></div>
-                      <div className="text-[9px] text-white/30 mt-0.5">Pixel Realm</div>
+                    <div className="flex-1 min-w-0 pr-2 py-1.5">
+                      <div className="text-[10px] font-semibold text-white leading-none truncate">Dragon Sword <span className="text-white/35">#4821</span></div>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span className="text-[8px] font-mono text-white/25">Pixel Realm</span>
+                        <span className="text-[7px] font-mono px-1 py-0.5 rounded" style={{ background: 'rgba(245,158,11,0.12)', color: '#f59e0b', border: '1px solid rgba(245,158,11,0.2)' }}>RARE</span>
+                      </div>
                     </div>
-                    <span className="text-[8px] font-mono px-1 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-400 shrink-0">RARE</span>
                   </div>
 
                   {/* NFT — Shadow Knight */}
-                  <div className="bg-[#0a0a0a] rounded-md px-2.5 py-2 flex items-center gap-2 border border-[#1c1c1c]">
-                    <div className="w-7 h-7 rounded-md shrink-0 flex items-center justify-center text-[13px]"
-                      style={{ background: 'linear-gradient(135deg, #6366f1, #7c3aed)' }}>
-                      🛡
+                  <div className="rounded-md flex items-center gap-2 border overflow-hidden shrink-0"
+                    style={{ background: '#060410', borderColor: 'rgba(124,58,237,0.25)' }}>
+                    <div className="w-9 h-9 shrink-0 flex items-center justify-center"
+                      style={{ background: 'linear-gradient(135deg, #1e1040 0%, #0a0520 100%)' }}>
+                      <KnightSvg />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-[10px] font-semibold text-white leading-none truncate">Shadow Knight <span className="text-white/40">#099</span></div>
-                      <div className="text-[9px] text-white/30 mt-0.5">Dark Guild</div>
+                    <div className="flex-1 min-w-0 pr-2 py-1.5">
+                      <div className="text-[10px] font-semibold text-white leading-none truncate">Shadow Knight <span className="text-white/35">#099</span></div>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span className="text-[8px] font-mono text-white/25">Dark Guild</span>
+                        <span className="text-[7px] font-mono px-1 py-0.5 rounded" style={{ background: 'rgba(124,58,237,0.12)', color: '#a78bfa', border: '1px solid rgba(124,58,237,0.2)' }}>EPIC</span>
+                      </div>
                     </div>
-                    <span className="text-[8px] font-mono px-1 py-0.5 rounded bg-violet-500/10 border border-violet-500/20 text-violet-400 shrink-0">EPIC</span>
                   </div>
                 </motion.div>
 
@@ -255,8 +321,9 @@ export function HeroSection() {
 
                   {/* Token row — GNOT */}
                   <div className="bg-[#0a0a0a] rounded-md px-2.5 py-2 flex items-center gap-2 border border-[#1c1c1c]">
-                    <div className="w-7 h-7 rounded-md bg-[#1a1a1a] flex items-center justify-center p-1 border border-[#2b2b2b] shrink-0">
-                      <Image src="/assets/logos/gnot-icon.svg" alt="GNOT" width={18} height={18} className="object-contain" />
+                    <div className="w-7 h-7 rounded-md bg-[#1a1a1a] flex items-center justify-center border border-[#2b2b2b] shrink-0 overflow-hidden">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src="/assets/logos/gnot-icon.svg" alt="GNOT" className="h-5 w-auto object-contain" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-xs font-bold text-white leading-none">500.00</div>
@@ -265,30 +332,36 @@ export function HeroSection() {
                     <ShieldCheck size={10} className="text-[#3ECF8E]/50 shrink-0" />
                   </div>
 
-                  {/* NFT — Void Mage character */}
-                  <div className="bg-[#0a0a0a] rounded-md px-2.5 py-2 flex items-center gap-2 border border-[#1c1c1c]">
-                    <div className="w-7 h-7 rounded-md shrink-0 flex items-center justify-center text-[13px]"
-                      style={{ background: 'linear-gradient(135deg, #8b5cf6, #ec4899)' }}>
-                      🔮
+                  {/* NFT — Void Mage */}
+                  <div className="rounded-md flex items-center gap-2 border overflow-hidden shrink-0"
+                    style={{ background: '#0b0510', borderColor: 'rgba(236,72,153,0.25)' }}>
+                    <div className="w-9 h-9 shrink-0 flex items-center justify-center"
+                      style={{ background: 'linear-gradient(135deg, #2d1040 0%, #1a0828 100%)' }}>
+                      <MageSvg />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-[10px] font-semibold text-white leading-none truncate">Void Mage <span className="text-white/40">#213</span></div>
-                      <div className="text-[9px] text-white/30 mt-0.5">Mystic Order</div>
+                    <div className="flex-1 min-w-0 pr-2 py-1.5">
+                      <div className="text-[10px] font-semibold text-white leading-none truncate">Void Mage <span className="text-white/35">#213</span></div>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span className="text-[8px] font-mono text-white/25">Mystic Order</span>
+                        <span className="text-[7px] font-mono px-1 py-0.5 rounded" style={{ background: 'rgba(236,72,153,0.12)', color: '#f472b6', border: '1px solid rgba(236,72,153,0.2)' }}>LEGENDARY</span>
+                      </div>
                     </div>
-                    <span className="text-[8px] font-mono px-1 py-0.5 rounded bg-pink-500/10 border border-pink-500/20 text-pink-400 shrink-0">LEGENDARY</span>
                   </div>
 
                   {/* NFT — Inferno Drake */}
-                  <div className="bg-[#0a0a0a] rounded-md px-2.5 py-2 flex items-center gap-2 border border-[#1c1c1c]">
-                    <div className="w-7 h-7 rounded-md shrink-0 flex items-center justify-center text-[13px]"
-                      style={{ background: 'linear-gradient(135deg, #ef4444, #b45309)' }}>
-                      🐉
+                  <div className="rounded-md flex items-center gap-2 border overflow-hidden shrink-0"
+                    style={{ background: '#0f0404', borderColor: 'rgba(239,68,68,0.25)' }}>
+                    <div className="w-9 h-9 shrink-0 flex items-center justify-center"
+                      style={{ background: 'linear-gradient(135deg, #3f0808 0%, #1a0404 100%)' }}>
+                      <DrakeSvg />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-[10px] font-semibold text-white leading-none truncate">Inferno Drake <span className="text-white/40">#07</span></div>
-                      <div className="text-[9px] text-white/30 mt-0.5">Dragon Kin</div>
+                    <div className="flex-1 min-w-0 pr-2 py-1.5">
+                      <div className="text-[10px] font-semibold text-white leading-none truncate">Inferno Drake <span className="text-white/35">#07</span></div>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span className="text-[8px] font-mono text-white/25">Dragon Kin</span>
+                        <span className="text-[7px] font-mono px-1 py-0.5 rounded" style={{ background: 'rgba(239,68,68,0.12)', color: '#f87171', border: '1px solid rgba(239,68,68,0.2)' }}>EPIC</span>
+                      </div>
                     </div>
-                    <span className="text-[8px] font-mono px-1 py-0.5 rounded bg-red-500/10 border border-red-500/20 text-red-400 shrink-0">EPIC</span>
                   </div>
                 </motion.div>
 

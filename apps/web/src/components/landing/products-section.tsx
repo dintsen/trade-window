@@ -3,6 +3,60 @@
 import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+
+/* ── Pixel-art SVG NFT thumbnails ── */
+function SwordSvg() {
+  return (
+    <svg viewBox="0 0 28 28" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+      <rect x="13" y="2" width="2" height="16" fill="#f59e0b"/>
+      <rect x="13.5" y="3" width="1" height="10" fill="#fde68a" opacity="0.55"/>
+      <rect x="7" y="16" width="14" height="2.5" rx="0.5" fill="#d97706"/>
+      <rect x="12" y="18.5" width="4" height="5.5" fill="#92400e"/>
+      <rect x="10.5" y="23.5" width="7" height="2" rx="0.5" fill="#78350f"/>
+    </svg>
+  );
+}
+function KnightSvg() {
+  return (
+    <svg viewBox="0 0 28 28" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+      <rect x="9" y="4" width="10" height="2" rx="1" fill="#5b21b6"/>
+      <rect x="8" y="6" width="12" height="13" rx="1" fill="#4c1d95"/>
+      <rect x="9" y="13" width="10" height="4" fill="#2d1b69"/>
+      <rect x="10" y="14" width="3" height="1.5" rx="0.5" fill="#7c3aed"/>
+      <rect x="15" y="14" width="3" height="1.5" rx="0.5" fill="#7c3aed"/>
+      <rect x="5" y="18" width="6" height="5" rx="1" fill="#3b0764"/>
+      <rect x="17" y="18" width="6" height="5" rx="1" fill="#3b0764"/>
+      <rect x="10" y="19" width="8" height="5" rx="1" fill="#2d1b69"/>
+    </svg>
+  );
+}
+function MageSvg() {
+  return (
+    <svg viewBox="0 0 28 28" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="14,3 10,16 18,16" fill="#7c3aed"/>
+      <rect x="7" y="15.5" width="14" height="2.5" rx="0.5" fill="#6d28d9"/>
+      <polygon points="14,6 14.7,8.5 17,8.5 15.1,10 15.8,12.5 14,11 12.2,12.5 12.9,10 11,8.5 13.3,8.5" fill="#f0abfc" opacity="0.9"/>
+      <rect x="9" y="18" width="10" height="8" rx="2" fill="#c4b5fd"/>
+      <rect x="11" y="20" width="2" height="2" fill="#4c1d95"/>
+      <rect x="15" y="20" width="2" height="2" fill="#4c1d95"/>
+    </svg>
+  );
+}
+function DrakeSvg() {
+  return (
+    <svg viewBox="0 0 28 28" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="6,18 2,9 11,15" fill="#7f1d1d" opacity="0.9"/>
+      <polygon points="22,18 26,9 17,15" fill="#7f1d1d" opacity="0.9"/>
+      <ellipse cx="14" cy="20" rx="8" ry="6" fill="#991b1b"/>
+      <rect x="10" y="10" width="8" height="10" fill="#b91c1c"/>
+      <rect x="8" y="6" width="12" height="8" rx="2" fill="#dc2626"/>
+      <rect x="18" y="9" width="5" height="3" rx="1" fill="#b91c1c"/>
+      <rect x="10" y="8" width="2.5" height="2.5" fill="#fbbf24"/>
+      <ellipse cx="23" cy="9" rx="2" ry="3" fill="#f97316" opacity="0.8"/>
+      <ellipse cx="23" cy="8" rx="1" ry="1.5" fill="#fde047" opacity="0.9"/>
+    </svg>
+  );
+}
 import {
   ArrowLeftRight,
   LayoutGrid,
@@ -146,34 +200,48 @@ export function ProductsSection() {
 
                 {/* Mini trade window demo */}
                 <div className="bg-[#080808] border border-[#1c1c1c] rounded-lg p-3 mb-5 grid grid-cols-2 gap-2">
-                  {[
-                    {
-                      user: 'User A', items: [
-                        { emoji: '⚔', name: 'Dragon Sword', id: '#4821', gradient: 'linear-gradient(135deg,#f59e0b,#d97706)', badge: 'RARE', badgeClass: 'text-amber-400' },
-                        { emoji: '🛡', name: 'Shadow Knight', id: '#099', gradient: 'linear-gradient(135deg,#6366f1,#7c3aed)', badge: 'EPIC', badgeClass: 'text-violet-400' },
-                      ]
-                    },
-                    {
-                      user: 'User B', items: [
-                        { emoji: '🔮', name: 'Void Mage', id: '#213', gradient: 'linear-gradient(135deg,#8b5cf6,#ec4899)', badge: 'LEGENDARY', badgeClass: 'text-pink-400' },
-                        { emoji: '🐉', name: 'Inferno Drake', id: '#07', gradient: 'linear-gradient(135deg,#ef4444,#b45309)', badge: 'EPIC', badgeClass: 'text-red-400' },
-                      ]
-                    },
-                  ].map((side) => (
-                    <div key={side.user} className="flex flex-col gap-1.5">
-                      <div className="flex items-center justify-between mb-0.5">
-                        <span className="text-[9px] font-mono text-white/30 uppercase">{side.user}</span>
-                        <span className="text-[8px] text-[#3ECF8E] font-mono">Locked ✓</span>
-                      </div>
-                      {side.items.map((item) => (
-                        <div key={item.name} className="flex items-center gap-1.5 bg-[#111] border border-[#1c1c1c] rounded px-2 py-1.5">
-                          <div className="w-5 h-5 rounded shrink-0 flex items-center justify-center text-[10px]" style={{ background: item.gradient }}>{item.emoji}</div>
-                          <span className="text-[9px] text-white/55 truncate flex-1">{item.name} <span className="text-white/20">{item.id}</span></span>
-                          <span className={`text-[7px] font-mono shrink-0 ${item.badgeClass}`}>{item.badge}</span>
-                        </div>
-                      ))}
+                  {/* User A */}
+                  <div className="flex flex-col gap-1.5">
+                    <div className="flex items-center justify-between mb-0.5">
+                      <span className="text-[9px] font-mono text-white/30 uppercase">User A</span>
+                      <span className="text-[8px] text-[#3ECF8E] font-mono">Locked ✓</span>
                     </div>
-                  ))}
+                    <div className="flex items-center gap-0 rounded overflow-hidden border" style={{ borderColor: 'rgba(245,158,11,0.22)', background: '#0d0a04' }}>
+                      <div className="w-8 h-8 shrink-0 flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#422006,#1a0a00)' }}><SwordSvg /></div>
+                      <div className="flex-1 min-w-0 px-1.5 py-1">
+                        <div className="text-[9px] font-semibold text-white leading-none">Dragon Sword <span className="text-white/30">#4821</span></div>
+                        <div className="text-[7px] font-mono mt-0.5" style={{ color: '#f59e0b' }}>RARE</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-0 rounded overflow-hidden border" style={{ borderColor: 'rgba(124,58,237,0.22)', background: '#060410' }}>
+                      <div className="w-8 h-8 shrink-0 flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#1e1040,#0a0520)' }}><KnightSvg /></div>
+                      <div className="flex-1 min-w-0 px-1.5 py-1">
+                        <div className="text-[9px] font-semibold text-white leading-none">Shadow Knight <span className="text-white/30">#099</span></div>
+                        <div className="text-[7px] font-mono mt-0.5" style={{ color: '#a78bfa' }}>EPIC</div>
+                      </div>
+                    </div>
+                  </div>
+                  {/* User B */}
+                  <div className="flex flex-col gap-1.5">
+                    <div className="flex items-center justify-between mb-0.5">
+                      <span className="text-[9px] font-mono text-white/30 uppercase">User B</span>
+                      <span className="text-[8px] text-[#3ECF8E] font-mono">Locked ✓</span>
+                    </div>
+                    <div className="flex items-center gap-0 rounded overflow-hidden border" style={{ borderColor: 'rgba(236,72,153,0.22)', background: '#0b0510' }}>
+                      <div className="w-8 h-8 shrink-0 flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#2d1040,#1a0828)' }}><MageSvg /></div>
+                      <div className="flex-1 min-w-0 px-1.5 py-1">
+                        <div className="text-[9px] font-semibold text-white leading-none">Void Mage <span className="text-white/30">#213</span></div>
+                        <div className="text-[7px] font-mono mt-0.5" style={{ color: '#f472b6' }}>LEGENDARY</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-0 rounded overflow-hidden border" style={{ borderColor: 'rgba(239,68,68,0.22)', background: '#0f0404' }}>
+                      <div className="w-8 h-8 shrink-0 flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#3f0808,#1a0404)' }}><DrakeSvg /></div>
+                      <div className="flex-1 min-w-0 px-1.5 py-1">
+                        <div className="text-[9px] font-semibold text-white leading-none">Inferno Drake <span className="text-white/30">#07</span></div>
+                        <div className="text-[7px] font-mono mt-0.5" style={{ color: '#f87171' }}>EPIC</div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Mini step flow */}
