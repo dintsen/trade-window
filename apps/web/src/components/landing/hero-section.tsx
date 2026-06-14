@@ -7,10 +7,10 @@ import { motion } from 'framer-motion';
 import { ArrowRight, ShieldCheck, Lock, Info } from 'lucide-react';
 import { AnimatedTag } from './animated-tag';
 
-/* ── Pixel-art SVG NFT thumbnails (28×28) ── */
-function SwordSvg() {
+/* ── Pixel-art SVG NFT thumbnails ── */
+function SwordSvg({ size = 32 }: { size?: number }) {
   return (
-    <svg viewBox="0 0 28 28" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 28 28" width={size} height={size} xmlns="http://www.w3.org/2000/svg">
       <rect x="13" y="2" width="2" height="16" fill="#f59e0b"/>
       <rect x="13.5" y="3" width="1" height="10" fill="#fde68a" opacity="0.55"/>
       <rect x="7" y="16" width="14" height="2.5" rx="0.5" fill="#d97706"/>
@@ -20,9 +20,9 @@ function SwordSvg() {
   );
 }
 
-function KnightSvg() {
+function KnightSvg({ size = 32 }: { size?: number }) {
   return (
-    <svg viewBox="0 0 28 28" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 28 28" width={size} height={size} xmlns="http://www.w3.org/2000/svg">
       <rect x="9" y="4" width="10" height="2" rx="1" fill="#5b21b6"/>
       <rect x="8" y="6" width="12" height="13" rx="1" fill="#4c1d95"/>
       <rect x="9" y="13" width="10" height="4" fill="#2d1b69"/>
@@ -36,9 +36,9 @@ function KnightSvg() {
   );
 }
 
-function MageSvg() {
+function MageSvg({ size = 32 }: { size?: number }) {
   return (
-    <svg viewBox="0 0 28 28" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 28 28" width={size} height={size} xmlns="http://www.w3.org/2000/svg">
       <polygon points="14,3 10,16 18,16" fill="#7c3aed"/>
       <rect x="7" y="15.5" width="14" height="2.5" rx="0.5" fill="#6d28d9"/>
       <polygon points="14,6 14.7,8.5 17,8.5 15.1,10 15.8,12.5 14,11 12.2,12.5 12.9,10 11,8.5 13.3,8.5" fill="#f0abfc" opacity="0.9"/>
@@ -50,9 +50,9 @@ function MageSvg() {
   );
 }
 
-function DrakeSvg() {
+function DrakeSvg({ size = 32 }: { size?: number }) {
   return (
-    <svg viewBox="0 0 28 28" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 28 28" width={size} height={size} xmlns="http://www.w3.org/2000/svg">
       <polygon points="6,18 2,9 11,15" fill="#7f1d1d" opacity="0.9"/>
       <polygon points="22,18 26,9 17,15" fill="#7f1d1d" opacity="0.9"/>
       <ellipse cx="14" cy="20" rx="8" ry="6" fill="#991b1b"/>
@@ -238,158 +238,181 @@ export function HeroSection() {
               </div>
 
               {/* Mockup Body */}
-              <div className="flex-1 p-3 grid grid-cols-2 gap-3 relative overflow-hidden">
+              <div className="flex-1 flex flex-col gap-2 p-3 overflow-hidden">
 
-                {/* User A Panel — ATONE + 2 weapon NFTs */}
+                {/* Two panels */}
+                <div className="grid grid-cols-2 gap-2 flex-1 min-h-0">
+
+                  {/* User A Panel */}
+                  <motion.div
+                    className="flex flex-col rounded-xl border border-[#262626] overflow-hidden"
+                    style={{ background: 'linear-gradient(180deg,#1c1c1c 0%,#141414 100%)' }}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6, duration: 0.4 }}
+                  >
+                    {/* Locked accent line */}
+                    <motion.div className="h-[2px] w-full shrink-0"
+                      style={{ background: 'linear-gradient(90deg,transparent,rgba(62,207,142,0.7) 50%,transparent)' }}
+                      animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2.5, repeat: Infinity }}
+                    />
+                    {/* Header */}
+                    <div className="flex items-center justify-between px-3 py-2 shrink-0">
+                      <div className="flex items-center gap-1.5">
+                        <motion.div className="w-1.5 h-1.5 rounded-full bg-[#3ECF8E]"
+                          animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 2, repeat: Infinity }} />
+                        <span className="text-[11px] font-semibold text-white/70">User A</span>
+                      </div>
+                      <motion.div
+                        className="flex items-center gap-1 text-[8px] text-[#3ECF8E] font-mono px-2 py-0.5 rounded-full border"
+                        style={{ background: 'rgba(62,207,142,0.06)' }}
+                        animate={{ borderColor: ['rgba(62,207,142,0.18)','rgba(62,207,142,0.45)','rgba(62,207,142,0.18)'] }}
+                        transition={{ duration: 2.5, repeat: Infinity }}
+                      >
+                        <Lock size={7} /> LOCKED
+                      </motion.div>
+                    </div>
+                    {/* Token */}
+                    <div className="mx-2.5 mb-2 shrink-0 flex items-center gap-2.5 px-2.5 py-2 rounded-lg border border-[#202020]" style={{ background: '#0e0e0e' }}>
+                      <div className="w-8 h-8 rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] flex items-center justify-center shrink-0">
+                        <Image src="/assets/logos/atomone.svg" alt="AtomOne" width={20} height={20} className="object-contain" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-bold text-white leading-none tracking-tight">1,500.00</div>
+                        <div className="text-[9px] text-white/30 font-mono mt-0.5">uatone · AtomOne</div>
+                      </div>
+                      <ShieldCheck size={12} className="text-[#3ECF8E]/45 shrink-0" />
+                    </div>
+                    {/* NFT 1 */}
+                    <div className="mx-2.5 mb-2 rounded-lg border overflow-hidden shrink-0" style={{ borderColor:'rgba(245,158,11,0.22)', background:'linear-gradient(135deg,#0f0800,#0a0500)' }}>
+                      <div className="h-[1px]" style={{ background:'linear-gradient(90deg,transparent,rgba(245,158,11,0.6) 50%,transparent)' }} />
+                      <div className="flex items-center">
+                        <div className="w-12 h-12 shrink-0 flex items-center justify-center" style={{ background:'linear-gradient(135deg,#3a1800,#1e0c00)' }}>
+                          <SwordSvg size={34} />
+                        </div>
+                        <div className="flex-1 min-w-0 px-2.5 py-2">
+                          <div className="flex items-center justify-between gap-1 mb-0.5">
+                            <span className="text-[10px] font-bold text-white truncate">Dragon Sword</span>
+                            <span className="text-[7px] font-mono shrink-0 px-1.5 py-0.5 rounded" style={{ background:'rgba(245,158,11,0.1)', color:'#f59e0b', border:'1px solid rgba(245,158,11,0.22)' }}>RARE</span>
+                          </div>
+                          <div className="text-[8px] text-white/25 font-mono">Pixel Realm · #4821</div>
+                        </div>
+                      </div>
+                    </div>
+                    {/* NFT 2 */}
+                    <div className="mx-2.5 mb-2.5 rounded-lg border overflow-hidden shrink-0" style={{ borderColor:'rgba(124,58,237,0.22)', background:'linear-gradient(135deg,#080514,#050310)' }}>
+                      <div className="h-[1px]" style={{ background:'linear-gradient(90deg,transparent,rgba(124,58,237,0.6) 50%,transparent)' }} />
+                      <div className="flex items-center">
+                        <div className="w-12 h-12 shrink-0 flex items-center justify-center" style={{ background:'linear-gradient(135deg,#1e1040,#0f0828)' }}>
+                          <KnightSvg size={34} />
+                        </div>
+                        <div className="flex-1 min-w-0 px-2.5 py-2">
+                          <div className="flex items-center justify-between gap-1 mb-0.5">
+                            <span className="text-[10px] font-bold text-white truncate">Shadow Knight</span>
+                            <span className="text-[7px] font-mono shrink-0 px-1.5 py-0.5 rounded" style={{ background:'rgba(124,58,237,0.1)', color:'#a78bfa', border:'1px solid rgba(124,58,237,0.22)' }}>EPIC</span>
+                          </div>
+                          <div className="text-[8px] text-white/25 font-mono">Dark Guild · #099</div>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+
+                  {/* User B Panel */}
+                  <motion.div
+                    className="flex flex-col rounded-xl border border-[#262626] overflow-hidden"
+                    style={{ background: 'linear-gradient(180deg,#1c1c1c 0%,#141414 100%)' }}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.75, duration: 0.4 }}
+                  >
+                    <motion.div className="h-[2px] w-full shrink-0"
+                      style={{ background: 'linear-gradient(90deg,transparent,rgba(62,207,142,0.7) 50%,transparent)' }}
+                      animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2.5, repeat: Infinity, delay: 0.6 }}
+                    />
+                    <div className="flex items-center justify-between px-3 py-2 shrink-0">
+                      <div className="flex items-center gap-1.5">
+                        <motion.div className="w-1.5 h-1.5 rounded-full bg-[#3ECF8E]"
+                          animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 2, repeat: Infinity, delay: 0.4 }} />
+                        <span className="text-[11px] font-semibold text-white/70">User B</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-[8px] text-[#3ECF8E] font-mono px-2 py-0.5 rounded-full border border-[#3ECF8E]/20" style={{ background:'rgba(62,207,142,0.06)' }}>
+                        <Lock size={7} /> LOCKED
+                      </div>
+                    </div>
+                    {/* Token GNOT */}
+                    <div className="mx-2.5 mb-2 shrink-0 flex items-center gap-2.5 px-2.5 py-2 rounded-lg border border-[#202020]" style={{ background:'#0e0e0e' }}>
+                      <div className="w-8 h-8 rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] flex items-center justify-center shrink-0 overflow-hidden">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src="/assets/logos/gnot-icon.svg" alt="GNOT" className="h-5 w-auto object-contain" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-bold text-white leading-none tracking-tight">500.00</div>
+                        <div className="text-[9px] text-white/30 font-mono mt-0.5">ugnot · Gno.land</div>
+                      </div>
+                      <ShieldCheck size={12} className="text-[#3ECF8E]/45 shrink-0" />
+                    </div>
+                    {/* NFT 3 */}
+                    <div className="mx-2.5 mb-2 rounded-lg border overflow-hidden shrink-0" style={{ borderColor:'rgba(236,72,153,0.22)', background:'linear-gradient(135deg,#0b0510,#080410)' }}>
+                      <div className="h-[1px]" style={{ background:'linear-gradient(90deg,transparent,rgba(236,72,153,0.6) 50%,transparent)' }} />
+                      <div className="flex items-center">
+                        <div className="w-12 h-12 shrink-0 flex items-center justify-center" style={{ background:'linear-gradient(135deg,#2d1040,#1a0828)' }}>
+                          <MageSvg size={34} />
+                        </div>
+                        <div className="flex-1 min-w-0 px-2.5 py-2">
+                          <div className="flex items-center justify-between gap-1 mb-0.5">
+                            <span className="text-[10px] font-bold text-white truncate">Void Mage</span>
+                            <span className="text-[7px] font-mono shrink-0 px-1.5 py-0.5 rounded" style={{ background:'rgba(236,72,153,0.1)', color:'#f472b6', border:'1px solid rgba(236,72,153,0.22)' }}>LEGENDARY</span>
+                          </div>
+                          <div className="text-[8px] text-white/25 font-mono">Mystic Order · #213</div>
+                        </div>
+                      </div>
+                    </div>
+                    {/* NFT 4 */}
+                    <div className="mx-2.5 mb-2.5 rounded-lg border overflow-hidden shrink-0" style={{ borderColor:'rgba(239,68,68,0.22)', background:'linear-gradient(135deg,#0f0404,#0a0303)' }}>
+                      <div className="h-[1px]" style={{ background:'linear-gradient(90deg,transparent,rgba(239,68,68,0.6) 50%,transparent)' }} />
+                      <div className="flex items-center">
+                        <div className="w-12 h-12 shrink-0 flex items-center justify-center" style={{ background:'linear-gradient(135deg,#3f0808,#1a0404)' }}>
+                          <DrakeSvg size={34} />
+                        </div>
+                        <div className="flex-1 min-w-0 px-2.5 py-2">
+                          <div className="flex items-center justify-between gap-1 mb-0.5">
+                            <span className="text-[10px] font-bold text-white truncate">Inferno Drake</span>
+                            <span className="text-[7px] font-mono shrink-0 px-1.5 py-0.5 rounded" style={{ background:'rgba(239,68,68,0.1)', color:'#f87171', border:'1px solid rgba(239,68,68,0.22)' }}>EPIC</span>
+                          </div>
+                          <div className="text-[8px] text-white/25 font-mono">Dragon Kin · #07</div>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                </div>
+
+                {/* Intent Hash — bottom row */}
                 <motion.div
-                  className="bg-[#111111] border border-[#1c1c1c] rounded-lg p-3 flex flex-col gap-2 relative"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6, duration: 0.4 }}
-                >
-                  <div className="absolute inset-0 border border-[#3ECF8E]/20 rounded-lg pointer-events-none" />
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-[11px] text-white/60 font-medium">User A</span>
-                    <motion.div
-                      className="flex items-center gap-1 text-[9px] text-[#3ECF8E] bg-[#3ECF8E]/10 px-1.5 py-0.5 rounded border border-[#3ECF8E]/20"
-                      animate={{ borderColor: ['rgba(62,207,142,0.2)', 'rgba(62,207,142,0.5)', 'rgba(62,207,142,0.2)'] }}
-                      transition={{ duration: 3, repeat: Infinity }}
-                    >
-                      <Lock size={7} /> Locked
-                    </motion.div>
-                  </div>
-
-                  {/* Token row */}
-                  <div className="bg-[#0a0a0a] rounded-md px-2.5 py-2 flex items-center gap-2 border border-[#1c1c1c]">
-                    <div className="w-7 h-7 rounded-md bg-[#1a1a1a] flex items-center justify-center p-1 border border-[#2b2b2b] shrink-0">
-                      <Image src="/assets/logos/atomone.svg" alt="AtomOne" width={18} height={18} className="object-contain" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-xs font-bold text-white leading-none">1,500.00</div>
-                      <div className="text-[9px] text-white/35 font-mono mt-0.5">uatone</div>
-                    </div>
-                    <ShieldCheck size={10} className="text-[#3ECF8E]/50 shrink-0" />
-                  </div>
-
-                  {/* NFT — Dragon Sword */}
-                  <div className="rounded-md flex items-center gap-2 border overflow-hidden shrink-0"
-                    style={{ background: '#0d0a04', borderColor: 'rgba(245,158,11,0.25)' }}>
-                    <div className="w-9 h-9 shrink-0 flex items-center justify-center"
-                      style={{ background: 'linear-gradient(135deg, #422006 0%, #1a0a00 100%)' }}>
-                      <SwordSvg />
-                    </div>
-                    <div className="flex-1 min-w-0 pr-2 py-1.5">
-                      <div className="text-[10px] font-semibold text-white leading-none truncate">Dragon Sword <span className="text-white/35">#4821</span></div>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <span className="text-[8px] font-mono text-white/25">Pixel Realm</span>
-                        <span className="text-[7px] font-mono px-1 py-0.5 rounded" style={{ background: 'rgba(245,158,11,0.12)', color: '#f59e0b', border: '1px solid rgba(245,158,11,0.2)' }}>RARE</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* NFT — Shadow Knight */}
-                  <div className="rounded-md flex items-center gap-2 border overflow-hidden shrink-0"
-                    style={{ background: '#060410', borderColor: 'rgba(124,58,237,0.25)' }}>
-                    <div className="w-9 h-9 shrink-0 flex items-center justify-center"
-                      style={{ background: 'linear-gradient(135deg, #1e1040 0%, #0a0520 100%)' }}>
-                      <KnightSvg />
-                    </div>
-                    <div className="flex-1 min-w-0 pr-2 py-1.5">
-                      <div className="text-[10px] font-semibold text-white leading-none truncate">Shadow Knight <span className="text-white/35">#099</span></div>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <span className="text-[8px] font-mono text-white/25">Dark Guild</span>
-                        <span className="text-[7px] font-mono px-1 py-0.5 rounded" style={{ background: 'rgba(124,58,237,0.12)', color: '#a78bfa', border: '1px solid rgba(124,58,237,0.2)' }}>EPIC</span>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* User B Panel — GNOT + character NFT */}
-                <motion.div
-                  className="bg-[#111111] border border-[#1c1c1c] rounded-lg p-3 flex flex-col gap-2 relative"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.75, duration: 0.4 }}
-                >
-                  <div className="absolute inset-0 border border-[#3ECF8E]/20 rounded-lg pointer-events-none" />
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-[11px] text-white/60 font-medium">User B</span>
-                    <div className="flex items-center gap-1 text-[9px] text-[#3ECF8E] bg-[#3ECF8E]/10 px-1.5 py-0.5 rounded border border-[#3ECF8E]/20">
-                      <Lock size={7} /> Locked
-                    </div>
-                  </div>
-
-                  {/* Token row — GNOT */}
-                  <div className="bg-[#0a0a0a] rounded-md px-2.5 py-2 flex items-center gap-2 border border-[#1c1c1c]">
-                    <div className="w-7 h-7 rounded-md bg-[#1a1a1a] flex items-center justify-center border border-[#2b2b2b] shrink-0 overflow-hidden">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src="/assets/logos/gnot-icon.svg" alt="GNOT" className="h-5 w-auto object-contain" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-xs font-bold text-white leading-none">500.00</div>
-                      <div className="text-[9px] text-white/35 font-mono mt-0.5">ugnot</div>
-                    </div>
-                    <ShieldCheck size={10} className="text-[#3ECF8E]/50 shrink-0" />
-                  </div>
-
-                  {/* NFT — Void Mage */}
-                  <div className="rounded-md flex items-center gap-2 border overflow-hidden shrink-0"
-                    style={{ background: '#0b0510', borderColor: 'rgba(236,72,153,0.25)' }}>
-                    <div className="w-9 h-9 shrink-0 flex items-center justify-center"
-                      style={{ background: 'linear-gradient(135deg, #2d1040 0%, #1a0828 100%)' }}>
-                      <MageSvg />
-                    </div>
-                    <div className="flex-1 min-w-0 pr-2 py-1.5">
-                      <div className="text-[10px] font-semibold text-white leading-none truncate">Void Mage <span className="text-white/35">#213</span></div>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <span className="text-[8px] font-mono text-white/25">Mystic Order</span>
-                        <span className="text-[7px] font-mono px-1 py-0.5 rounded" style={{ background: 'rgba(236,72,153,0.12)', color: '#f472b6', border: '1px solid rgba(236,72,153,0.2)' }}>LEGENDARY</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* NFT — Inferno Drake */}
-                  <div className="rounded-md flex items-center gap-2 border overflow-hidden shrink-0"
-                    style={{ background: '#0f0404', borderColor: 'rgba(239,68,68,0.25)' }}>
-                    <div className="w-9 h-9 shrink-0 flex items-center justify-center"
-                      style={{ background: 'linear-gradient(135deg, #3f0808 0%, #1a0404 100%)' }}>
-                      <DrakeSvg />
-                    </div>
-                    <div className="flex-1 min-w-0 pr-2 py-1.5">
-                      <div className="text-[10px] font-semibold text-white leading-none truncate">Inferno Drake <span className="text-white/35">#07</span></div>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <span className="text-[8px] font-mono text-white/25">Dragon Kin</span>
-                        <span className="text-[7px] font-mono px-1 py-0.5 rounded" style={{ background: 'rgba(239,68,68,0.12)', color: '#f87171', border: '1px solid rgba(239,68,68,0.2)' }}>EPIC</span>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* Intent Hash preview */}
-                <motion.div
-                  className="absolute bottom-3 left-3 right-3 bg-[#0a0a0a] border border-[#3ECF8E]/25 rounded-lg p-3 shadow-2xl flex flex-col gap-2"
-                  initial={{ opacity: 0, y: 16 }}
+                  className="shrink-0 rounded-xl border overflow-hidden"
+                  style={{ borderColor:'rgba(62,207,142,0.15)', background:'linear-gradient(180deg,#0d1410 0%,#0a0f0c 100%)' }}
+                  initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.95, duration: 0.45 }}
                 >
-                  <div className="flex justify-between items-center">
-                    <span className="text-[10px] font-medium text-white/50">Final Intent Hash</span>
-                    <span className="text-[9px] text-[#3ECF8E] font-mono flex items-center gap-1">
-                      <motion.div
-                        className="w-1 h-1 rounded-full bg-[#3ECF8E]"
-                        animate={{ opacity: [1, 0, 1] }}
-                        transition={{ duration: 1, repeat: Infinity }}
-                      />
-                      <CountdownDisplay />
-                    </span>
-                  </div>
-                  <div className="text-[10px] font-mono text-[#3ECF8E] bg-[#3ECF8E]/8 px-2.5 py-2 rounded-md border border-[#3ECF8E]/20 text-center">
-                    0x8f2a7b931dc240...9c4e21
-                  </div>
-                  <div className="w-full bg-white/[0.04] text-white/30 text-[10px] py-2 rounded-md text-center border border-[#1c1c1c] font-medium">
-                    Sign &amp; Settle (Disabled in Demo)
+                  <div className="h-[1px]" style={{ background:'linear-gradient(90deg,transparent,rgba(62,207,142,0.4) 50%,transparent)' }} />
+                  <div className="px-3 py-2.5 flex flex-col gap-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[9px] font-mono text-white/35 uppercase tracking-wider">Final Intent Hash</span>
+                      <span className="text-[9px] text-[#3ECF8E] font-mono flex items-center gap-1.5">
+                        <motion.div className="w-1 h-1 rounded-full bg-[#3ECF8E]"
+                          animate={{ opacity: [1, 0, 1] }} transition={{ duration: 1, repeat: Infinity }} />
+                        <CountdownDisplay />
+                      </span>
+                    </div>
+                    <div className="text-[10px] font-mono text-[#3ECF8E]/80 px-3 py-1.5 rounded-lg border text-center tracking-wider" style={{ background:'rgba(62,207,142,0.05)', borderColor:'rgba(62,207,142,0.12)' }}>
+                      0x8f2a7b931dc240...9c4e21
+                    </div>
+                    <div className="w-full py-1.5 text-[9px] text-white/20 border border-[#1c1c1c] rounded-lg text-center font-medium tracking-wide" style={{ background:'rgba(255,255,255,0.025)' }}>
+                      Sign &amp; Settle · Disabled in Demo
+                    </div>
                   </div>
                 </motion.div>
+
               </div>
             </div>
           </motion.div>
