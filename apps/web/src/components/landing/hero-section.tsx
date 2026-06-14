@@ -180,7 +180,7 @@ export function HeroSection() {
                 href="/trade"
                 className="w-full sm:w-auto px-7 py-3.5 bg-transparent border border-[#2b2b2b] hover:border-[#3b3b3b] hover:bg-white/[0.03] text-white font-medium rounded-lg transition-all text-center text-sm flex items-center justify-center"
               >
-                Launch Demo Room
+                Create Trade Room
               </Link>
             </motion.div>
           </motion.div>
