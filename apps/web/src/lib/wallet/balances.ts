@@ -11,6 +11,9 @@ const LCD_ENDPOINTS: Record<string, string> = {
   "atomone-1": "https://rest.cosmos.directory/atomone",
 };
 
+/** Gno.land RPC endpoint for ABCI queries */
+const GNO_RPC = "https://rpc.gno.land";
+
 interface BankBalancesResponse {
   balances?: { denom: string; amount: string }[];
 }
@@ -46,6 +49,54 @@ export async function fetchBalances(
         chainId,
       };
     });
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Fetch bank balances from Gno.land via ABCI query.
+ * Gno.land does not have a Cosmos SDK LCD endpoint; balances are read
+ * through the JSON-RPC `abci_query` method on the RPC node.
+ */
+export async function fetchGnoBalances(
+  address: string
+): Promise<WalletBalance[] | null> {
+  try {
+    const path = `bank/balances/${address}`;
+    const res = await fetch(
+      `${GNO_RPC}/abci_query?path="${encodeURIComponent(path)}"`,
+      { headers: { accept: "application/json" } }
+    );
+    if (!res.ok) return null;
+
+    const json = await res.json();
+    // Response: { result: { response: { value: "<base64>" } } }
+    const b64 = json?.result?.response?.value;
+    if (!b64) return [];
+
+    // The value is a Protobuf-encoded amino JSON list of coins
+    // Gno.land returns it as "(123 ugnot,0 photon)" style or JSON coins
+    const decoded = atob(b64);
+    // Try JSON first
+    try {
+      const coins: { denom: string; amount: string }[] = JSON.parse(decoded);
+      return coins.map((c) => {
+        const asset = getAsset(c.denom);
+        return { denom: c.denom, amount: c.amount, symbol: asset?.symbol, decimals: asset?.decimals, chainId: "gno-testnet" };
+      });
+    } catch {
+      // Fallback: parse "123 ugnot,0 photon" format
+      return decoded
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean)
+        .map((s) => {
+          const [amount, denom] = s.split(" ");
+          const asset = getAsset(denom);
+          return { denom, amount, symbol: asset?.symbol, decimals: asset?.decimals, chainId: "gno-testnet" };
+        });
+    }
   } catch {
     return null;
   }

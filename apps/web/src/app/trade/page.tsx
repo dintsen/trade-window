@@ -15,6 +15,9 @@ import { useWalletStore } from '@/lib/wallet/wallet-store';
 import { buildRoomCommitmentPayload } from '@/lib/gno/commitment-call';
 import { GnoTransactionPreview } from '@/components/trade/GnoTransactionPreview';
 import { GnoTestnetTransfer } from '@/components/trade/GnoTestnetTransfer';
+import { signAndBroadcast } from '@/lib/wallet/signing';
+import { toast, updateToast } from '@/hooks/use-toasts';
+import { useWalletBalances } from '@/hooks/use-wallet-balances';
 
 function TradeRoomWrapperInner() {
   const { account, connect, disconnect, adapters, isConnecting, activeProvider } = useWalletStore();
@@ -207,7 +210,7 @@ function TradeRoomWrapperInner() {
               </div>
 
               <p className="mt-5 text-center text-[10px] text-white/20 font-mono">
-                MVP prototype — AtomOne / Gno.land · Real signing not implemented
+                MVP prototype — AtomOne / Gno.land · Trust-based P2P settlement
               </p>
             </div>
           </div>
@@ -240,6 +243,9 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
   const [nfts, setNfts] = useState<StargazeNFT[]>([]);
   const [nftLoading, setNftLoading] = useState(false);
   const [nftError, setNftError] = useState<string | null>(null);
+  const [isSigning, setIsSigning] = useState(false);
+  const [signedTxHash, setSignedTxHash] = useState<string | null>(null);
+  const { balances } = useWalletBalances();
   const searchParams = useSearchParams();
 
   // Auto-join room from URL ?room=<id> when connected
@@ -313,6 +319,87 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
     if (!chatMsg.trim()) return;
     actions.sendMessage(chatMsg);
     setChatMsg('');
+  };
+
+  /**
+   * Cross-network validation: check if any asset the user is sending
+   * belongs to a chain different from the connected wallet's chain.
+   */
+  const getCrossNetworkWarnings = (): string[] => {
+    if (!account || !myAssets.length) return [];
+    const warnings: string[] = [];
+    myAssets.forEach((asset) => {
+      if (asset.chainId && account.chainId && asset.chainId !== account.chainId) {
+        warnings.push(
+          `Asset "${asset.displayDenom}" is on ${asset.chainId} but your wallet is on ${account.chainId}.`
+        );
+      }
+    });
+    return warnings;
+  };
+
+  const handleSignAndSettle = async () => {
+    if (!account) return;
+    const crossNetworkWarnings = getCrossNetworkWarnings();
+    if (crossNetworkWarnings.length > 0) {
+      toast({
+        type: 'warning',
+        title: 'Cross-Network Warning',
+        message: crossNetworkWarnings[0],
+        duration: 8000,
+      });
+      return;
+    }
+
+    // For MVP demo: sign the first coin asset the user is offering
+    const coinAsset = myAssets.find((a) => a.type === 'coin' && a.amount);
+    if (!coinAsset) {
+      toast({ type: 'info', title: 'Nothing to sign', message: 'Add a token asset to your offer first.' });
+      return;
+    }
+
+    // Counterparty address (the other party in the room)
+    const toAddress = isPartyA ? roomData?.partyB : roomData?.partyA;
+    if (!toAddress) {
+      toast({ type: 'error', title: 'No counterparty', message: 'Counterparty address not found.' });
+      return;
+    }
+
+    setIsSigning(true);
+    const pendingId = toast({
+      type: 'pending',
+      title: 'Signing transaction…',
+      message: `Sending ${coinAsset.amount} ${coinAsset.displayDenom} to ${toAddress.slice(0, 10)}…`,
+    });
+
+    try {
+      const result = await signAndBroadcast({
+        account,
+        toAddress,
+        denom: coinAsset.baseDenom,
+        amount: coinAsset.amount ?? '0',
+        memo: `Trade Window · Room ${roomData?.id ?? ''}`,
+      });
+
+      updateToast(pendingId, {
+        type: 'success',
+        title: 'Transaction submitted!',
+        message: 'Your assets are on their way.',
+        txHash: result.txHash,
+        explorerUrl: result.explorerUrl,
+        duration: 0,
+      });
+      setSignedTxHash(result.txHash);
+    } catch (err) {
+      updateToast(pendingId, {
+        type: 'error',
+        title: 'Transaction failed',
+        message: err instanceof Error ? err.message : 'Unknown error',
+        duration: 8000,
+      });
+    } finally {
+      setIsSigning(false);
+    }
   };
 
   if (isOfflineMode && !forceOfflineView) {
@@ -509,45 +596,79 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
             )}
 
             {roomData.state === 'ready_to_sign' && (
-              <div className="bg-[#0a0a0a] border border-white/5 shadow-2xl rounded-2xl p-6 mt-auto flex flex-col gap-6 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/5 to-transparent pointer-events-none"></div>
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 z-10">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                      <CheckCircle2 size={20} />
-                    </div>
-                    <div>
-                      <h3 className="text-base font-medium text-white">Final Intent Hash</h3>
-                      <p className="text-xs text-white/50">Review this deterministic hash before any future signing step.</p>
-                    </div>
+              <div className="bg-[#0a0a0a] border border-[#1c1c1c] shadow-2xl rounded-2xl p-6 mt-auto flex flex-col gap-5 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-[#3ECF8E]/4 to-transparent pointer-events-none" />
+
+                {/* Header */}
+                <div className="flex items-center gap-3 z-10">
+                  <div className="w-10 h-10 rounded-lg bg-[#3ECF8E]/10 border border-[#3ECF8E]/20 flex items-center justify-center text-[#3ECF8E]">
+                    <CheckCircle2 size={20} />
                   </div>
-                  
-                  <div className="bg-[#030303] border border-emerald-500/30 rounded-xl px-4 py-3 flex-1 md:max-w-md shadow-inner">
-                    <div className="font-mono text-emerald-400 break-all text-sm font-medium tracking-wide">{intentHash}</div>
+                  <div>
+                    <h3 className="text-base font-semibold text-white">Ready to Sign & Settle</h3>
+                    <p className="text-xs text-white/40">Both sides locked. Review the intent hash, then sign your side.</p>
                   </div>
                 </div>
 
-                <div className="z-10 mt-2 flex flex-col gap-4">
-                  <div className="bg-[#111] border border-white/10 rounded-xl p-4">
-                    <div className="flex justify-between items-center mb-3">
-                      <h4 className="text-sm font-medium text-white/80">Future Gno commitment call preview</h4>
-                      <Badge variant="outline" className="text-[10px] bg-white/5 border-white/10 text-white/50">Preview only</Badge>
-                    </div>
-                    
-                    <GnoTransactionPreview 
-                      payload={buildRoomCommitmentPayload({
-                        realmPath: "gno.land/r/tradewindow/rooms",
-                        method: "CommitIntent",
-                        args: [roomData.id, intentHash || "", roomData.partyA, roomData.partyB],
-                        intentHash: intentHash || "",
-                        roomId: roomData.id,
-                        parties: [roomData.partyA, roomData.partyB]
-                      }, walletAddress)}
-                      disabledReason="Signing not implemented yet. This is a read-only preview of the future smart contract call."
-                      onSign={() => {}}
-                    />
-                    
+                {/* Intent hash */}
+                <div className="z-10 bg-[#030303] border border-[#3ECF8E]/20 rounded-xl px-4 py-3">
+                  <p className="text-[10px] font-mono text-white/30 uppercase tracking-[0.12em] mb-1">Intent Hash</p>
+                  <div className="font-mono text-[#3ECF8E] break-all text-xs font-medium tracking-wide">{intentHash}</div>
+                </div>
+
+                {/* Cross-network warnings */}
+                {getCrossNetworkWarnings().map((w, i) => (
+                  <div key={i} className="z-10 flex items-start gap-2.5 bg-amber-500/5 border border-amber-500/20 rounded-xl px-4 py-3">
+                    <AlertTriangle size={14} className="text-amber-400 shrink-0 mt-0.5" />
+                    <p className="text-xs text-amber-300/80 leading-relaxed">{w}</p>
                   </div>
+                ))}
+
+                {/* Success state */}
+                {signedTxHash ? (
+                  <div className="z-10 flex items-center gap-2.5 bg-[#3ECF8E]/5 border border-[#3ECF8E]/20 rounded-xl px-4 py-3">
+                    <CheckCircle2 size={14} className="text-[#3ECF8E] shrink-0" />
+                    <div>
+                      <p className="text-xs text-[#3ECF8E] font-semibold">Transaction submitted</p>
+                      <p className="text-[10px] font-mono text-white/30 mt-0.5 break-all">{signedTxHash}</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="z-10 flex gap-3">
+                    <Button
+                      onClick={handleSignAndSettle}
+                      disabled={isSigning || getCrossNetworkWarnings().length > 0}
+                      className="flex-1 h-11 bg-[#3ECF8E] hover:bg-[#4ADBA0] text-black font-semibold rounded-lg disabled:opacity-50 text-sm"
+                    >
+                      {isSigning ? 'Signing…' : 'Sign & Send My Assets'}
+                    </Button>
+                    <Button
+                      onClick={actions.cancelTrade}
+                      className="h-11 px-4 rounded-lg border border-[#2b2b2b] bg-transparent text-white/40 hover:text-white/70 text-sm"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                )}
+
+                {/* Gno commitment preview */}
+                <div className="z-10 bg-[#111] border border-[#1c1c1c] rounded-xl p-4">
+                  <div className="flex justify-between items-center mb-3">
+                    <h4 className="text-xs font-medium text-white/50">Gno commitment call preview</h4>
+                    <Badge variant="outline" className="text-[10px] bg-white/5 border-white/10 text-white/30">Preview only</Badge>
+                  </div>
+                  <GnoTransactionPreview
+                    payload={buildRoomCommitmentPayload({
+                      realmPath: "gno.land/r/tradewindow/rooms",
+                      method: "CommitIntent",
+                      args: [roomData.id, intentHash || "", roomData.partyA, roomData.partyB],
+                      intentHash: intentHash || "",
+                      roomId: roomData.id,
+                      parties: [roomData.partyA, roomData.partyB]
+                    }, walletAddress)}
+                    disabledReason="Gno realm signing is not yet live. This preview shows the future smart contract call."
+                    onSign={() => {}}
+                  />
                 </div>
               </div>
             )}
