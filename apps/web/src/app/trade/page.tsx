@@ -1195,19 +1195,44 @@ function AssetCard({ asset }: { asset: TradeAsset }) {
     <div className={`rounded-xl border bg-[#0a0a0a] overflow-hidden shadow-inner group relative ${isSuspicious ? 'border-rose-500/30' : 'border-white/10'}`}>
       {isSuspicious && <div className="absolute top-0 left-0 w-1 h-full bg-rose-500 z-10"></div>}
 
-      {/* NFT image strip */}
-      {isNft && nftImageUrl && (
-        <div className="w-full aspect-[3/1] relative overflow-hidden bg-[#111]">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={nftImageUrl} alt={asset.displayDenom} className="w-full h-full object-cover object-top" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] to-transparent" />
-        </div>
-      )}
-
-      <div className="p-4 flex flex-col gap-2">
-        <div className="flex justify-between items-start">
-          <div className="flex items-center gap-3 pl-1">
-            {!isNft && (
+      {isNft ? (
+        /* ── NFT card layout ───────────────────────────────────────── */
+        <>
+          {/* Square image with overlay info */}
+          <div className="relative w-full aspect-square overflow-hidden bg-[#111]">
+            {nftImageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={nftImageUrl}
+                alt={asset.displayDenom}
+                className="w-full h-full object-cover object-center"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <ImageIcon size={32} className="text-white/10" />
+              </div>
+            )}
+            {/* Bottom overlay: name + chain badge */}
+            <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent px-3 pt-8 pb-3">
+              <div className="font-bold text-white text-sm leading-tight">{asset.displayDenom}</div>
+              <div className="flex items-center gap-1.5 mt-1">
+                <span className="text-[10px] text-violet-300 bg-violet-500/20 border border-violet-500/30 px-1.5 py-0.5 rounded font-mono">NFT</span>
+                <span className="text-[10px] text-white/50">{asset.sourceChain}</span>
+              </div>
+            </div>
+          </div>
+          {/* Technical denom */}
+          <div className="px-3 py-2">
+            <div className="bg-[#111] border border-white/5 rounded p-2 text-[9px] font-mono text-white/35 break-all">
+              {asset.technicalDenom}
+            </div>
+          </div>
+        </>
+      ) : (
+        /* ── Coin card layout ──────────────────────────────────────── */
+        <div className="p-4 flex flex-col gap-2">
+          <div className="flex justify-between items-start">
+            <div className="flex items-center gap-3 pl-1">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center border overflow-hidden relative p-1.5 shrink-0 ${isSuspicious ? 'bg-rose-500/10 border-rose-500/20' : 'bg-white/5 border-white/10'}`}>
                 {logo ? (
                   <Image src={logo} alt={asset.displayDenom} width={24} height={24} className="object-contain" />
@@ -1215,29 +1240,23 @@ function AssetCard({ asset }: { asset: TradeAsset }) {
                   <span className="font-bold text-[10px] text-white/60">{asset.displayDenom.slice(0,3)}</span>
                 )}
               </div>
-            )}
-            <div className="flex flex-col">
-              <div className="text-base font-bold text-white tracking-wide">
-                {isNft ? (
-                  <span>{asset.displayDenom}</span>
-                ) : (
-                  <>{asset.amount} <span className="text-white/50 text-sm font-normal">{asset.displayDenom}</span></>
-                )}
+              <div className="flex flex-col">
+                <div className="text-base font-bold text-white tracking-wide">
+                  {asset.amount} <span className="text-white/50 text-sm font-normal">{asset.displayDenom}</span>
+                </div>
+                <div className="text-[10px] text-white/30">{asset.sourceChain}</div>
               </div>
-              <div className="text-[10px] text-white/30">{asset.sourceChain}</div>
+            </div>
+            <div className="flex flex-col items-end gap-1 mt-1">
+              {isVerified && <span className="text-[10px] text-emerald-400 flex items-center gap-1"><Info size={10} /> Verified</span>}
+              {isSuspicious && <div className="text-[10px] text-rose-400 flex items-center gap-1 font-medium"><ShieldAlert size={10} /> Suspicious</div>}
             </div>
           </div>
-          <div className="flex flex-col items-end gap-1 mt-1">
-            {isNft && <span className="text-[10px] text-violet-400 flex items-center gap-1"><ImageIcon size={10} /> NFT</span>}
-            {isVerified && !isNft && <span className="text-[10px] text-emerald-400 flex items-center gap-1"><Info size={10} /> Verified</span>}
-            {isSuspicious && <div className="text-[10px] text-rose-400 flex items-center gap-1 font-medium"><ShieldAlert size={10} /> Suspicious</div>}
+          <div className="bg-[#111] border border-white/5 rounded p-2 text-[9px] font-mono text-white/40 break-all mt-1">
+            {asset.technicalDenom}
           </div>
         </div>
-
-        <div className="bg-[#111] border border-white/5 rounded p-2 text-[9px] font-mono text-white/40 break-all mt-1">
-          {asset.technicalDenom}
-        </div>
-      </div>
+      )}
     </div>
   );
 }
