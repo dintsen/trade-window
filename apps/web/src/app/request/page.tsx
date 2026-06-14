@@ -173,22 +173,22 @@ export default function RequestPage() {
                     <FieldLabel>Request Type *</FieldLabel>
                     <select required name="requestType" defaultValue="" className={selectCls}>
                       <option value="" disabled hidden>Select type...</option>
-                      <option value="Buy">Buy</option>
-                      <option value="Sell">Sell</option>
-                      <option value="Swap">Swap</option>
-                      <option value="OTC bundle">OTC bundle</option>
-                      <option value="NFT / game asset / RWA inquiry">NFT / game asset / RWA</option>
-                      <option value="Other">Other</option>
+                      <option value="buy">Buy</option>
+                      <option value="sell">Sell</option>
+                      <option value="swap">Swap</option>
+                      <option value="otc_bundle">OTC bundle</option>
+                      <option value="nft_game_rwa">NFT / game asset / RWA</option>
+                      <option value="other">Other</option>
                     </select>
                   </div>
                   <div>
                     <FieldLabel>Chain / Ecosystem *</FieldLabel>
                     <select required name="chain" defaultValue="" className={selectCls}>
                       <option value="" disabled hidden>Select chain...</option>
-                      <option value="Gno.land">Gno.land</option>
-                      <option value="AtomOne">AtomOne</option>
-                      <option value="Cosmos / IBC">Cosmos / IBC</option>
-                      <option value="Other">Other</option>
+                      <option value="gno">Gno.land</option>
+                      <option value="atomone">AtomOne</option>
+                      <option value="cosmos_ibc">Cosmos / IBC</option>
+                      <option value="other">Other</option>
                     </select>
                   </div>
                   <div>
