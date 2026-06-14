@@ -1,6 +1,8 @@
 package rooms
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"errors"
 	"strings"
 	"sync"
@@ -8,6 +10,17 @@ import (
 
 	"github.com/tradewindow/backend-go/internal/config"
 )
+
+const maxAssetsPerOffer = 20
+
+// GenerateRoomID returns a cryptographically random room ID.
+func GenerateRoomID() string {
+	b := make([]byte, 8)
+	if _, err := rand.Read(b); err != nil {
+		panic("failed to generate room ID: " + err.Error())
+	}
+	return "room-" + hex.EncodeToString(b)
+}
 
 type RoomState string
 
@@ -120,11 +133,17 @@ func (r *Room) AddAsset(party string, asset TradeAsset) error {
 	}
 
 	if party == r.PartyA {
+		if len(r.OfferA) >= maxAssetsPerOffer {
+			return errors.New("offer limit reached: max 20 assets per side")
+		}
 		r.OfferA = append(r.OfferA, asset)
 		if r.LockB {
 			r.LockB = false
 		}
 	} else if party == r.PartyB {
+		if len(r.OfferB) >= maxAssetsPerOffer {
+			return errors.New("offer limit reached: max 20 assets per side")
+		}
 		r.OfferB = append(r.OfferB, asset)
 		if r.LockA {
 			r.LockA = false
@@ -210,14 +229,21 @@ func (r *Room) ToggleLock(party string, lock bool) error {
 	return nil
 }
 
-func (r *Room) Cancel() {
+// Cancel transitions the room to cancelled state.
+// party must be PartyA or PartyB; returns error if unauthorized.
+func (r *Room) Cancel(party string) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.touch()
-	if r.State != StateCompleted && r.State != StateExpired {
-		r.State = StateCancelled
-		r.countdownStarted = false
+	if party != r.PartyA && party != r.PartyB {
+		return errors.New("only a trade party can cancel")
 	}
+	if r.State == StateCompleted || r.State == StateExpired {
+		return errors.New("room is already finalized")
+	}
+	r.State = StateCancelled
+	r.countdownStarted = false
+	return nil
 }
 
 // StartCountdown returns true if this caller should run the countdown loop

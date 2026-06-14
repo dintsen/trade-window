@@ -8,7 +8,7 @@ import {
 export const DEFAULT_COSMOS_CHAIN_ID = "cosmoshub-4";
 
 /** Chains we ask Keplr-like wallets to enable. All read-only: connect + address. */
-export const COSMOS_CHAIN_IDS = ["cosmoshub-4", "stargaze-1"];
+export const COSMOS_CHAIN_IDS = ["cosmoshub-4", "stargaze-1", "atomone-1"];
 
 function getProvider(id: CosmosWalletProviderId): KeplrLikeProvider | null {
   if (typeof window === "undefined") return null;

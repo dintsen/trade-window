@@ -27,6 +27,8 @@ export const adenaWalletAdapter: WalletAdapter = {
       return {
         address: accountInfo.address,
         displayAddress: accountInfo.address.slice(0, 10) + "…" + accountInfo.address.slice(-4),
+        chainId: "gno-1",
+        ecosystem: "gno" as const,
         provider: "adena",
         isMock: false
       };
@@ -52,6 +54,8 @@ export const adenaWalletAdapter: WalletAdapter = {
       return {
         address: accountInfo.address,
         displayAddress: accountInfo.address.slice(0, 10) + "…" + accountInfo.address.slice(-4),
+        chainId: "gno-1",
+        ecosystem: "gno" as const,
         provider: "adena",
         isMock: false
       };

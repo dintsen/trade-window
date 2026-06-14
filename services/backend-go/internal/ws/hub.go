@@ -135,7 +135,7 @@ func (h *Hub) ProcessMessage(c *Client, msg protocol.WSMessage) {
 	switch msg.Type {
 	case "room:create":
 		h.mu.Lock()
-		id := fmt.Sprintf("room-%d", len(h.Rooms)+1)
+		id := rooms.GenerateRoomID()
 		r := rooms.NewRoom(id)
 		h.Rooms[id] = r
 		h.RoomClients[id] = make(map[*Client]bool)
@@ -225,7 +225,10 @@ func (h *Hub) ProcessMessage(c *Client, msg protocol.WSMessage) {
 			c.SendError(protocol.ErrMissingRoom, "Not in a room")
 			return
 		}
-		room.Cancel()
+		if err := room.Cancel(c.Address); err != nil {
+			c.SendError(protocol.ErrStateRejected, err.Error())
+			return
+		}
 		h.broadcastLog(room.ID, fmt.Sprintf("Trade cancelled by %s.", c.Address))
 		h.BroadcastRoomState(room.ID)
 
