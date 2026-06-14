@@ -840,7 +840,7 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
                   <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">NFTs via Stargaze</span>
                 </div>
 
-                <div className="flex gap-2 mb-3">
+                <div className="flex gap-2 mb-2">
                   <input
                     type="text"
                     placeholder="stars1… address"
@@ -864,6 +864,14 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
                   </button>
                 </div>
 
+                {/* Sample NFTs — loads real Bad Kids from Stargaze IPFS */}
+                <button
+                  onClick={() => { setNftError(null); setNfts(SAMPLE_STARGAZE_NFTS); }}
+                  className="w-full mb-3 py-1.5 rounded-lg border border-violet-500/15 text-violet-400/60 hover:border-violet-500/30 hover:text-violet-400 text-[10px] font-mono transition-colors"
+                >
+                  ↓ load sample NFTs from Stargaze
+                </button>
+
                 {nftError && (
                   <div className="text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-lg px-3 py-2 mb-3">
                     {nftError}
@@ -872,7 +880,7 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
 
                 {nfts.length === 0 && !nftLoading && !nftError && (
                   <div className="text-[11px] text-white/20 text-center py-4 italic">
-                    Enter a Stargaze address and click Load to see NFTs.
+                    Enter a Stargaze address or load sample NFTs.
                   </div>
                 )}
 
@@ -993,6 +1001,23 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
 }
 
 // ── Stargaze NFT types & fetch ──────────────────────────────────────────────
+
+/** Real Bad Kids NFTs from Stargaze mainnet (IPFS gateway confirmed). */
+const BAD_KIDS_CONTRACT = 'stars19jq6mj84cnt9p7sagjxqf8hxtczwc8wlpuwe4sh62w45aheseues57n420';
+const IPFS_GW = 'https://ipfs-gw.stargaze-apis.com/ipfs/QmbGvE3wmxex8KiBbbvMjR8f9adR28s3XkiZSTuGmHoMHV/';
+
+const SAMPLE_STARGAZE_NFTS: StargazeNFT[] = [
+  { tokenId: '42',   name: 'Bad Kid #42',   imageUrl: IPFS_GW + '42.jpg',   collectionAddr: BAD_KIDS_CONTRACT, collectionName: 'Bad Kids' },
+  { tokenId: '100',  name: 'Bad Kid #100',  imageUrl: IPFS_GW + '100.jpg',  collectionAddr: BAD_KIDS_CONTRACT, collectionName: 'Bad Kids' },
+  { tokenId: '500',  name: 'Bad Kid #500',  imageUrl: IPFS_GW + '500.jpg',  collectionAddr: BAD_KIDS_CONTRACT, collectionName: 'Bad Kids' },
+  { tokenId: '777',  name: 'Bad Kid #777',  imageUrl: IPFS_GW + '777.jpg',  collectionAddr: BAD_KIDS_CONTRACT, collectionName: 'Bad Kids' },
+  { tokenId: '1000', name: 'Bad Kid #1000', imageUrl: IPFS_GW + '1000.jpg', collectionAddr: BAD_KIDS_CONTRACT, collectionName: 'Bad Kids' },
+  { tokenId: '1234', name: 'Bad Kid #1234', imageUrl: IPFS_GW + '1234.jpg', collectionAddr: BAD_KIDS_CONTRACT, collectionName: 'Bad Kids' },
+  { tokenId: '2048', name: 'Bad Kid #2048', imageUrl: IPFS_GW + '2048.jpg', collectionAddr: BAD_KIDS_CONTRACT, collectionName: 'Bad Kids' },
+  { tokenId: '5000', name: 'Bad Kid #5000', imageUrl: IPFS_GW + '5000.jpg', collectionAddr: BAD_KIDS_CONTRACT, collectionName: 'Bad Kids' },
+  { tokenId: '9000', name: 'Bad Kid #9000', imageUrl: IPFS_GW + '9000.jpg', collectionAddr: BAD_KIDS_CONTRACT, collectionName: 'Bad Kids' },
+];
+
 interface StargazeNFT {
   tokenId: string;
   name: string;

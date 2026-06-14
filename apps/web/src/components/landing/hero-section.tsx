@@ -74,23 +74,26 @@ export function HeroSection() {
     <section className="relative w-full min-h-[90vh] flex flex-col items-center justify-center pt-24 pb-16 overflow-hidden bg-[#030303]">
 
       {/* ── Animated gradient orbs ─────────────────────────── */}
+      {/* Large pulsing green orb — top center */}
       <motion.div
-        className="absolute top-[-10%] left-[20%] w-[600px] h-[500px] rounded-full pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse, rgba(62,207,142,0.07) 0%, transparent 70%)' }}
-        animate={{ x: [0, 40, -20, 0], y: [0, -30, 20, 0] }}
-        transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute top-[-15%] left-[15%] w-[700px] h-[600px] rounded-full pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse, rgba(62,207,142,0.18) 0%, rgba(62,207,142,0.06) 40%, transparent 70%)' }}
+        animate={{ x: [0, 40, -20, 0], y: [0, -30, 20, 0], opacity: [0.7, 1, 0.7] }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
       />
+      {/* Secondary orb — bottom right */}
       <motion.div
-        className="absolute bottom-[5%] right-[10%] w-[500px] h-[400px] rounded-full pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse, rgba(62,207,142,0.05) 0%, transparent 70%)' }}
-        animate={{ x: [0, -30, 30, 0], y: [0, 20, -20, 0] }}
-        transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut', delay: 3 }}
+        className="absolute bottom-[0%] right-[5%] w-[550px] h-[450px] rounded-full pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse, rgba(62,207,142,0.12) 0%, rgba(62,207,142,0.04) 45%, transparent 70%)' }}
+        animate={{ x: [0, -30, 30, 0], y: [0, 20, -20, 0], opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
       />
+      {/* Blue accent orb — left side */}
       <motion.div
-        className="absolute top-[40%] left-[-5%] w-[350px] h-[350px] rounded-full pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse, rgba(20,175,235,0.04) 0%, transparent 70%)' }}
-        animate={{ x: [0, 25, -10, 0], y: [0, -15, 25, 0] }}
-        transition={{ duration: 26, repeat: Infinity, ease: 'easeInOut', delay: 6 }}
+        className="absolute top-[35%] left-[-8%] w-[400px] h-[400px] rounded-full pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse, rgba(20,175,235,0.08) 0%, transparent 70%)' }}
+        animate={{ x: [0, 25, -10, 0], y: [0, -15, 25, 0], opacity: [0.5, 0.9, 0.5] }}
+        transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut', delay: 4 }}
       />
 
       {/* ── Dot grid ───────────────────────────────────────── */}
@@ -283,35 +286,37 @@ export function HeroSection() {
                       </div>
                       <ShieldCheck size={12} className="text-[#3ECF8E]/45 shrink-0" />
                     </div>
-                    {/* NFT 1 */}
-                    <div className="mx-2.5 mb-2 rounded-lg border overflow-hidden shrink-0" style={{ borderColor:'rgba(245,158,11,0.22)', background:'linear-gradient(135deg,#0f0800,#0a0500)' }}>
-                      <div className="h-[1px]" style={{ background:'linear-gradient(90deg,transparent,rgba(245,158,11,0.6) 50%,transparent)' }} />
+                    {/* NFT 1 — Bad Kid #42 */}
+                    <div className="mx-2.5 mb-2 rounded-lg border overflow-hidden shrink-0" style={{ borderColor:'rgba(245,158,11,0.28)', background:'linear-gradient(135deg,#0f0800,#0a0500)' }}>
+                      <div className="h-[1px]" style={{ background:'linear-gradient(90deg,transparent,rgba(245,158,11,0.7) 50%,transparent)' }} />
                       <div className="flex items-center">
-                        <div className="w-12 h-12 shrink-0 flex items-center justify-center" style={{ background:'linear-gradient(135deg,#3a1800,#1e0c00)' }}>
-                          <SwordSvg size={34} />
+                        <div className="w-12 h-12 shrink-0 overflow-hidden bg-[#111]">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src="https://ipfs-gw.stargaze-apis.com/ipfs/QmbGvE3wmxex8KiBbbvMjR8f9adR28s3XkiZSTuGmHoMHV/42.jpg" alt="Bad Kid #42" className="w-full h-full object-cover" />
                         </div>
                         <div className="flex-1 min-w-0 px-2.5 py-2">
                           <div className="flex items-center justify-between gap-1 mb-0.5">
-                            <span className="text-[10px] font-bold text-white truncate">Dragon Sword</span>
+                            <span className="text-[10px] font-bold text-white truncate">Bad Kid #42</span>
                             <span className="text-[7px] font-mono shrink-0 px-1.5 py-0.5 rounded" style={{ background:'rgba(245,158,11,0.1)', color:'#f59e0b', border:'1px solid rgba(245,158,11,0.22)' }}>RARE</span>
                           </div>
-                          <div className="text-[8px] text-white/25 font-mono">Pixel Realm · #4821</div>
+                          <div className="text-[8px] text-white/25 font-mono">Bad Kids · stargaze-1</div>
                         </div>
                       </div>
                     </div>
-                    {/* NFT 2 */}
-                    <div className="mx-2.5 mb-2.5 rounded-lg border overflow-hidden shrink-0" style={{ borderColor:'rgba(124,58,237,0.22)', background:'linear-gradient(135deg,#080514,#050310)' }}>
-                      <div className="h-[1px]" style={{ background:'linear-gradient(90deg,transparent,rgba(124,58,237,0.6) 50%,transparent)' }} />
+                    {/* NFT 2 — Bad Kid #1000 */}
+                    <div className="mx-2.5 mb-2.5 rounded-lg border overflow-hidden shrink-0" style={{ borderColor:'rgba(124,58,237,0.28)', background:'linear-gradient(135deg,#080514,#050310)' }}>
+                      <div className="h-[1px]" style={{ background:'linear-gradient(90deg,transparent,rgba(124,58,237,0.7) 50%,transparent)' }} />
                       <div className="flex items-center">
-                        <div className="w-12 h-12 shrink-0 flex items-center justify-center" style={{ background:'linear-gradient(135deg,#1e1040,#0f0828)' }}>
-                          <KnightSvg size={34} />
+                        <div className="w-12 h-12 shrink-0 overflow-hidden bg-[#111]">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src="https://ipfs-gw.stargaze-apis.com/ipfs/QmbGvE3wmxex8KiBbbvMjR8f9adR28s3XkiZSTuGmHoMHV/1000.jpg" alt="Bad Kid #1000" className="w-full h-full object-cover" />
                         </div>
                         <div className="flex-1 min-w-0 px-2.5 py-2">
                           <div className="flex items-center justify-between gap-1 mb-0.5">
-                            <span className="text-[10px] font-bold text-white truncate">Shadow Knight</span>
+                            <span className="text-[10px] font-bold text-white truncate">Bad Kid #1000</span>
                             <span className="text-[7px] font-mono shrink-0 px-1.5 py-0.5 rounded" style={{ background:'rgba(124,58,237,0.1)', color:'#a78bfa', border:'1px solid rgba(124,58,237,0.22)' }}>EPIC</span>
                           </div>
-                          <div className="text-[8px] text-white/25 font-mono">Dark Guild · #099</div>
+                          <div className="text-[8px] text-white/25 font-mono">Bad Kids · stargaze-1</div>
                         </div>
                       </div>
                     </div>
@@ -351,35 +356,37 @@ export function HeroSection() {
                       </div>
                       <ShieldCheck size={12} className="text-[#3ECF8E]/45 shrink-0" />
                     </div>
-                    {/* NFT 3 */}
-                    <div className="mx-2.5 mb-2 rounded-lg border overflow-hidden shrink-0" style={{ borderColor:'rgba(236,72,153,0.22)', background:'linear-gradient(135deg,#0b0510,#080410)' }}>
-                      <div className="h-[1px]" style={{ background:'linear-gradient(90deg,transparent,rgba(236,72,153,0.6) 50%,transparent)' }} />
+                    {/* NFT 3 — Bad Kid #5000 */}
+                    <div className="mx-2.5 mb-2 rounded-lg border overflow-hidden shrink-0" style={{ borderColor:'rgba(236,72,153,0.28)', background:'linear-gradient(135deg,#0b0510,#080410)' }}>
+                      <div className="h-[1px]" style={{ background:'linear-gradient(90deg,transparent,rgba(236,72,153,0.7) 50%,transparent)' }} />
                       <div className="flex items-center">
-                        <div className="w-12 h-12 shrink-0 flex items-center justify-center" style={{ background:'linear-gradient(135deg,#2d1040,#1a0828)' }}>
-                          <MageSvg size={34} />
+                        <div className="w-12 h-12 shrink-0 overflow-hidden bg-[#111]">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src="https://ipfs-gw.stargaze-apis.com/ipfs/QmbGvE3wmxex8KiBbbvMjR8f9adR28s3XkiZSTuGmHoMHV/5000.jpg" alt="Bad Kid #5000" className="w-full h-full object-cover" />
                         </div>
                         <div className="flex-1 min-w-0 px-2.5 py-2">
                           <div className="flex items-center justify-between gap-1 mb-0.5">
-                            <span className="text-[10px] font-bold text-white truncate">Void Mage</span>
+                            <span className="text-[10px] font-bold text-white truncate">Bad Kid #5000</span>
                             <span className="text-[7px] font-mono shrink-0 px-1.5 py-0.5 rounded" style={{ background:'rgba(236,72,153,0.1)', color:'#f472b6', border:'1px solid rgba(236,72,153,0.22)' }}>LEGENDARY</span>
                           </div>
-                          <div className="text-[8px] text-white/25 font-mono">Mystic Order · #213</div>
+                          <div className="text-[8px] text-white/25 font-mono">Bad Kids · stargaze-1</div>
                         </div>
                       </div>
                     </div>
-                    {/* NFT 4 */}
-                    <div className="mx-2.5 mb-2.5 rounded-lg border overflow-hidden shrink-0" style={{ borderColor:'rgba(239,68,68,0.22)', background:'linear-gradient(135deg,#0f0404,#0a0303)' }}>
-                      <div className="h-[1px]" style={{ background:'linear-gradient(90deg,transparent,rgba(239,68,68,0.6) 50%,transparent)' }} />
+                    {/* NFT 4 — Bad Kid #9000 */}
+                    <div className="mx-2.5 mb-2.5 rounded-lg border overflow-hidden shrink-0" style={{ borderColor:'rgba(239,68,68,0.28)', background:'linear-gradient(135deg,#0f0404,#0a0303)' }}>
+                      <div className="h-[1px]" style={{ background:'linear-gradient(90deg,transparent,rgba(239,68,68,0.7) 50%,transparent)' }} />
                       <div className="flex items-center">
-                        <div className="w-12 h-12 shrink-0 flex items-center justify-center" style={{ background:'linear-gradient(135deg,#3f0808,#1a0404)' }}>
-                          <DrakeSvg size={34} />
+                        <div className="w-12 h-12 shrink-0 overflow-hidden bg-[#111]">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src="https://ipfs-gw.stargaze-apis.com/ipfs/QmbGvE3wmxex8KiBbbvMjR8f9adR28s3XkiZSTuGmHoMHV/9000.jpg" alt="Bad Kid #9000" className="w-full h-full object-cover" />
                         </div>
                         <div className="flex-1 min-w-0 px-2.5 py-2">
                           <div className="flex items-center justify-between gap-1 mb-0.5">
-                            <span className="text-[10px] font-bold text-white truncate">Inferno Drake</span>
+                            <span className="text-[10px] font-bold text-white truncate">Bad Kid #9000</span>
                             <span className="text-[7px] font-mono shrink-0 px-1.5 py-0.5 rounded" style={{ background:'rgba(239,68,68,0.1)', color:'#f87171', border:'1px solid rgba(239,68,68,0.22)' }}>EPIC</span>
                           </div>
-                          <div className="text-[8px] text-white/25 font-mono">Dragon Kin · #07</div>
+                          <div className="text-[8px] text-white/25 font-mono">Bad Kids · stargaze-1</div>
                         </div>
                       </div>
                     </div>
