@@ -114,7 +114,7 @@ export function ProductsSection() {
           {/* Featured: Trade Room — spans 3 cols */}
           <FadeUp delay={0.05} className="lg:col-span-3">
             <motion.div
-              className="relative h-full bg-[#0c0c0c] border border-[#1c1c1c] rounded-xl p-7 flex flex-col gap-6 overflow-hidden cursor-default group"
+              className="relative h-full bg-[#0c0c0c] border border-[#1c1c1c] rounded-xl p-5 sm:p-7 flex flex-col gap-6 overflow-hidden cursor-default group"
               whileHover={{
                 borderColor: 'rgba(14,165,233,0.35)',
                 boxShadow: '0 0 40px rgba(14,165,233,0.06)',
@@ -212,14 +212,14 @@ export function ProductsSection() {
                 </div>
 
                 {/* Mini step flow */}
-                <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
                   {['Add Assets', 'Inspect', 'Lock', 'Countdown', 'Sign'].map((step, i) => (
                     <React.Fragment key={step}>
                       <div className="flex items-center gap-1.5 bg-[#111] border border-[#1c1c1c] rounded-md px-2.5 py-1.5">
                         <span className="text-[10px] font-mono text-[#3ECF8E]/60 w-3.5">{i + 1}</span>
                         <span className="text-[11px] text-white/50">{step}</span>
                       </div>
-                      {i < 4 && <span className="text-white/15 text-xs">→</span>}
+                      {i < 4 && <span className="hidden sm:inline text-white/15 text-xs">→</span>}
                     </React.Fragment>
                   ))}
                 </div>
