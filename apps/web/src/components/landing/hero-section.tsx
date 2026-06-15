@@ -241,14 +241,14 @@ export function HeroSection() {
               </div>
 
               {/* Mockup Body */}
-              <div className="flex-1 flex flex-col gap-2 p-3 overflow-hidden">
+              <div className="flex-1 flex flex-col gap-2 p-3 overflow-visible">
 
                 {/* Two panels */}
                 <div className="grid grid-cols-2 gap-2 flex-1 min-h-0">
 
                   {/* User A Panel */}
                   <motion.div
-                    className="flex flex-col rounded-xl border border-[#262626] overflow-hidden"
+                    className="flex flex-col rounded-xl border border-[#262626] overflow-visible"
                     style={{ background: 'linear-gradient(180deg,#1c1c1c 0%,#141414 100%)' }}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -300,9 +300,9 @@ export function HeroSection() {
                         </div>
 
                         {/* Slot 2: Bad Kid #42 */}
-                        <div className="aspect-square rounded-xl border border-amber-500/30 hover:border-amber-500/50 bg-amber-950/5 relative overflow-hidden cursor-pointer group/item hover:shadow-[0_0_15px_rgba(245,158,11,0.15)] transition-all duration-200">
+                        <div className="aspect-square rounded-xl border border-amber-500/30 hover:border-amber-500/50 bg-amber-950/5 relative cursor-pointer group/item hover:shadow-[0_0_15px_rgba(245,158,11,0.15)] transition-all duration-200">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src="https://ipfs.io/ipfs/QmbGvE3wmxex8KiBbbvMjR8f9adR28s3XkiZSTuGmHoMHV/42.jpg" alt="Bad Kid #42" className="w-full h-full object-cover" />
+                          <img src="https://ipfs.io/ipfs/QmbGvE3wmxex8KiBbbvMjR8f9adR28s3XkiZSTuGmHoMHV/42.jpg" alt="Bad Kid #42" className="w-full h-full object-cover rounded-xl" />
                           <span className="absolute bottom-1 left-1.5 px-1 bg-black/85 text-[8px] font-bold font-mono text-amber-300 rounded border border-amber-500/20 py-0.5 leading-none">RARE</span>
 
                           {/* Tooltip mockup */}
@@ -320,9 +320,9 @@ export function HeroSection() {
                         </div>
 
                         {/* Slot 3: Bad Kid #1000 */}
-                        <div className="aspect-square rounded-xl border border-violet-500/30 hover:border-violet-500/50 bg-violet-950/5 relative overflow-hidden cursor-pointer group/item hover:shadow-[0_0_15px_rgba(139,92,246,0.15)] transition-all duration-200">
+                        <div className="aspect-square rounded-xl border border-violet-500/30 hover:border-violet-500/50 bg-violet-950/5 relative cursor-pointer group/item hover:shadow-[0_0_15px_rgba(139,92,246,0.15)] transition-all duration-200">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src="https://ipfs.io/ipfs/QmbGvE3wmxex8KiBbbvMjR8f9adR28s3XkiZSTuGmHoMHV/1000.jpg" alt="Bad Kid #1000" className="w-full h-full object-cover" />
+                          <img src="https://ipfs.io/ipfs/QmbGvE3wmxex8KiBbbvMjR8f9adR28s3XkiZSTuGmHoMHV/1000.jpg" alt="Bad Kid #1000" className="w-full h-full object-cover rounded-xl" />
                           <span className="absolute bottom-1 left-1.5 px-1 bg-black/85 text-[8px] font-bold font-mono text-violet-300 rounded border border-violet-500/20 py-0.5 leading-none">EPIC</span>
 
                           {/* Tooltip mockup */}
@@ -357,7 +357,7 @@ export function HeroSection() {
 
                   {/* User B Panel */}
                   <motion.div
-                    className="flex flex-col rounded-xl border border-[#262626] overflow-hidden"
+                    className="flex flex-col rounded-xl border border-[#262626] overflow-visible"
                     style={{ background: 'linear-gradient(180deg,#1c1c1c 0%,#141414 100%)' }}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -403,9 +403,9 @@ export function HeroSection() {
                         </div>
 
                         {/* Slot 2: Bad Kid #5000 */}
-                        <div className="aspect-square rounded-xl border border-pink-500/30 hover:border-pink-500/50 bg-pink-950/5 relative overflow-hidden cursor-pointer group/item hover:shadow-[0_0_15px_rgba(236,72,153,0.15)] transition-all duration-200">
+                        <div className="aspect-square rounded-xl border border-pink-500/30 hover:border-pink-500/50 bg-pink-950/5 relative cursor-pointer group/item hover:shadow-[0_0_15px_rgba(236,72,153,0.15)] transition-all duration-200">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src="https://ipfs.io/ipfs/QmbGvE3wmxex8KiBbbvMjR8f9adR28s3XkiZSTuGmHoMHV/5000.jpg" alt="Bad Kid #5000" className="w-full h-full object-cover" />
+                          <img src="https://ipfs.io/ipfs/QmbGvE3wmxex8KiBbbvMjR8f9adR28s3XkiZSTuGmHoMHV/5000.jpg" alt="Bad Kid #5000" className="w-full h-full object-cover rounded-xl" />
                           <span className="absolute bottom-1 left-1.5 px-1 bg-black/85 text-[8px] font-bold font-mono text-pink-300 rounded border border-pink-500/20 py-0.5 leading-none">LEGEND</span>
 
                           {/* Tooltip mockup */}
@@ -423,9 +423,9 @@ export function HeroSection() {
                         </div>
 
                         {/* Slot 3: Bad Kid #9000 */}
-                        <div className="aspect-square rounded-xl border border-red-500/30 hover:border-red-500/50 bg-red-950/5 relative overflow-hidden cursor-pointer group/item hover:shadow-[0_0_15px_rgba(239,68,68,0.15)] transition-all duration-200">
+                        <div className="aspect-square rounded-xl border border-red-500/30 hover:border-red-500/50 bg-red-950/5 relative cursor-pointer group/item hover:shadow-[0_0_15px_rgba(239,68,68,0.15)] transition-all duration-200">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src="https://ipfs.io/ipfs/QmbGvE3wmxex8KiBbbvMjR8f9adR28s3XkiZSTuGmHoMHV/9000.jpg" alt="Bad Kid #9000" className="w-full h-full object-cover" />
+                          <img src="https://ipfs.io/ipfs/QmbGvE3wmxex8KiBbbvMjR8f9adR28s3XkiZSTuGmHoMHV/9000.jpg" alt="Bad Kid #9000" className="w-full h-full object-cover rounded-xl" />
                           <span className="absolute bottom-1 left-1.5 px-1 bg-black/85 text-[8px] font-bold font-mono text-red-300 rounded border border-red-500/20 py-0.5 leading-none">EPIC</span>
 
                           {/* Tooltip mockup */}
