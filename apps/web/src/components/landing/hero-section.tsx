@@ -201,7 +201,7 @@ export function HeroSection() {
 
         {/* ── Right: Floating Mockup ──────────────────────────── */}
         <motion.div
-          className="relative w-full lg:h-[540px] z-10"
+          className="relative w-full h-[480px] sm:h-[520px] lg:h-[540px] z-10"
           initial={{ opacity: 0, x: 40 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7, delay: 0.2, ease }}

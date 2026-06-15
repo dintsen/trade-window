@@ -529,7 +529,7 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
   }
 
   return (
-    <div className="flex-1 flex flex-col md:flex-row h-[calc(100vh-64px)]">
+    <div className="flex-1 flex flex-col md:flex-row h-auto md:h-[calc(100vh-64px)]">
       
       {/* Center: Main Trade Window */}
       <div className="flex-1 flex flex-col p-6 overflow-y-auto relative bg-[#030303]">
@@ -612,10 +612,10 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
             <div className="text-left w-full px-1 mb-[-12px]">
               <span className="text-xs font-medium text-white/40 uppercase tracking-wider">Step 3 — Add assets and lock trade</span>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[400px]">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-auto lg:h-[400px]">
               
               {/* My Offer */}
-              <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-5 flex flex-col relative overflow-hidden">
+              <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-5 flex flex-col relative overflow-hidden h-[350px] lg:h-full">
                 {myLock && <div className="absolute inset-0 border-2 border-emerald-500/40 rounded-2xl pointer-events-none"></div>}
                 
                 <div className="flex justify-between items-center mb-4">
@@ -647,7 +647,7 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
               </div>
 
               {/* Counterparty Offer */}
-              <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-5 flex flex-col relative overflow-hidden">
+              <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-5 flex flex-col relative overflow-hidden h-[350px] lg:h-full">
                 {theirLock && <div className="absolute inset-0 border-2 border-emerald-500/40 rounded-2xl pointer-events-none"></div>}
                 
                 <div className="flex justify-between items-center mb-4">
@@ -777,7 +777,7 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
       </div>
 
       {/* Right Sidebar */}
-      <div className="w-full md:w-[350px] lg:w-[400px] border-l border-white/5 bg-[#0a0a0a] flex flex-col h-full">
+      <div className="w-full md:w-[350px] lg:w-[400px] border-t md:border-t-0 md:border-l border-white/5 bg-[#0a0a0a] flex flex-col h-[600px] md:h-full">
         <div className="flex items-center border-b border-white/5 overflow-x-auto custom-scrollbar shrink-0">
           <button onClick={() => setActiveTab('setup')} className={`flex-1 py-4 px-2 text-xs font-medium uppercase tracking-wider transition-colors border-b-2 ${activeTab === 'setup' ? 'border-emerald-400 text-emerald-400 bg-emerald-500/5' : 'border-transparent text-white/40 hover:bg-white/5 hover:text-white/80'}`}>Setup</button>
           <button onClick={() => setActiveTab('assets')} className={`flex-1 py-4 px-2 text-xs font-medium uppercase tracking-wider transition-colors border-b-2 ${activeTab === 'assets' ? 'border-emerald-400 text-emerald-400 bg-emerald-500/5' : 'border-transparent text-white/40 hover:bg-white/5 hover:text-white/80'}`}>Assets</button>

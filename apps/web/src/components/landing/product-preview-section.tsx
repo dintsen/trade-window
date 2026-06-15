@@ -40,7 +40,7 @@ export function ProductPreviewSection() {
             
             {/* Left: Trade Room */}
             <div className="flex-1 flex flex-col p-6 gap-6 relative">
-              <div className="grid grid-cols-2 gap-6 h-full">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 h-full">
                 
                 {/* User Panel */}
                 <div className="bg-[#111] border border-white/5 rounded-xl p-5 flex flex-col">
@@ -101,7 +101,7 @@ export function ProductPreviewSection() {
 
               {/* Action Bar */}
               <div className="mt-auto border-t border-white/5 pt-6 flex flex-col gap-4">
-                <div className="flex items-center justify-between bg-[#0a0a0a] border border-white/5 shadow-inner rounded-xl px-5 py-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-[#0a0a0a] border border-white/5 shadow-inner rounded-xl px-5 py-4 gap-4">
                   <div className="flex items-center gap-3">
                     <FileCheck size={20} className="text-emerald-400" />
                     <div>
@@ -122,10 +122,10 @@ export function ProductPreviewSection() {
             </div>
 
             {/* Right: Sidebar (Chat & Logs) */}
-            <div className="w-full md:w-80 border-l border-white/5 bg-[#0a0a0a] flex flex-col">
+            <div className="w-full md:w-80 border-t md:border-t-0 md:border-l border-white/5 bg-[#0a0a0a] flex flex-col">
               
               {/* Chat */}
-              <div className="flex-1 flex flex-col border-b border-white/5 relative">
+              <div className="flex-1 min-h-[220px] flex flex-col border-b border-white/5 relative">
                 <div className="absolute inset-0 bg-gradient-to-b from-[#111]/50 to-transparent pointer-events-none"></div>
                 <div className="px-4 py-3 border-b border-white/5 flex items-center gap-2 text-xs font-semibold text-white/60 tracking-wider uppercase z-10">
                   <MessageSquare size={14} /> Chat

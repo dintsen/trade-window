@@ -115,12 +115,12 @@ export default function BoardPage() {
             {/* Type filter */}
             <div className="px-3 py-2.5 border-b border-[#1c1c1c]">
               <p className="text-[10px] font-mono text-white/30 uppercase tracking-[0.12em] mb-2">Request Type</p>
-              <div className="flex flex-col gap-0.5">
+              <div className="flex flex-row flex-wrap gap-1 lg:flex-col lg:gap-0.5">
                 {TYPE_FILTERS.map(t => (
                   <button
                     key={t}
                     onClick={() => setTypeFilter(t)}
-                    className={`text-left px-2 py-1.5 rounded-md text-xs transition-colors ${
+                    className={`text-left lg:text-left px-2.5 py-1.5 lg:px-2 lg:py-1.5 rounded-md text-xs transition-colors ${
                       typeFilter === t
                         ? "bg-[#3ECF8E]/10 text-[#3ECF8E] font-medium"
                         : "text-white/50 hover:bg-white/[0.04] hover:text-white/70"
@@ -134,12 +134,12 @@ export default function BoardPage() {
             {/* Chain filter */}
             <div className="px-3 py-2.5">
               <p className="text-[10px] font-mono text-white/30 uppercase tracking-[0.12em] mb-2">Ecosystem</p>
-              <div className="flex flex-col gap-0.5">
+              <div className="flex flex-row flex-wrap gap-1 lg:flex-col lg:gap-0.5">
                 {CHAIN_FILTERS.map(c => (
                   <button
                     key={c}
                     onClick={() => setChainFilter(c)}
-                    className={`text-left px-2 py-1.5 rounded-md text-xs transition-colors ${
+                    className={`text-left lg:text-left px-2.5 py-1.5 lg:px-2 lg:py-1.5 rounded-md text-xs transition-colors ${
                       chainFilter === c
                         ? "bg-[#3ECF8E]/10 text-[#3ECF8E] font-medium"
                         : "text-white/50 hover:bg-white/[0.04] hover:text-white/70"
@@ -257,22 +257,26 @@ export default function BoardPage() {
 
                   {/* Offering */}
                   <div className="flex items-center">
+                    <span className="text-[10px] font-mono text-white/25 uppercase tracking-wider mr-2 md:hidden">Offer:</span>
                     <AssetCell denom={listing.offerAsset} />
                   </div>
 
                   {/* Arrow + Wanting */}
                   <div className="flex items-center gap-2">
                     <ArrowRight size={12} className="text-white/20 shrink-0 hidden md:block" />
+                    <span className="text-[10px] font-mono text-white/25 uppercase tracking-wider mr-2 md:hidden">Want:</span>
                     <AssetCell denom={listing.wantAsset} />
                   </div>
 
                   {/* Amount */}
                   <div className="flex items-center">
+                    <span className="text-[10px] font-mono text-white/25 uppercase tracking-wider mr-2 md:hidden">Amount:</span>
                     <span className="text-xs text-white/50 font-mono">{listing.amountRange || '—'}</span>
                   </div>
 
                   {/* Date */}
                   <div className="flex items-center">
+                    <span className="text-[10px] font-mono text-white/25 uppercase tracking-wider mr-2 md:hidden">Date:</span>
                     <span className="text-xs text-white/30 font-mono whitespace-nowrap">
                       {new Date(listing.createdAt).toLocaleDateString()}
                     </span>

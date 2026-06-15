@@ -148,7 +148,7 @@ export function ProductsSection() {
                 </p>
 
                 {/* Mini trade window demo — real ecosystem assets */}
-                <div className="bg-[#080808] border border-[#1c1c1c] rounded-lg p-3 mb-5 grid grid-cols-2 gap-2">
+                <div className="bg-[#080808] border border-[#1c1c1c] rounded-lg p-3 mb-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {/* User A: Bad Kid NFT + ATONE */}
                   <div className="flex flex-col gap-1.5">
                     <div className="flex items-center justify-between mb-0.5">
