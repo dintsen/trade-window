@@ -7,7 +7,7 @@ import { TradeAsset, DEMO_ASSETS } from '@/lib/trade/assets';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { ShieldAlert, Info, AlertTriangle, RefreshCw, Copy, CheckCircle2, XCircle, Hexagon, User, Globe, Send, Terminal, Lock, LinkIcon, ImageIcon, ArrowLeftRight, ChevronLeft } from 'lucide-react';
+import { ShieldAlert, Info, AlertTriangle, RefreshCw, Copy, CheckCircle2, XCircle, Hexagon, User, Globe, Send, Terminal, Lock, LinkIcon, ImageIcon, ArrowLeftRight, ChevronLeft, Plus, X } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -378,6 +378,7 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
     PHOTON: '/assets/logos/photon.svg',
     ATOM: '/assets/logos/cosmos.svg',
     USDC: '/assets/logos/usdc.svg',
+    STARS: '/assets/tokens/stars.svg',
   };
 
   const getAssetLogo = (denom: string): string | null => ASSET_LOGOS[denom.toUpperCase()] ?? null;
@@ -627,14 +628,12 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
                   )}
                 </div>
                 
-                <div className="flex-1 overflow-y-auto space-y-3 mb-4 pr-2 custom-scrollbar">
-                  {myAssets.length === 0 ? (
-                    <div className="h-full flex flex-col items-center justify-center text-white/20 text-sm italic">
-                      No assets added. Use Asset Picker to build your offer.
-                    </div>
-                  ) : (
-                    myAssets.map((asset, i) => <AssetCard key={i} asset={asset} />)
-                  )}
+                <div className="flex-1 overflow-y-auto mb-4 pr-1 custom-scrollbar">
+                  <InventoryGrid
+                    assets={myAssets}
+                    isLocked={!!myLock}
+                    emptyMessage="No assets added. Use Asset Picker to build your offer."
+                  />
                 </div>
                 
                 <Button 
@@ -659,14 +658,12 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
                   )}
                 </div>
                 
-                <div className="flex-1 overflow-y-auto space-y-3 mb-4 pr-2 custom-scrollbar">
-                  {theirAssets.length === 0 ? (
-                    <div className="h-full flex flex-col items-center justify-center text-white/20 text-sm italic">
-                      Counterparty is building their offer.
-                    </div>
-                  ) : (
-                    theirAssets.map((asset, i) => <AssetCard key={i} asset={asset} />)
-                  )}
+                <div className="flex-1 overflow-y-auto mb-4 pr-1 custom-scrollbar">
+                  <InventoryGrid
+                    assets={theirAssets}
+                    isLocked={!!theirLock}
+                    emptyMessage="Counterparty is building their offer."
+                  />
                 </div>
                 
                 <div className="w-full py-2 text-center text-xs text-white/30 border-t border-white/5">
@@ -1174,89 +1171,167 @@ const ASSET_LOGO_MAP: Record<string, string> = {
   PHOTON: '/assets/logos/photon.svg',
   ATOM: '/assets/logos/cosmos.svg',
   USDC: '/assets/logos/usdc.svg',
+  STARS: '/assets/tokens/stars.svg',
 };
 
-function AssetCard({ asset }: { asset: TradeAsset }) {
-  const isSuspicious = asset.verificationStatus === 'suspicious';
-  const isVerified = asset.verificationStatus === 'verified';
-  const isNft = asset.type === 'nft';
-  const logo = ASSET_LOGO_MAP[asset.displayDenom.toUpperCase()] ?? null;
-
-  // Parse imageUrl from metadata for NFTs
-  let nftImageUrl: string | null = null;
-  if (isNft && asset.metadata) {
-    try {
-      const m = JSON.parse(asset.metadata);
-      nftImageUrl = m.imageUrl ?? null;
-    } catch { /* ignore */ }
+function InventoryGrid({
+  assets,
+  isLocked,
+  onRemove,
+  emptyMessage,
+}: {
+  assets: TradeAsset[];
+  isLocked: boolean;
+  onRemove?: (id: string) => void;
+  emptyMessage: string;
+}) {
+  if (assets.length === 0) {
+    return (
+      <div className="h-full flex flex-col items-center justify-center text-white/20 text-xs italic text-center p-4">
+        {emptyMessage}
+      </div>
+    );
   }
 
-  return (
-    <div className={`rounded-xl border bg-[#0a0a0a] overflow-hidden shadow-inner group relative ${isSuspicious ? 'border-rose-500/30' : 'border-white/10'}`}>
-      {isSuspicious && <div className="absolute top-0 left-0 w-1 h-full bg-rose-500 z-10"></div>}
+  // We want to render a grid of at least 8 slots, or more if assets.length > 8
+  const slotCount = Math.max(8, Math.ceil(assets.length / 4) * 4); // Always pad to multiples of 4
 
-      {isNft ? (
-        /* ── NFT card layout ───────────────────────────────────────── */
-        <>
-          {/* Square image with overlay info */}
-          <div className="relative w-full aspect-square overflow-hidden bg-[#111]">
-            {nftImageUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={nftImageUrl}
-                alt={asset.displayDenom}
-                className="w-full h-full object-cover object-center"
-              />
+  return (
+    <div className="grid grid-cols-4 gap-2 pr-1">
+      {assets.map((asset) => {
+        const isNft = asset.type === 'nft';
+        const isSuspicious = asset.verificationStatus === 'suspicious';
+        const isVerified = asset.verificationStatus === 'verified';
+        const logo = ASSET_LOGO_MAP[asset.displayDenom.toUpperCase()] ?? null;
+
+        // Parse imageUrl from metadata for NFTs
+        let nftImageUrl: string | null = null;
+        if (isNft && asset.metadata) {
+          try {
+            const m = JSON.parse(asset.metadata);
+            nftImageUrl = m.imageUrl ?? null;
+          } catch { /* ignore */ }
+        }
+
+        // Get border color and hover glows
+        let borderClass = 'border-white/10 hover:border-white/25 bg-white/[0.02]';
+        let glowClass = 'hover:shadow-[0_0_15px_rgba(255,255,255,0.05)]';
+        let badgeClass = 'text-white/40 bg-white/5 border-white/5';
+        if (isNft) {
+          borderClass = 'border-violet-500/25 hover:border-violet-500/50 bg-violet-950/5';
+          glowClass = 'hover:shadow-[0_0_15px_rgba(139,92,246,0.15)]';
+          badgeClass = 'text-violet-300 bg-violet-500/20 border-violet-500/30';
+        } else if (isSuspicious) {
+          borderClass = 'border-rose-500/25 hover:border-rose-500/50 bg-rose-950/5';
+          glowClass = 'hover:shadow-[0_0_15px_rgba(244,63,94,0.15)]';
+          badgeClass = 'text-rose-300 bg-rose-500/20 border-rose-500/30';
+        } else if (isVerified) {
+          borderClass = 'border-emerald-500/20 hover:border-emerald-500/40 bg-emerald-950/5';
+          glowClass = 'hover:shadow-[0_0_15px_rgba(16,185,129,0.15)]';
+          badgeClass = 'text-emerald-300 bg-emerald-500/20 border-emerald-500/30';
+        }
+
+        return (
+          <div
+            key={asset.id}
+            className={`aspect-square rounded-xl border flex items-center justify-center relative transition-all duration-200 cursor-pointer group ${borderClass} ${glowClass}`}
+          >
+            {/* Remove button */}
+            {onRemove && !isLocked && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRemove(asset.id);
+                }}
+                className="absolute top-1 right-1 w-4 h-4 rounded-full bg-black/85 hover:bg-rose-500/20 hover:text-rose-400 border border-white/10 hover:border-rose-500/30 flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all z-20 text-white/40"
+              >
+                <X size={9} />
+              </button>
+            )}
+
+            {/* Content */}
+            {isNft ? (
+              <div className="w-full h-full relative overflow-hidden rounded-xl">
+                {nftImageUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={nftImageUrl}
+                    alt={asset.displayDenom}
+                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <ImageIcon size={18} className="text-white/15" />
+                  </div>
+                )}
+                {/* Micro badge */}
+                <span className="absolute bottom-1 left-1.5 px-1 bg-black/85 text-[8px] font-bold font-mono text-violet-400 rounded border border-violet-500/20 select-none py-0.5 leading-none">
+                  NFT
+                </span>
+              </div>
             ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <ImageIcon size={32} className="text-white/10" />
+              <div className="flex flex-col items-center justify-center w-full h-full p-2 relative">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center border overflow-hidden p-1 shrink-0 bg-white/5 border-white/5`}>
+                  {logo ? (
+                    <Image src={logo} alt={asset.displayDenom} width={18} height={18} className="object-contain" />
+                  ) : (
+                    <span className="font-bold text-[8px] text-white/60">{asset.displayDenom.slice(0,3)}</span>
+                  )}
+                </div>
+                {/* Quantity overlay */}
+                <span className="absolute bottom-1 right-1.5 max-w-[85%] truncate px-1 bg-black/85 text-[9px] font-bold font-mono text-white/70 rounded border border-white/5 select-none py-0.5 leading-none">
+                  {parseFloat(asset.amount) >= 1000
+                    ? `${(parseFloat(asset.amount) / 1000).toFixed(1).replace(/\.0$/, '')}k`
+                    : asset.amount}
+                </span>
               </div>
             )}
-            {/* Bottom overlay: name + chain badge */}
-            <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent px-3 pt-8 pb-3">
-              <div className="font-bold text-white text-sm leading-tight">{asset.displayDenom}</div>
-              <div className="flex items-center gap-1.5 mt-1">
-                <span className="text-[10px] text-violet-300 bg-violet-500/20 border border-violet-500/30 px-1.5 py-0.5 rounded font-mono">NFT</span>
-                <span className="text-[10px] text-white/50">{asset.sourceChain}</span>
+
+            {/* Premium Game-style Tooltip */}
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 w-48 bg-[#0a0a0c]/95 backdrop-blur-md border border-white/15 rounded-xl p-3 shadow-2xl opacity-0 pointer-events-none group-hover:opacity-100 transition-all duration-200 scale-95 group-hover:scale-100 origin-bottom z-50 text-left">
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <span className={`font-bold text-xs ${isNft ? 'text-violet-400' : isSuspicious ? 'text-rose-400' : 'text-emerald-400'}`}>
+                  {asset.displayDenom}
+                </span>
+                <span className={`text-[8px] font-mono px-1 rounded border uppercase ${badgeClass}`}>
+                  {asset.type}
+                </span>
               </div>
-            </div>
-          </div>
-          {/* Technical denom */}
-          <div className="px-3 py-2">
-            <div className="bg-[#111] border border-white/5 rounded p-2 text-[9px] font-mono text-white/35 break-all">
-              {asset.technicalDenom}
-            </div>
-          </div>
-        </>
-      ) : (
-        /* ── Coin card layout ──────────────────────────────────────── */
-        <div className="p-4 flex flex-col gap-2">
-          <div className="flex justify-between items-start">
-            <div className="flex items-center gap-3 pl-1">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center border overflow-hidden relative p-1.5 shrink-0 ${isSuspicious ? 'bg-rose-500/10 border-rose-500/20' : 'bg-white/5 border-white/10'}`}>
-                {logo ? (
-                  <Image src={logo} alt={asset.displayDenom} width={24} height={24} className="object-contain" />
-                ) : (
-                  <span className="font-bold text-[10px] text-white/60">{asset.displayDenom.slice(0,3)}</span>
+              
+              <div className="space-y-1 text-[10px] text-white/60 leading-normal">
+                <div>
+                  <span className="text-white/30 font-medium mr-1">Amount:</span> 
+                  <span className="font-mono text-white/80">{asset.amount}</span>
+                </div>
+                <div>
+                  <span className="text-white/30 font-medium mr-1">Chain:</span> 
+                  {asset.sourceChain}
+                </div>
+                
+                <div className="pt-1.5 border-t border-white/5 mt-1.5 text-[8px] font-mono text-white/30 truncate" title={asset.technicalDenom}>
+                  {asset.technicalDenom}
+                </div>
+                
+                {isSuspicious && (
+                  <div className="text-rose-400 font-semibold flex items-center gap-1 mt-1 text-[9px] bg-rose-500/10 border border-rose-500/20 px-1.5 py-0.5 rounded">
+                    <ShieldAlert size={8} /> Suspicious token!
+                  </div>
                 )}
               </div>
-              <div className="flex flex-col">
-                <div className="text-base font-bold text-white tracking-wide">
-                  {asset.amount} <span className="text-white/50 text-sm font-normal">{asset.displayDenom}</span>
-                </div>
-                <div className="text-[10px] text-white/30">{asset.sourceChain}</div>
-              </div>
-            </div>
-            <div className="flex flex-col items-end gap-1 mt-1">
-              {isVerified && <span className="text-[10px] text-emerald-400 flex items-center gap-1"><Info size={10} /> Verified</span>}
-              {isSuspicious && <div className="text-[10px] text-rose-400 flex items-center gap-1 font-medium"><ShieldAlert size={10} /> Suspicious</div>}
             </div>
           </div>
-          <div className="bg-[#111] border border-white/5 rounded p-2 text-[9px] font-mono text-white/40 break-all mt-1">
-            {asset.technicalDenom}
-          </div>
+        );
+      })}
+
+      {/* Render remaining empty slots */}
+      {Array.from({ length: slotCount - assets.length }).map((_, idx) => (
+        <div
+          key={`empty-${idx}`}
+          className="aspect-square bg-white/[0.01] border border-white/5 border-dashed rounded-xl flex items-center justify-center text-white/5 relative"
+        >
+          <Plus size={12} className="opacity-35" />
         </div>
-      )}
+      ))}
     </div>
   );
 }

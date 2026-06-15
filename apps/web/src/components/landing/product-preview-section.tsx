@@ -1,5 +1,5 @@
 import React from 'react';
-import { MessageSquare, Terminal, ShieldAlert, ArrowRightLeft, FileCheck, Info } from 'lucide-react';
+import { MessageSquare, Terminal, ShieldAlert, ArrowRightLeft, FileCheck, Info, Plus } from 'lucide-react';
 import Image from 'next/image';
 
 export function ProductPreviewSection() {
@@ -43,56 +43,90 @@ export function ProductPreviewSection() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 h-full">
                 
                 {/* User Panel */}
-                <div className="bg-[#111] border border-white/5 rounded-xl p-5 flex flex-col">
+                <div className="bg-[#111] border border-white/5 rounded-xl p-5 flex flex-col justify-between">
                   <div className="flex justify-between items-center mb-4">
-                    <span className="text-white/80 font-medium">You</span>
+                    <span className="text-white/80 font-medium text-sm">You</span>
                     <span className="text-xs text-emerald-400 border border-emerald-500/20 bg-emerald-500/10 px-2 py-1 rounded">Locked</span>
                   </div>
                   
-                  <div className="bg-[#0a0a0a] border border-white/5 shadow-inner rounded-xl p-4 flex flex-col gap-2 group relative overflow-hidden cursor-pointer">
-                    <div className="flex justify-between items-start">
-                      <div className="flex items-center gap-3 pl-1">
-                        <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 relative p-1.5">
-                          <Image src="/assets/logos/atomone.svg" alt="ATONE" width={24} height={24} className="object-contain drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                  <div className="grid grid-cols-4 gap-2">
+                    {/* Slot 1: ATONE */}
+                    <div className="aspect-square rounded-xl border border-emerald-500/20 hover:border-emerald-500/40 bg-emerald-950/5 relative flex items-center justify-center p-2 cursor-pointer group/item hover:shadow-[0_0_15px_rgba(16,185,129,0.15)] transition-all duration-200">
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center bg-white/5 overflow-hidden">
+                        <Image src="/assets/logos/atomone.svg" alt="ATONE" width={20} height={20} className="object-contain" />
+                      </div>
+                      <span className="absolute bottom-1 right-1.5 px-1 bg-black/85 text-[9px] font-bold font-mono text-white/70 rounded border border-white/5 py-0.5 leading-none">1.5k</span>
+
+                      {/* Tooltip mockup */}
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-[#0a0a0c]/95 backdrop-blur-md border border-white/15 rounded-xl p-3 shadow-2xl opacity-0 pointer-events-none group-hover/item:opacity-100 transition-all duration-200 scale-95 group-hover/item:scale-100 origin-bottom z-30 text-left">
+                        <div className="flex items-center gap-1.5 mb-1.5">
+                          <span className="font-bold text-xs text-emerald-400">ATONE</span>
+                          <span className="text-[8px] font-mono text-white/40 px-1 bg-white/5 rounded border border-white/5 uppercase">COIN</span>
                         </div>
-                        <div className="flex flex-col">
-                          <div className="text-base font-bold text-white tracking-wide">1,500.00</div>
-                          <div className="text-[10px] text-white/40 font-mono">uatomone</div>
+                        <div className="space-y-1 text-[9px] text-white/60 font-sans">
+                          <div><span className="text-white/30 font-medium">Amount:</span> <span className="font-mono">1,500.00</span></div>
+                          <div><span className="text-white/30 font-medium">Chain:</span> AtomOne</div>
+                          <div className="pt-1.5 border-t border-white/5 mt-1.5 text-[8px] font-mono text-white/30 truncate">uatone</div>
                         </div>
                       </div>
-                      <Info size={16} className="text-white/20 group-hover:text-white/40 transition-colors mt-1" />
                     </div>
-                    
-                    {/* Tooltip Mockup */}
-                    <div className="absolute bottom-2 left-2 right-2 bg-[#1a1a1a] border border-white/10 rounded-lg p-3 opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none shadow-xl">
-                      <div className="text-[10px] text-white/40 mb-1">Trace</div>
-                      <div className="text-xs font-mono text-emerald-400 break-all">ibc/27394FB092D2ECCD56123C74F36E4C...</div>
+                    {/* Slot 2: Empty */}
+                    <div className="aspect-square bg-white/[0.01] border border-white/5 border-dashed rounded-xl flex items-center justify-center text-white/5">
+                      <Plus size={12} className="opacity-30" />
+                    </div>
+                    {/* Slot 3: Empty */}
+                    <div className="aspect-square bg-white/[0.01] border border-white/5 border-dashed rounded-xl flex items-center justify-center text-white/5">
+                      <Plus size={12} className="opacity-30" />
+                    </div>
+                    {/* Slot 4: Empty */}
+                    <div className="aspect-square bg-white/[0.01] border border-white/5 border-dashed rounded-xl flex items-center justify-center text-white/5">
+                      <Plus size={12} className="opacity-30" />
                     </div>
                   </div>
                 </div>
 
                 {/* Counterparty Panel */}
-                <div className="bg-[#111] border border-white/5 rounded-xl p-5 flex flex-col">
+                <div className="bg-[#111] border border-white/5 rounded-xl p-5 flex flex-col justify-between">
                   <div className="flex justify-between items-center mb-4">
-                    <span className="text-white/80 font-medium">Counterparty</span>
+                    <span className="text-white/80 font-medium text-sm">Counterparty</span>
                     <span className="text-xs text-emerald-400 border border-emerald-500/20 bg-emerald-500/10 px-2 py-1 rounded">Locked</span>
                   </div>
                   
-                  <div className="bg-[#0a0a0a] border border-rose-500/30 shadow-inner rounded-xl p-4 flex flex-col gap-2 relative overflow-hidden">
-                    <div className="absolute left-0 top-0 w-1 h-full bg-rose-500"></div>
-                    <div className="flex justify-between items-start">
-                      <div className="flex items-center gap-3 pl-1">
-                        <div className="w-10 h-10 rounded-full bg-rose-500/10 flex items-center justify-center border border-rose-500/20 relative p-1.5">
-                          <Image src="/assets/logos/usdc.svg" alt="USDC" width={24} height={24} className="object-contain drop-shadow-[0_0_8px_rgba(244,63,94,0.5)]" />
+                  <div className="grid grid-cols-4 gap-2">
+                    {/* Slot 1: USDC */}
+                    <div className="aspect-square rounded-xl border border-rose-500/25 hover:border-rose-500/50 bg-rose-950/5 relative flex items-center justify-center p-2 cursor-pointer group/item hover:shadow-[0_0_15px_rgba(244,63,94,0.15)] transition-all duration-200">
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center bg-white/5 overflow-hidden">
+                        <Image src="/assets/logos/usdc.svg" alt="USDC" width={20} height={20} className="object-contain" />
+                      </div>
+                      <span className="absolute bottom-1 right-1.5 px-1 bg-black/85 text-[9px] font-bold font-mono text-white/70 rounded border border-white/5 py-0.5 leading-none">5.0k</span>
+
+                      {/* Tooltip mockup */}
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-[#0a0a0c]/95 backdrop-blur-md border border-white/15 rounded-xl p-3 shadow-2xl opacity-0 pointer-events-none group-hover/item:opacity-100 transition-all duration-200 scale-95 group-hover/item:scale-100 origin-bottom z-30 text-left">
+                        <div className="flex items-center gap-1.5 mb-1.5">
+                          <span className="font-bold text-xs text-rose-400">USDC</span>
+                          <span className="text-[8px] font-mono text-white/40 px-1 bg-white/5 rounded border border-white/5 uppercase">COIN</span>
                         </div>
-                        <div className="flex flex-col">
-                          <div className="text-base font-bold text-white tracking-wide">5,000.00</div>
-                          <div className="text-[10px] text-white/40 font-mono">usdc</div>
+                        <div className="space-y-1 text-[9px] text-white/60 font-sans">
+                          <div><span className="text-white/30 font-medium">Amount:</span> <span className="font-mono">5,000.00</span></div>
+                          <div><span className="text-white/30 font-medium">Chain:</span> Gno.land</div>
+                          <div className="pt-1.5 border-t border-white/5 mt-1.5 text-[8px] font-mono text-white/30 truncate">usdc</div>
+                          <div className="text-rose-400 font-semibold flex items-center gap-1 mt-1 text-[8px] bg-rose-500/10 border border-rose-500/20 px-1.5 py-0.5 rounded leading-none">
+                            <ShieldAlert size={8} /> Suspicious token!
+                          </div>
                         </div>
                       </div>
-                      <div className="flex flex-col items-end gap-1 mt-1">
-                        <div className="text-[10px] text-rose-400 flex items-center gap-1 font-medium"><ShieldAlert size={10} /> Suspicious denom</div>
-                      </div>
+                    </div>
+                    {/* Slot 2: Empty */}
+                    <div className="aspect-square bg-white/[0.01] border border-white/5 border-dashed rounded-xl flex items-center justify-center text-white/5">
+                      <Plus size={12} className="opacity-30" />
+                    </div>
+                    {/* Slot 3: Empty */}
+                    <div className="aspect-square bg-white/[0.01] border border-white/5 border-dashed rounded-xl flex items-center justify-center text-white/5">
+                      <Plus size={12} className="opacity-30" />
+                    </div>
+                    {/* Slot 4: Empty */}
+                    <div className="aspect-square bg-white/[0.01] border border-white/5 border-dashed rounded-xl flex items-center justify-center text-white/5">
+                      <Plus size={12} className="opacity-30" />
                     </div>
                   </div>
                 </div>

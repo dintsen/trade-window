@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { ArrowRight, ShieldCheck, Lock, Info } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Lock, Info, Plus } from 'lucide-react';
 import { AnimatedTag } from './animated-tag';
 
 /* ── Pixel-art SVG NFT thumbnails ── */
@@ -275,48 +275,81 @@ export function HeroSection() {
                         <Lock size={7} /> LOCKED
                       </motion.div>
                     </div>
-                    {/* Token */}
-                    <div className="mx-2.5 mb-2 shrink-0 flex items-center gap-2.5 px-2.5 py-2 rounded-lg border border-[#202020]" style={{ background: '#0e0e0e' }}>
-                      <div className="w-8 h-8 rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] flex items-center justify-center shrink-0">
-                        <Image src="/assets/logos/atomone.svg" alt="AtomOne" width={20} height={20} className="object-contain" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-bold text-white leading-none tracking-tight">1,500.00</div>
-                        <div className="text-[9px] text-white/30 font-mono mt-0.5">uatone · AtomOne</div>
-                      </div>
-                      <ShieldCheck size={12} className="text-[#3ECF8E]/45 shrink-0" />
-                    </div>
-                    {/* NFT 1 — Bad Kid #42 */}
-                    <div className="mx-2.5 mb-2 rounded-lg border overflow-hidden shrink-0" style={{ borderColor:'rgba(245,158,11,0.28)', background:'linear-gradient(135deg,#0f0800,#0a0500)' }}>
-                      <div className="h-[1px]" style={{ background:'linear-gradient(90deg,transparent,rgba(245,158,11,0.7) 50%,transparent)' }} />
-                      <div className="flex items-center">
-                        <div className="w-12 h-12 shrink-0 overflow-hidden bg-[#111]">
+                    {/* Grid of Slots */}
+                    <div className="px-3 pb-3 flex-1 flex flex-col justify-center">
+                      <div className="grid grid-cols-3 gap-2">
+                        {/* Slot 1: AtomOne Token */}
+                        <div className="aspect-square rounded-xl border border-emerald-500/20 hover:border-emerald-500/40 bg-emerald-950/5 relative flex items-center justify-center p-2 cursor-pointer group/item hover:shadow-[0_0_15px_rgba(16,185,129,0.15)] transition-all duration-200">
+                          <div className="w-8 h-8 rounded-full flex items-center justify-center bg-white/5 overflow-hidden">
+                            <Image src="/assets/logos/atomone.svg" alt="AtomOne" width={20} height={20} className="object-contain" />
+                          </div>
+                          <span className="absolute bottom-1 right-1.5 px-1 bg-black/85 text-[9px] font-bold font-mono text-white/70 rounded border border-white/5 py-0.5 leading-none">1.5k</span>
+                          
+                          {/* Tooltip mockup */}
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-[#0a0a0c]/95 backdrop-blur-md border border-white/15 rounded-xl p-3 shadow-2xl opacity-0 pointer-events-none group-hover/item:opacity-100 transition-all duration-200 scale-95 group-hover/item:scale-100 origin-bottom z-30 text-left">
+                            <div className="flex items-center gap-1.5 mb-1.5">
+                              <span className="font-bold text-xs text-emerald-400">ATONE</span>
+                              <span className="text-[8px] font-mono text-white/40 px-1 bg-white/5 rounded border border-white/5 uppercase">COIN</span>
+                            </div>
+                            <div className="space-y-1 text-[9px] text-white/60 font-sans">
+                              <div><span className="text-white/30 font-medium">Amount:</span> <span className="font-mono">1,500.00</span></div>
+                              <div><span className="text-white/30 font-medium">Chain:</span> AtomOne</div>
+                              <div className="pt-1.5 border-t border-white/5 mt-1.5 text-[8px] font-mono text-white/30 truncate">uatone</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Slot 2: Bad Kid #42 */}
+                        <div className="aspect-square rounded-xl border border-amber-500/30 hover:border-amber-500/50 bg-amber-950/5 relative overflow-hidden cursor-pointer group/item hover:shadow-[0_0_15px_rgba(245,158,11,0.15)] transition-all duration-200">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img src="https://ipfs.io/ipfs/QmbGvE3wmxex8KiBbbvMjR8f9adR28s3XkiZSTuGmHoMHV/42.jpg" alt="Bad Kid #42" className="w-full h-full object-cover" />
-                        </div>
-                        <div className="flex-1 min-w-0 px-2.5 py-2">
-                          <div className="flex items-center justify-between gap-1 mb-0.5">
-                            <span className="text-[10px] font-bold text-white truncate">Bad Kid #42</span>
-                            <span className="text-[7px] font-mono shrink-0 px-1.5 py-0.5 rounded" style={{ background:'rgba(245,158,11,0.1)', color:'#f59e0b', border:'1px solid rgba(245,158,11,0.22)' }}>RARE</span>
+                          <span className="absolute bottom-1 left-1.5 px-1 bg-black/85 text-[8px] font-bold font-mono text-amber-300 rounded border border-amber-500/20 py-0.5 leading-none">RARE</span>
+
+                          {/* Tooltip mockup */}
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-[#0a0a0c]/95 backdrop-blur-md border border-white/15 rounded-xl p-3 shadow-2xl opacity-0 pointer-events-none group-hover/item:opacity-100 transition-all duration-200 scale-95 group-hover/item:scale-100 origin-bottom z-30 text-left">
+                            <div className="flex items-center justify-between gap-1.5 mb-1.5">
+                              <span className="font-bold text-xs text-amber-400">Bad Kid #42</span>
+                              <span className="text-[8px] font-mono text-amber-400 px-1 bg-amber-500/10 rounded border border-amber-500/20 uppercase">RARE</span>
+                            </div>
+                            <div className="space-y-1 text-[9px] text-white/60 font-sans">
+                              <div><span className="text-white/30 font-medium">Collection:</span> Bad Kids</div>
+                              <div><span className="text-white/30 font-medium">Token ID:</span> #42</div>
+                              <div className="pt-1.5 border-t border-white/5 mt-1.5 text-[8px] font-mono text-white/30 truncate">stargaze-1</div>
+                            </div>
                           </div>
-                          <div className="text-[8px] text-white/25 font-mono">Bad Kids · stargaze-1</div>
                         </div>
-                      </div>
-                    </div>
-                    {/* NFT 2 — Bad Kid #1000 */}
-                    <div className="mx-2.5 mb-2.5 rounded-lg border overflow-hidden shrink-0" style={{ borderColor:'rgba(124,58,237,0.28)', background:'linear-gradient(135deg,#080514,#050310)' }}>
-                      <div className="h-[1px]" style={{ background:'linear-gradient(90deg,transparent,rgba(124,58,237,0.7) 50%,transparent)' }} />
-                      <div className="flex items-center">
-                        <div className="w-12 h-12 shrink-0 overflow-hidden bg-[#111]">
+
+                        {/* Slot 3: Bad Kid #1000 */}
+                        <div className="aspect-square rounded-xl border border-violet-500/30 hover:border-violet-500/50 bg-violet-950/5 relative overflow-hidden cursor-pointer group/item hover:shadow-[0_0_15px_rgba(139,92,246,0.15)] transition-all duration-200">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img src="https://ipfs.io/ipfs/QmbGvE3wmxex8KiBbbvMjR8f9adR28s3XkiZSTuGmHoMHV/1000.jpg" alt="Bad Kid #1000" className="w-full h-full object-cover" />
-                        </div>
-                        <div className="flex-1 min-w-0 px-2.5 py-2">
-                          <div className="flex items-center justify-between gap-1 mb-0.5">
-                            <span className="text-[10px] font-bold text-white truncate">Bad Kid #1000</span>
-                            <span className="text-[7px] font-mono shrink-0 px-1.5 py-0.5 rounded" style={{ background:'rgba(124,58,237,0.1)', color:'#a78bfa', border:'1px solid rgba(124,58,237,0.22)' }}>EPIC</span>
+                          <span className="absolute bottom-1 left-1.5 px-1 bg-black/85 text-[8px] font-bold font-mono text-violet-300 rounded border border-violet-500/20 py-0.5 leading-none">EPIC</span>
+
+                          {/* Tooltip mockup */}
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-[#0a0a0c]/95 backdrop-blur-md border border-white/15 rounded-xl p-3 shadow-2xl opacity-0 pointer-events-none group-hover/item:opacity-100 transition-all duration-200 scale-95 group-hover/item:scale-100 origin-bottom z-30 text-left">
+                            <div className="flex items-center justify-between gap-1.5 mb-1.5">
+                              <span className="font-bold text-xs text-violet-400">Bad Kid #1000</span>
+                              <span className="text-[8px] font-mono text-violet-400 px-1 bg-violet-500/10 rounded border border-violet-500/20 uppercase">EPIC</span>
+                            </div>
+                            <div className="space-y-1 text-[9px] text-white/60 font-sans">
+                              <div><span className="text-white/30 font-medium">Collection:</span> Bad Kids</div>
+                              <div><span className="text-white/30 font-medium">Token ID:</span> #1000</div>
+                              <div className="pt-1.5 border-t border-white/5 mt-1.5 text-[8px] font-mono text-white/30 truncate">stargaze-1</div>
+                            </div>
                           </div>
-                          <div className="text-[8px] text-white/25 font-mono">Bad Kids · stargaze-1</div>
+                        </div>
+
+                        {/* Slot 4: Empty */}
+                        <div className="aspect-square bg-white/[0.01] border border-white/5 border-dashed rounded-xl flex items-center justify-center text-white/5">
+                          <Plus size={12} className="opacity-30" />
+                        </div>
+                        {/* Slot 5: Empty */}
+                        <div className="aspect-square bg-white/[0.01] border border-white/5 border-dashed rounded-xl flex items-center justify-center text-white/5">
+                          <Plus size={12} className="opacity-30" />
+                        </div>
+                        {/* Slot 6: Empty */}
+                        <div className="aspect-square bg-white/[0.01] border border-white/5 border-dashed rounded-xl flex items-center justify-center text-white/5">
+                          <Plus size={12} className="opacity-30" />
                         </div>
                       </div>
                     </div>
@@ -344,49 +377,82 @@ export function HeroSection() {
                         <Lock size={7} /> LOCKED
                       </div>
                     </div>
-                    {/* Token GNOT */}
-                    <div className="mx-2.5 mb-2 shrink-0 flex items-center gap-2.5 px-2.5 py-2 rounded-lg border border-[#202020]" style={{ background:'#0e0e0e' }}>
-                      <div className="w-8 h-8 rounded-lg bg-[#1c1c1c] border border-[#2a2a2a] flex items-center justify-center shrink-0 overflow-hidden">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src="/assets/logos/gnot-icon.svg" alt="GNOT" className="h-5 w-auto object-contain" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-bold text-white leading-none tracking-tight">500.00</div>
-                        <div className="text-[9px] text-white/30 font-mono mt-0.5">ugnot · Gno.land</div>
-                      </div>
-                      <ShieldCheck size={12} className="text-[#3ECF8E]/45 shrink-0" />
-                    </div>
-                    {/* NFT 3 — Bad Kid #5000 */}
-                    <div className="mx-2.5 mb-2 rounded-lg border overflow-hidden shrink-0" style={{ borderColor:'rgba(236,72,153,0.28)', background:'linear-gradient(135deg,#0b0510,#080410)' }}>
-                      <div className="h-[1px]" style={{ background:'linear-gradient(90deg,transparent,rgba(236,72,153,0.7) 50%,transparent)' }} />
-                      <div className="flex items-center">
-                        <div className="w-12 h-12 shrink-0 overflow-hidden bg-[#111]">
+                    {/* Grid of Slots */}
+                    <div className="px-3 pb-3 flex-1 flex flex-col justify-center">
+                      <div className="grid grid-cols-3 gap-2">
+                        {/* Slot 1: GNOT Token */}
+                        <div className="aspect-square rounded-xl border border-emerald-500/20 hover:border-emerald-500/40 bg-emerald-950/5 relative flex items-center justify-center p-2 cursor-pointer group/item hover:shadow-[0_0_15px_rgba(16,185,129,0.15)] transition-all duration-200">
+                          <div className="w-8 h-8 rounded-full flex items-center justify-center bg-white/5 overflow-hidden">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src="/assets/logos/gnot-icon.svg" alt="GNOT" className="h-5 w-auto object-contain" />
+                          </div>
+                          <span className="absolute bottom-1 right-1.5 px-1 bg-black/85 text-[9px] font-bold font-mono text-white/70 rounded border border-white/5 py-0.5 leading-none">500</span>
+                          
+                          {/* Tooltip mockup */}
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-[#0a0a0c]/95 backdrop-blur-md border border-white/15 rounded-xl p-3 shadow-2xl opacity-0 pointer-events-none group-hover/item:opacity-100 transition-all duration-200 scale-95 group-hover/item:scale-100 origin-bottom z-30 text-left">
+                            <div className="flex items-center gap-1.5 mb-1.5">
+                              <span className="font-bold text-xs text-emerald-400">GNOT</span>
+                              <span className="text-[8px] font-mono text-white/40 px-1 bg-white/5 rounded border border-white/5 uppercase">COIN</span>
+                            </div>
+                            <div className="space-y-1 text-[9px] text-white/60 font-sans">
+                              <div><span className="text-white/30 font-medium">Amount:</span> <span className="font-mono">500.00</span></div>
+                              <div><span className="text-white/30 font-medium">Chain:</span> Gno.land</div>
+                              <div className="pt-1.5 border-t border-white/5 mt-1.5 text-[8px] font-mono text-white/30 truncate">ugnot</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Slot 2: Bad Kid #5000 */}
+                        <div className="aspect-square rounded-xl border border-pink-500/30 hover:border-pink-500/50 bg-pink-950/5 relative overflow-hidden cursor-pointer group/item hover:shadow-[0_0_15px_rgba(236,72,153,0.15)] transition-all duration-200">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img src="https://ipfs.io/ipfs/QmbGvE3wmxex8KiBbbvMjR8f9adR28s3XkiZSTuGmHoMHV/5000.jpg" alt="Bad Kid #5000" className="w-full h-full object-cover" />
-                        </div>
-                        <div className="flex-1 min-w-0 px-2.5 py-2">
-                          <div className="flex items-center justify-between gap-1 mb-0.5">
-                            <span className="text-[10px] font-bold text-white truncate">Bad Kid #5000</span>
-                            <span className="text-[7px] font-mono shrink-0 px-1.5 py-0.5 rounded" style={{ background:'rgba(236,72,153,0.1)', color:'#f472b6', border:'1px solid rgba(236,72,153,0.22)' }}>LEGENDARY</span>
+                          <span className="absolute bottom-1 left-1.5 px-1 bg-black/85 text-[8px] font-bold font-mono text-pink-300 rounded border border-pink-500/20 py-0.5 leading-none">LEGEND</span>
+
+                          {/* Tooltip mockup */}
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-[#0a0a0c]/95 backdrop-blur-md border border-white/15 rounded-xl p-3 shadow-2xl opacity-0 pointer-events-none group-hover/item:opacity-100 transition-all duration-200 scale-95 group-hover/item:scale-100 origin-bottom z-30 text-left">
+                            <div className="flex items-center justify-between gap-1.5 mb-1.5">
+                              <span className="font-bold text-xs text-pink-400">Bad Kid #5000</span>
+                              <span className="text-[8px] font-mono text-pink-400 px-1 bg-pink-500/10 rounded border border-pink-500/20 uppercase">LEGEND</span>
+                            </div>
+                            <div className="space-y-1 text-[9px] text-white/60 font-sans">
+                              <div><span className="text-white/30 font-medium">Collection:</span> Bad Kids</div>
+                              <div><span className="text-white/30 font-medium">Token ID:</span> #5000</div>
+                              <div className="pt-1.5 border-t border-white/5 mt-1.5 text-[8px] font-mono text-white/30 truncate">stargaze-1</div>
+                            </div>
                           </div>
-                          <div className="text-[8px] text-white/25 font-mono">Bad Kids · stargaze-1</div>
                         </div>
-                      </div>
-                    </div>
-                    {/* NFT 4 — Bad Kid #9000 */}
-                    <div className="mx-2.5 mb-2.5 rounded-lg border overflow-hidden shrink-0" style={{ borderColor:'rgba(239,68,68,0.28)', background:'linear-gradient(135deg,#0f0404,#0a0303)' }}>
-                      <div className="h-[1px]" style={{ background:'linear-gradient(90deg,transparent,rgba(239,68,68,0.7) 50%,transparent)' }} />
-                      <div className="flex items-center">
-                        <div className="w-12 h-12 shrink-0 overflow-hidden bg-[#111]">
+
+                        {/* Slot 3: Bad Kid #9000 */}
+                        <div className="aspect-square rounded-xl border border-red-500/30 hover:border-red-500/50 bg-red-950/5 relative overflow-hidden cursor-pointer group/item hover:shadow-[0_0_15px_rgba(239,68,68,0.15)] transition-all duration-200">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img src="https://ipfs.io/ipfs/QmbGvE3wmxex8KiBbbvMjR8f9adR28s3XkiZSTuGmHoMHV/9000.jpg" alt="Bad Kid #9000" className="w-full h-full object-cover" />
-                        </div>
-                        <div className="flex-1 min-w-0 px-2.5 py-2">
-                          <div className="flex items-center justify-between gap-1 mb-0.5">
-                            <span className="text-[10px] font-bold text-white truncate">Bad Kid #9000</span>
-                            <span className="text-[7px] font-mono shrink-0 px-1.5 py-0.5 rounded" style={{ background:'rgba(239,68,68,0.1)', color:'#f87171', border:'1px solid rgba(239,68,68,0.22)' }}>EPIC</span>
+                          <span className="absolute bottom-1 left-1.5 px-1 bg-black/85 text-[8px] font-bold font-mono text-red-300 rounded border border-red-500/20 py-0.5 leading-none">EPIC</span>
+
+                          {/* Tooltip mockup */}
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-[#0a0a0c]/95 backdrop-blur-md border border-white/15 rounded-xl p-3 shadow-2xl opacity-0 pointer-events-none group-hover/item:opacity-100 transition-all duration-200 scale-95 group-hover/item:scale-100 origin-bottom z-30 text-left">
+                            <div className="flex items-center justify-between gap-1.5 mb-1.5">
+                              <span className="font-bold text-xs text-red-400">Bad Kid #9000</span>
+                              <span className="text-[8px] font-mono text-red-400 px-1 bg-red-500/10 rounded border border-red-500/20 uppercase">EPIC</span>
+                            </div>
+                            <div className="space-y-1 text-[9px] text-white/60 font-sans">
+                              <div><span className="text-white/30 font-medium">Collection:</span> Bad Kids</div>
+                              <div><span className="text-white/30 font-medium">Token ID:</span> #9000</div>
+                              <div className="pt-1.5 border-t border-white/5 mt-1.5 text-[8px] font-mono text-white/30 truncate">stargaze-1</div>
+                            </div>
                           </div>
-                          <div className="text-[8px] text-white/25 font-mono">Bad Kids · stargaze-1</div>
+                        </div>
+
+                        {/* Slot 4: Empty */}
+                        <div className="aspect-square bg-white/[0.01] border border-white/5 border-dashed rounded-xl flex items-center justify-center text-white/5">
+                          <Plus size={12} className="opacity-30" />
+                        </div>
+                        {/* Slot 5: Empty */}
+                        <div className="aspect-square bg-white/[0.01] border border-white/5 border-dashed rounded-xl flex items-center justify-center text-white/5">
+                          <Plus size={12} className="opacity-30" />
+                        </div>
+                        {/* Slot 6: Empty */}
+                        <div className="aspect-square bg-white/[0.01] border border-white/5 border-dashed rounded-xl flex items-center justify-center text-white/5">
+                          <Plus size={12} className="opacity-30" />
                         </div>
                       </div>
                     </div>

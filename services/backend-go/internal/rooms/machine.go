@@ -137,17 +137,15 @@ func (r *Room) AddAsset(party string, asset TradeAsset) error {
 			return errors.New("offer limit reached: max 20 assets per side")
 		}
 		r.OfferA = append(r.OfferA, asset)
-		if r.LockB {
-			r.LockB = false
-		}
+		r.LockA = false
+		r.LockB = false
 	} else if party == r.PartyB {
 		if len(r.OfferB) >= maxAssetsPerOffer {
 			return errors.New("offer limit reached: max 20 assets per side")
 		}
 		r.OfferB = append(r.OfferB, asset)
-		if r.LockA {
-			r.LockA = false
-		}
+		r.LockA = false
+		r.LockB = false
 	} else {
 		return errors.New("unauthorized party")
 	}

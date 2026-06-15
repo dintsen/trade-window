@@ -8,6 +8,7 @@ import { ProductsSection } from '../components/landing/products-section';
 import { AssetClassesSection } from '../components/landing/asset-classes-section';
 import { SafetyMechanicsSection } from '../components/landing/safety-mechanics-section';
 import { ProductPreviewSection } from '../components/landing/product-preview-section';
+import { ProtocolDeepDive } from '../components/landing/protocol-deep-dive';
 import { EcosystemRoadmapSection } from '../components/landing/ecosystem-roadmap-section';
 import { OtcBoardSection } from '../components/landing/otc-board-section';
 import { FinalCtaSection } from '../components/landing/final-cta-section';
@@ -27,6 +28,7 @@ export default function Home() {
         <OtcBoardSection />
         <SafetyMechanicsSection />
         <ProductPreviewSection />
+        <ProtocolDeepDive />
         <EcosystemRoadmapSection />
         <FinalCtaSection />
         <DonationBanner />

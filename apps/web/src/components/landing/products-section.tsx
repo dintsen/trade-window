@@ -147,65 +147,68 @@ export function ProductsSection() {
                   Real-time P2P trade room. Both parties add assets, inspect each other&apos;s bundles, lock and review the final intent before signing. All actions are logged. No silent changes.
                 </p>
 
-                {/* Mini trade window demo — real ecosystem assets */}
-                <div className="bg-[#080808] border border-[#1c1c1c] rounded-lg p-3 mb-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {/* User A: Bad Kid NFT + ATONE */}
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center justify-between mb-0.5">
+                {/* Mini trade window demo — game inventory slots */}
+                <div className="bg-[#080808] border border-[#1c1c1c] rounded-lg p-3 mb-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* User A */}
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center justify-between">
                       <span className="text-[9px] font-mono text-white/30 uppercase">User A</span>
-                      <span className="text-[8px] text-[#3ECF8E] font-mono">Locked ✓</span>
+                      <span className="text-[8px] text-[#3ECF8E] font-mono font-semibold uppercase tracking-wider bg-[#3ECF8E]/10 border border-[#3ECF8E]/25 px-1.5 py-0.5 rounded">Locked ✓</span>
                     </div>
-                    {/* Bad Kid #42 */}
-                    <div className="flex items-center gap-0 rounded overflow-hidden border" style={{ borderColor: 'rgba(139,92,246,0.3)', background: '#0a0814' }}>
-                      <div className="w-8 h-8 shrink-0 overflow-hidden">
+                    <div className="grid grid-cols-4 gap-1.5">
+                      {/* Slot 1: Bad Kid #42 */}
+                      <div className="aspect-square rounded-lg border border-violet-500/30 bg-violet-950/5 relative overflow-hidden group/item">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={`${DEMO_IPFS_BASE}/42.jpg`} alt="Bad Kid #42" className="w-full h-full object-cover object-center" />
+                        <img src={`${DEMO_IPFS_BASE}/42.jpg`} alt="Bad Kid #42" className="w-full h-full object-cover" />
+                        <span className="absolute bottom-0.5 left-1 px-0.5 bg-black/85 text-[7px] font-bold font-mono text-violet-300 rounded leading-none py-0.5">NFT</span>
                       </div>
-                      <div className="flex-1 min-w-0 px-1.5 py-1">
-                        <div className="text-[9px] font-semibold text-white leading-none">Bad Kid <span className="text-white/40">#42</span></div>
-                        <div className="text-[7px] font-mono mt-0.5 text-white/30">Bad Kids · stargaze-1</div>
+                      {/* Slot 2: ATONE */}
+                      <div className="aspect-square rounded-lg border border-emerald-500/25 bg-emerald-950/5 relative flex items-center justify-center p-1">
+                        <div className="w-6 h-6 rounded-full flex items-center justify-center bg-[#3ECF8E]/10 overflow-hidden">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src="/assets/logos/atomone.svg" alt="ATONE" className="w-4 h-4 object-contain" />
+                        </div>
+                        <span className="absolute bottom-0.5 right-1 px-0.5 bg-black/85 text-[7px] font-bold font-mono text-white/80 rounded leading-none py-0.5">50</span>
                       </div>
-                      <span className="text-[7px] font-mono mr-1.5 shrink-0 px-1 py-0.5 rounded" style={{ background:'rgba(139,92,246,0.12)', color:'#a78bfa', border:'1px solid rgba(139,92,246,0.2)' }}>NFT</span>
-                    </div>
-                    {/* 50 ATONE */}
-                    <div className="flex items-center gap-0 rounded overflow-hidden border" style={{ borderColor: 'rgba(62,207,142,0.2)', background: '#040d08' }}>
-                      <div className="w-8 h-8 shrink-0 flex items-center justify-center bg-[#3ECF8E]/10">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src="/assets/logos/atomone.svg" alt="ATONE" className="w-4 h-4 object-contain" />
+                      {/* Slot 3: Empty */}
+                      <div className="aspect-square rounded-lg border border-white/5 border-dashed bg-white/[0.01] flex items-center justify-center text-white/10">
+                        <span className="text-[9px] font-mono opacity-30">+</span>
                       </div>
-                      <div className="flex-1 min-w-0 px-1.5 py-1">
-                        <div className="text-[9px] font-semibold text-white leading-none">50 <span className="text-white/40">ATONE</span></div>
-                        <div className="text-[7px] font-mono mt-0.5 text-white/30">atomone-1 · uatone</div>
+                      {/* Slot 4: Empty */}
+                      <div className="aspect-square rounded-lg border border-white/5 border-dashed bg-white/[0.01] flex items-center justify-center text-white/10">
+                        <span className="text-[9px] font-mono opacity-30">+</span>
                       </div>
                     </div>
                   </div>
-                  {/* User B: Bad Kid NFT + STARS */}
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center justify-between mb-0.5">
+
+                  {/* User B */}
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center justify-between">
                       <span className="text-[9px] font-mono text-white/30 uppercase">User B</span>
-                      <span className="text-[8px] text-[#3ECF8E] font-mono">Locked ✓</span>
+                      <span className="text-[8px] text-[#3ECF8E] font-mono font-semibold uppercase tracking-wider bg-[#3ECF8E]/10 border border-[#3ECF8E]/25 px-1.5 py-0.5 rounded">Locked ✓</span>
                     </div>
-                    {/* Bad Kid #5000 */}
-                    <div className="flex items-center gap-0 rounded overflow-hidden border" style={{ borderColor: 'rgba(139,92,246,0.3)', background: '#0a0814' }}>
-                      <div className="w-8 h-8 shrink-0 overflow-hidden">
+                    <div className="grid grid-cols-4 gap-1.5">
+                      {/* Slot 1: Bad Kid #5000 */}
+                      <div className="aspect-square rounded-lg border border-violet-500/30 bg-violet-950/5 relative overflow-hidden">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={`${DEMO_IPFS_BASE}/5000.jpg`} alt="Bad Kid #5000" className="w-full h-full object-cover object-center" />
+                        <img src={`${DEMO_IPFS_BASE}/5000.jpg`} alt="Bad Kid #5000" className="w-full h-full object-cover" />
+                        <span className="absolute bottom-0.5 left-1 px-0.5 bg-black/85 text-[7px] font-bold font-mono text-violet-300 rounded leading-none py-0.5">NFT</span>
                       </div>
-                      <div className="flex-1 min-w-0 px-1.5 py-1">
-                        <div className="text-[9px] font-semibold text-white leading-none">Bad Kid <span className="text-white/40">#5000</span></div>
-                        <div className="text-[7px] font-mono mt-0.5 text-white/30">Bad Kids · stargaze-1</div>
+                      {/* Slot 2: STARS */}
+                      <div className="aspect-square rounded-lg border border-pink-500/25 bg-pink-950/5 relative flex items-center justify-center p-1">
+                        <div className="w-6 h-6 rounded-full flex items-center justify-center bg-pink-500/10 overflow-hidden">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src="/assets/tokens/stars.svg" alt="STARS" className="w-4 h-4 object-contain" />
+                        </div>
+                        <span className="absolute bottom-0.5 right-1 px-0.5 bg-black/85 text-[7px] font-bold font-mono text-white/80 rounded leading-none py-0.5">2.0k</span>
                       </div>
-                      <span className="text-[7px] font-mono mr-1.5 shrink-0 px-1 py-0.5 rounded" style={{ background:'rgba(139,92,246,0.12)', color:'#a78bfa', border:'1px solid rgba(139,92,246,0.2)' }}>NFT</span>
-                    </div>
-                    {/* 2000 STARS */}
-                    <div className="flex items-center gap-0 rounded overflow-hidden border" style={{ borderColor: 'rgba(244,114,182,0.2)', background: '#0b0409' }}>
-                      <div className="w-8 h-8 shrink-0 flex items-center justify-center bg-pink-500/10">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src="/assets/tokens/stars.svg" alt="STARS" className="w-4 h-4 object-contain" />
+                      {/* Slot 3: Empty */}
+                      <div className="aspect-square rounded-lg border border-white/5 border-dashed bg-white/[0.01] flex items-center justify-center text-white/10">
+                        <span className="text-[9px] font-mono opacity-30">+</span>
                       </div>
-                      <div className="flex-1 min-w-0 px-1.5 py-1">
-                        <div className="text-[9px] font-semibold text-white leading-none">2000 <span className="text-white/40">STARS</span></div>
-                        <div className="text-[7px] font-mono mt-0.5 text-white/30">stargaze-1 · ustars</div>
+                      {/* Slot 4: Empty */}
+                      <div className="aspect-square rounded-lg border border-white/5 border-dashed bg-white/[0.01] flex items-center justify-center text-white/10">
+                        <span className="text-[9px] font-mono opacity-30">+</span>
                       </div>
                     </div>
                   </div>
