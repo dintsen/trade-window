@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Plus, RefreshCw, AlertTriangle, LayoutGrid, ArrowRight, ChevronLeft } from "lucide-react";
+import { Plus, RefreshCw, AlertTriangle, LayoutGrid, ArrowRight, ChevronLeft, X, Copy, Check } from "lucide-react";
 import { PublicBoardListing } from "@/lib/board/types";
 import { fetchListings } from "@/lib/board/api";
 import { getAsset } from "@/lib/assets/asset-registry";
@@ -33,6 +33,14 @@ export default function BoardPage() {
   const [error, setError] = useState<string | null>(null);
   const [typeFilter, setTypeFilter] = useState<string>("All");
   const [chainFilter, setChainFilter] = useState<string>("All");
+  const [selectedListing, setSelectedListing] = useState<PublicBoardListing | null>(null);
+  const [copiedContact, setCopiedContact] = useState(false);
+
+  const handleCopyContact = (contact: string) => {
+    navigator.clipboard.writeText(contact);
+    setCopiedContact(true);
+    setTimeout(() => setCopiedContact(false), 2000);
+  };
 
   const loadListings = async () => {
     setLoading(true);
@@ -219,7 +227,8 @@ export default function BoardPage() {
               {filteredListings.map((listing, idx) => (
                 <div
                   key={listing.id}
-                  className={`group flex flex-col md:grid md:grid-cols-[2fr_1fr_1fr_auto_auto] gap-2 md:gap-4 px-5 py-4 hover:bg-[#111111] transition-colors ${
+                  onClick={() => setSelectedListing(listing)}
+                  className={`group flex flex-col md:grid md:grid-cols-[2fr_1fr_1fr_auto_auto] gap-2 md:gap-4 px-5 py-4 hover:bg-[#111111] transition-colors cursor-pointer ${
                     idx < filteredListings.length - 1 ? 'border-b border-[#1c1c1c]' : ''
                   }`}
                 >
@@ -306,6 +315,124 @@ export default function BoardPage() {
           )}
         </div>
       </main>
+
+      {/* Listing Detail Modal */}
+      {selectedListing && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div 
+            className="absolute inset-0 bg-black/85 backdrop-blur-md transition-opacity duration-300"
+            onClick={() => setSelectedListing(null)}
+          />
+          <div className="relative w-full max-w-lg bg-[#0c0c0e]/95 border border-white/10 rounded-2xl p-6 shadow-[0_0_50px_rgba(0,0,0,0.8)] flex flex-col gap-6 z-10 text-left font-sans animate-in fade-in zoom-in-95 duration-200">
+            {/* Header */}
+            <div className="flex justify-between items-start gap-4">
+              <div>
+                <h3 className="text-lg font-bold text-white leading-tight mb-2">
+                  {selectedListing.title}
+                </h3>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 bg-[#1a1a1a] border border-[#2b2b2b] text-white/40 rounded capitalize">
+                    {selectedListing.requestType.replace(/_/g, " ")}
+                  </span>
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 bg-[#1a1a1a] border border-[#2b2b2b] text-white/30 rounded">
+                    {selectedListing.chain}
+                  </span>
+                  <span className="text-[10px] px-1.5 py-0.5 bg-[#3ECF8E]/8 border border-[#3ECF8E]/20 text-[#3ECF8E]/70 rounded font-mono uppercase">
+                    {selectedListing.status}
+                  </span>
+                </div>
+              </div>
+              <button 
+                onClick={() => setSelectedListing(null)}
+                className="p-1 rounded-md hover:bg-white/5 text-white/40 hover:text-white transition-colors"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Deal Parameters */}
+            <div className="grid grid-cols-2 gap-4 bg-black/45 border border-white/5 rounded-xl p-4 font-mono text-xs">
+              <div className="flex flex-col gap-1.5">
+                <span className="text-white/30 text-[10px] uppercase tracking-wider">Offering</span>
+                <AssetCell denom={selectedListing.offerAsset} />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <span className="text-white/30 text-[10px] uppercase tracking-wider">Wanting</span>
+                <AssetCell denom={selectedListing.wantAsset} />
+              </div>
+              <div className="flex flex-col gap-1.5 mt-2">
+                <span className="text-white/30 text-[10px] uppercase tracking-wider">Amount / Rate</span>
+                <span className="text-white/80 font-medium">{selectedListing.amountRange || 'Negotiable'}</span>
+              </div>
+              <div className="flex flex-col gap-1.5 mt-2">
+                <span className="text-white/30 text-[10px] uppercase tracking-wider">Date Posted</span>
+                <span className="text-white/60">{new Date(selectedListing.createdAt).toLocaleDateString()}</span>
+              </div>
+            </div>
+
+            {/* Note / Message */}
+            {selectedListing.publicMessage && (
+              <div className="flex flex-col gap-2">
+                <span className="text-[10px] font-mono text-white/35 uppercase tracking-wider">Public Note</span>
+                <div className="bg-[#121215] border border-white/5 rounded-xl px-4 py-3 text-xs text-white/60 leading-relaxed">
+                  {selectedListing.publicMessage}
+                </div>
+              </div>
+            )}
+
+            {/* Contacts & Coordination */}
+            <div className="flex flex-col gap-2">
+              <span className="text-[10px] font-mono text-white/35 uppercase tracking-wider">Contact Details</span>
+              {selectedListing.publicContact ? (
+                <div className="flex items-center justify-between gap-3 bg-emerald-500/5 border border-emerald-500/10 rounded-xl px-4 py-3 text-xs">
+                  <div className="min-w-0">
+                    <div className="text-emerald-400 font-bold font-mono truncate">{selectedListing.publicContact}</div>
+                    <div className="text-white/30 text-[10px] font-mono mt-0.5">Preferred method: {selectedListing.contactMethod || 'Other'}</div>
+                  </div>
+                  <button
+                    onClick={() => handleCopyContact(selectedListing.publicContact!)}
+                    className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition-colors shrink-0 flex items-center justify-center gap-1.5 font-mono text-[10px]"
+                  >
+                    {copiedContact ? (
+                      <>
+                        <Check size={12} className="text-emerald-400" />
+                        Copied
+                      </>
+                    ) : (
+                      <>
+                        <Copy size={12} />
+                        Copy Handle
+                      </>
+                    )}
+                  </button>
+                </div>
+              ) : (
+                <div className="bg-amber-500/5 border border-amber-500/10 rounded-xl px-4 py-3 text-xs text-amber-200/60 leading-relaxed">
+                  No direct contact handle was provided by the creator. You can initiate a secure trade room to coordinate.
+                </div>
+              )}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-2 mt-2 pt-4 border-t border-white/5">
+              <Link
+                href="/trade"
+                className="flex-1 bg-[#3ECF8E] hover:bg-[#4ADBA0] text-black font-semibold rounded-xl py-3 text-center text-xs transition-colors flex justify-center items-center gap-1.5 shadow-[0_0_15px_rgba(62,207,142,0.15)]"
+              >
+                Start Direct Trade Room
+                <ArrowRight size={14} />
+              </Link>
+              <button
+                onClick={() => setSelectedListing(null)}
+                className="sm:w-28 bg-white/5 hover:bg-white/10 text-white font-medium rounded-xl py-3 text-xs transition-colors"
+              >
+                Back to Board
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
     </div>
   );
 }
