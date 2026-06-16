@@ -7,8 +7,8 @@ export function DonationBanner() {
     <section id="support" className="w-full py-20 px-6 border-t border-white/5 bg-[#050505]">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/10 text-[11px] font-mono uppercase tracking-wider text-white/50 mb-5">
-            <Heart size={12} className="text-emerald-400" /> Community supported
+          <div className="flex items-center justify-center gap-1.5 text-xs font-mono text-[#3ECF8E] uppercase tracking-[0.15em] mb-4">
+            <Heart size={12} className="fill-[#3ECF8E]/20 text-[#3ECF8E]" /> Community supported
           </div>
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-4">
             Support Trade Window
