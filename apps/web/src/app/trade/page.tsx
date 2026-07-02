@@ -91,8 +91,34 @@ function buildInviteLink(roomId: string, account: { provider?: string; mockUser?
   return url.toString();
 }
 
+/**
+ * Wallet extensions (Keplr/Adena/Cosmostation) inject into `window` AFTER the
+ * first React render, so a one-shot availability check shows "Not found" even
+ * when the wallet is installed. Re-render periodically for ~15s and on window
+ * focus (e.g. user installs the extension in another tab and comes back).
+ */
+function useWalletDetection() {
+  const [, force] = useState(0);
+  useEffect(() => {
+    let ticks = 0;
+    const interval = setInterval(() => {
+      force((v) => v + 1);
+      if (++ticks >= 30) clearInterval(interval);
+    }, 500);
+    const onFocus = () => force((v) => v + 1);
+    window.addEventListener('focus', onFocus);
+    document.addEventListener('visibilitychange', onFocus);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('focus', onFocus);
+      document.removeEventListener('visibilitychange', onFocus);
+    };
+  }, []);
+}
+
 function TradeRoomWrapperInner() {
   const { account, connect, disconnect, adapters, isConnecting, activeProvider, error } = useWalletStore();
+  useWalletDetection();
   const searchParams = useSearchParams();
   const invitedMockSeat = searchParams?.get('mockSeat') === 'A' || searchParams?.get('mockSeat') === 'B'
     ? searchParams.get('mockSeat') as 'A' | 'B'
@@ -153,10 +179,15 @@ function TradeRoomWrapperInner() {
 
               {/* Header */}
               <div className="mb-8 text-center">
-                <p className="text-[10px] font-mono text-[#3ECF8E] uppercase tracking-[0.15em] mb-5">Trade Window · MVP</p>
-                <h1 className="text-xl font-semibold text-white tracking-tight mb-2">Connect wallet</h1>
+                <span className="inline-flex items-center gap-1.5 text-[10px] font-mono text-[#3ECF8E] uppercase tracking-[0.15em] mb-5 px-3 py-1 rounded-full border border-[#3ECF8E]/20 bg-[#3ECF8E]/5">
+                  <span className="w-1 h-1 rounded-full bg-[#3ECF8E] animate-pulse" />
+                  Trade Window · MVP
+                </span>
+                <h1 className="text-3xl font-bold tracking-tight mb-2.5 bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent">
+                  Connect wallet
+                </h1>
                 <p className="text-sm text-white/40 leading-relaxed">
-                  Choose a wallet to enter the OTC trade room.
+                  Choose a wallet to enter your private OTC trade room.
                 </p>
               </div>
 
@@ -336,6 +367,21 @@ function TradeRoomWrapperInner() {
                 </div>
               )}
 
+              {/* How it works */}
+              <div className="mt-6 grid grid-cols-3 gap-2">
+                {[
+                  { n: '01', t: 'Connect', d: 'Wallet stays in your control' },
+                  { n: '02', t: 'Build offer', d: 'Append-only, no silent edits' },
+                  { n: '03', t: 'Lock & sign', d: '10s review before anything' },
+                ].map((step) => (
+                  <div key={step.n} className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-3 text-center">
+                    <p className="text-[9px] font-mono text-[#3ECF8E]/60 mb-1">{step.n}</p>
+                    <p className="text-[11px] font-semibold text-white/70 mb-0.5">{step.t}</p>
+                    <p className="text-[9px] text-white/25 leading-snug">{step.d}</p>
+                  </div>
+                ))}
+              </div>
+
               <p className="mt-5 text-center text-[10px] text-white/20 font-mono">
                 MVP prototype — AtomOne / Gno.land · Trust-based P2P settlement
               </p>
@@ -354,6 +400,66 @@ export default function TradeRoomWrapper() {
     <Suspense>
       <TradeRoomWrapperInner />
     </Suspense>
+  );
+}
+
+/** Visual progress of the safe-trade flow. Purely presentational. */
+function TradeStepper({ current }: { current: number }) {
+  const steps = ['Connect', 'Room', 'Offers', 'Lock', 'Countdown', 'Sign'];
+  return (
+    <div className="flex items-center w-full overflow-x-auto custom-scrollbar mb-6 select-none px-1">
+      {steps.map((label, i) => {
+        const done = i < current;
+        const active = i === current;
+        return (
+          <div key={label} className={`flex items-center ${i < steps.length - 1 ? 'flex-1' : ''} min-w-fit`}>
+            <div className="flex items-center gap-2">
+              <div
+                className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border transition-all duration-300 ${
+                  done
+                    ? 'bg-emerald-500 border-emerald-500 text-black'
+                    : active
+                    ? 'border-emerald-400 text-emerald-300 bg-emerald-500/10 ring-4 ring-emerald-500/10'
+                    : 'border-white/10 text-white/25 bg-white/[0.02]'
+                }`}
+              >
+                {done ? <CheckCircle2 size={12} /> : i + 1}
+              </div>
+              <span className={`text-[11px] font-medium whitespace-nowrap transition-colors ${active ? 'text-white' : done ? 'text-emerald-400/70' : 'text-white/25'}`}>
+                {label}
+              </span>
+            </div>
+            {i < steps.length - 1 && (
+              <div className={`h-px flex-1 mx-3 min-w-[14px] transition-colors ${done ? 'bg-emerald-500/40' : 'bg-white/8'}`} />
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/** Circular countdown with SVG progress ring. */
+function CountdownRing({ seconds, total = 10 }: { seconds: number; total?: number }) {
+  const r = 56;
+  const c = 2 * Math.PI * r;
+  const frac = Math.max(0, Math.min(1, seconds / total));
+  return (
+    <div className="relative w-36 h-36 mx-auto">
+      <div className="absolute inset-0 rounded-full bg-emerald-500/10 blur-2xl animate-pulse" />
+      <svg viewBox="0 0 128 128" className="w-full h-full -rotate-90 relative">
+        <circle cx="64" cy="64" r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="8" />
+        <circle
+          cx="64" cy="64" r={r} fill="none" stroke="#3ECF8E" strokeWidth="8" strokeLinecap="round"
+          strokeDasharray={c} strokeDashoffset={c * (1 - frac)}
+          className="transition-[stroke-dashoffset] duration-1000 ease-linear drop-shadow-[0_0_6px_rgba(62,207,142,0.6)]"
+        />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className="text-4xl font-mono font-bold text-emerald-300 tabular-nums">{seconds}</span>
+        <span className="text-[9px] uppercase tracking-[0.2em] text-white/30 mt-1">seconds</span>
+      </div>
+    </div>
   );
 }
 
@@ -442,6 +548,21 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
   
   const myLock = isPartyA ? roomData?.lockA : roomData?.lockB;
   const theirLock = isPartyA ? roomData?.lockB : roomData?.lockA;
+
+  // Stepper position: 0 Connect · 1 Room · 2 Offers · 3 Lock · 4 Countdown · 5 Sign
+  const currentStep = !roomData
+    ? 1
+    : roomData.state === 'lobby'
+    ? 1
+    : roomData.state === 'active'
+    ? (myAssets.length === 0 ? 2 : 3)
+    : roomData.state === 'locked_countdown'
+    ? 4
+    : roomData.state === 'ready_to_sign'
+    ? 5
+    : roomData.state === 'completed'
+    ? 6
+    : 5;
 
   const copyRoomId = () => {
     if (roomData?.id) {
@@ -701,19 +822,31 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
           </div>
         </div>
 
+        {/* Flow progress */}
+        <TradeStepper current={currentStep} />
+
         {/* Trade Boards */}
         {!roomData ? (
-          <div className="flex-1 flex flex-col items-center justify-center text-center opacity-50">
-            <Hexagon size={48} className="text-white/20 mb-4" />
-            <h2 className="text-xl font-medium text-white mb-2">Step 2 — Create or join room</h2>
-            <p className="text-white/50 text-sm max-w-sm">Use the Setup panel on the right to create a new room or join an existing one using a Room ID.</p>
+          <div className="flex-1 flex flex-col items-center justify-center text-center">
+            <div className="relative mb-6">
+              <div className="absolute inset-0 rounded-2xl bg-emerald-500/10 blur-xl" />
+              <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-b from-white/[0.06] to-transparent border border-white/10 flex items-center justify-center">
+                <Hexagon size={28} className="text-emerald-400/70" />
+              </div>
+            </div>
+            <h2 className="text-xl font-semibold text-white mb-2 tracking-tight">Create or join a room</h2>
+            <p className="text-white/40 text-sm max-w-sm leading-relaxed">Use the <span className="text-emerald-400/80 font-medium">Setup</span> panel on the right to create a private trade room, or join with an invite link / Room ID.</p>
           </div>
         ) : roomData.state === 'lobby' ? (
           <div className="flex-1 flex flex-col items-center justify-center text-center px-4">
-            <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-6 animate-pulse">
-              <RefreshCw className="text-emerald-400 animate-spin" size={24} style={{ animationDuration: '3s' }} />
+            <div className="relative w-20 h-20 mb-6">
+              <span className="absolute inset-0 rounded-full border border-emerald-500/30 animate-ping" style={{ animationDuration: '2.4s' }} />
+              <span className="absolute inset-2 rounded-full border border-emerald-500/20 animate-ping" style={{ animationDuration: '2.4s', animationDelay: '0.6s' }} />
+              <div className="absolute inset-0 rounded-full bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center">
+                <Globe className="text-emerald-400" size={26} />
+              </div>
             </div>
-            <h2 className="text-2xl font-medium text-white mb-3">Waiting for counterparty…</h2>
+            <h2 className="text-2xl font-semibold text-white mb-3 tracking-tight">Waiting for counterparty…</h2>
             <p className="text-white/50 text-sm mb-8 max-w-md">
               Room created. Share this invite link with your trading partner — they open it and land directly in this room.
             </p>
@@ -755,14 +888,17 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
           </div>
         ) : (
           <div className="flex flex-col gap-6 h-full">
-            <div className="text-left w-full px-1 mb-[-12px]">
-              <span className="text-xs font-medium text-white/40 uppercase tracking-wider">Step 3 — Add assets and lock trade</span>
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-auto lg:h-[400px]">
+            <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-6 h-auto lg:h-[400px]">
+              {/* MMO-style VS divider */}
+              <div className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-[#0d0d0d] border border-white/10 items-center justify-center shadow-[0_0_30px_rgba(0,0,0,0.8)]">
+                <ArrowLeftRight size={15} className="text-emerald-400/80" />
+              </div>
               
               {/* My Offer */}
               <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-5 flex flex-col relative overflow-hidden h-[350px] lg:h-full">
-                {myLock && <div className="absolute inset-0 border-2 border-emerald-500/40 rounded-2xl pointer-events-none"></div>}
+                {myLock && (
+                  <div className="absolute inset-0 rounded-2xl pointer-events-none ring-2 ring-emerald-500/50 shadow-[inset_0_0_40px_-16px_rgba(62,207,142,0.35)]" />
+                )}
                 
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-white/80 font-medium flex items-center gap-2"><User size={16}/> My Offer</span>
@@ -781,18 +917,28 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
                   />
                 </div>
                 
-                <Button 
-                  onClick={actions.lockTrade} 
+                <Button
+                  onClick={actions.lockTrade}
                   disabled={myLock || roomData.state !== 'active' || myAssets.length === 0}
-                  className="w-full bg-white/5 hover:bg-emerald-500/20 hover:text-emerald-400 text-white border border-white/10 hover:border-emerald-500/30 transition-all disabled:opacity-50"
+                  className={`w-full h-11 rounded-xl font-semibold transition-all ${
+                    myLock || roomData.state !== 'active' || myAssets.length === 0
+                      ? 'bg-white/[0.04] text-white/35 border border-white/10'
+                      : 'bg-emerald-500 hover:bg-emerald-400 text-black shadow-[0_0_28px_-8px_rgba(62,207,142,0.55)]'
+                  }`}
                 >
-                  {myLock ? "Waiting for Counterparty" : "Lock Offer"}
+                  {myLock ? (
+                    <span className="flex items-center gap-2"><Lock size={14} /> Waiting for counterparty…</span>
+                  ) : (
+                    <span className="flex items-center gap-2"><Lock size={14} /> Lock Offer</span>
+                  )}
                 </Button>
               </div>
 
               {/* Counterparty Offer */}
               <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-5 flex flex-col relative overflow-hidden h-[350px] lg:h-full">
-                {theirLock && <div className="absolute inset-0 border-2 border-emerald-500/40 rounded-2xl pointer-events-none"></div>}
+                {theirLock && (
+                  <div className="absolute inset-0 rounded-2xl pointer-events-none ring-2 ring-emerald-500/50 shadow-[inset_0_0_40px_-16px_rgba(62,207,142,0.35)]" />
+                )}
                 
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-white/80 font-medium flex items-center gap-2"><Globe size={16}/> Counterparty Offer</span>
@@ -820,10 +966,19 @@ function TradeRoom({ walletAddress }: { walletAddress: string }) {
 
             {/* Final State / Countdown Area */}
             {roomData.state === 'locked_countdown' && (
-              <div className="bg-black border border-emerald-500/30 rounded-2xl p-8 text-center mt-auto">
-                <div className="text-5xl font-mono text-emerald-400 mb-4">{countdown}</div>
-                <div className="text-white/60">Both parties locked. Final review countdown.</div>
-                <Button onClick={actions.cancelTrade} variant="destructive" className="mt-4 bg-rose-500/20 text-rose-400 border border-rose-500/30 hover:bg-rose-500/30">Cancel Trade</Button>
+              <div className="relative bg-[#050505] border border-emerald-500/25 rounded-2xl p-8 text-center mt-auto overflow-hidden">
+                <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[420px] h-[220px] bg-emerald-500/10 blur-[80px] rounded-full pointer-events-none" />
+                <div className="relative">
+                  <CountdownRing seconds={countdown ?? 0} />
+                  <h3 className="text-white font-semibold mt-5 mb-1 tracking-tight">Both sides locked</h3>
+                  <p className="text-white/40 text-sm mb-6 max-w-sm mx-auto">Final safety review. Offers are frozen — you can still cancel before signing begins.</p>
+                  <Button
+                    onClick={actions.cancelTrade}
+                    className="px-6 h-10 rounded-xl bg-rose-500/10 text-rose-300 border border-rose-500/25 hover:bg-rose-500/20 hover:text-rose-200 transition-all font-medium"
+                  >
+                    Cancel Trade
+                  </Button>
+                </div>
               </div>
             )}
 
