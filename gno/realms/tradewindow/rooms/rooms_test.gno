@@ -13,107 +13,81 @@ func resetRoomsForTest() {
 	testing.SetOriginCaller(address(partyA))
 }
 
-func TestCreateRoom(t *testing.T) {
+func TestCreateRoom(cur realm, t *testing.T) {
 	resetRoomsForTest()
 
-	res := CreateRoom("room1", partyA, partyB, "hash1", 100, 200)
+	res := CreateRoom(cross(cur), "room1", partyA, partyB, "hash1", 100, 200)
 	if res != "created" {
 		t.Errorf("Expected 'created', got %s", res)
 	}
 
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("Did not panic on duplicate room")
-		}
-	}()
-	CreateRoom("room1", partyA, partyB, "hash1", 100, 200)
+	if r := revive(func() { CreateRoom(cross(cur), "room1", partyA, partyB, "hash1", 100, 200) }); r == nil {
+		t.Errorf("Did not panic on duplicate room")
+	}
 }
 
-func TestRejectEmptyRoomID(t *testing.T) {
+func TestRejectEmptyRoomID(cur realm, t *testing.T) {
 	resetRoomsForTest()
 
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("Did not panic on empty room ID")
-		}
-	}()
-	CreateRoom("", partyA, partyB, "hash", 100, 200)
+	if r := revive(func() { CreateRoom(cross(cur), "", partyA, partyB, "hash", 100, 200) }); r == nil {
+		t.Errorf("Did not panic on empty room ID")
+	}
 }
 
-func TestRejectEmptyParty(t *testing.T) {
+func TestRejectEmptyParty(cur realm, t *testing.T) {
 	resetRoomsForTest()
 
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("Did not panic on empty party")
-		}
-	}()
-	CreateRoom("room2", "", partyB, "hash", 100, 200)
+	if r := revive(func() { CreateRoom(cross(cur), "room2", "", partyB, "hash", 100, 200) }); r == nil {
+		t.Errorf("Did not panic on empty party")
+	}
 }
 
-func TestRejectEmptyIntentHash(t *testing.T) {
+func TestRejectEmptyIntentHash(cur realm, t *testing.T) {
 	resetRoomsForTest()
 
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("Did not panic on empty intent hash")
-		}
-	}()
-	CreateRoom("room3", partyA, partyB, "", 100, 200)
+	if r := revive(func() { CreateRoom(cross(cur), "room3", partyA, partyB, "", 100, 200) }); r == nil {
+		t.Errorf("Did not panic on empty intent hash")
+	}
 }
 
-func TestCancelAndExpireRoom(t *testing.T) {
+func TestCancelAndExpireRoom(cur realm, t *testing.T) {
 	resetRoomsForTest()
 
-	CreateRoom("room4", partyA, partyB, "hash", 100, 200)
-	CancelRoom("room4")
+	CreateRoom(cross(cur), "room4", partyA, partyB, "hash", 100, 200)
+	CancelRoom(cross(cur), "room4")
 	if GetRoom("room4").Status != "cancelled" {
 		t.Errorf("Expected room to be cancelled")
 	}
 
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("Did not panic when cancelling cancelled room")
-		}
-	}()
-	CancelRoom("room4") // should panic
+	if r := revive(func() { CancelRoom(cross(cur), "room4") }); r == nil {
+		t.Errorf("Did not panic when cancelling cancelled room")
+	}
 }
 
-func TestCannotCancelCompleted(t *testing.T) {
+func TestCannotCancelCompleted(cur realm, t *testing.T) {
 	resetRoomsForTest()
 
-	CreateRoom("room5", partyA, partyB, "hash", 100, 200)
+	CreateRoom(cross(cur), "room5", partyA, partyB, "hash", 100, 200)
 	GetRoom("room5").Status = "completed"
 
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("Did not panic when cancelling a completed room")
-		}
-	}()
-	CancelRoom("room5")
+	if r := revive(func() { CancelRoom(cross(cur), "room5") }); r == nil {
+		t.Errorf("Did not panic when cancelling a completed room")
+	}
 }
 
-func TestRejectUnauthorizedCreateAndCancel(t *testing.T) {
+func TestRejectUnauthorizedCreateAndCancel(cur realm, t *testing.T) {
 	resetRoomsForTest()
 	testing.SetOriginCaller(address(stranger))
 
-	func() {
-		defer func() {
-			if r := recover(); r == nil {
-				t.Errorf("Did not panic on unauthorized create")
-			}
-		}()
-		CreateRoom("room6", partyA, partyB, "hash", 100, 200)
-	}()
+	if r := revive(func() { CreateRoom(cross(cur), "room6", partyA, partyB, "hash", 100, 200) }); r == nil {
+		t.Errorf("Did not panic on unauthorized create")
+	}
 
 	testing.SetOriginCaller(address(partyA))
-	CreateRoom("room6", partyA, partyB, "hash", 100, 200)
+	CreateRoom(cross(cur), "room6", partyA, partyB, "hash", 100, 200)
 
 	testing.SetOriginCaller(address(stranger))
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("Did not panic on unauthorized cancel")
-		}
-	}()
-	CancelRoom("room6")
+	if r := revive(func() { CancelRoom(cross(cur), "room6") }); r == nil {
+		t.Errorf("Did not panic on unauthorized cancel")
+	}
 }

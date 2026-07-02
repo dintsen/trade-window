@@ -59,6 +59,7 @@ func caller() string {
 }
 
 func CreateEscrow(
+	cur realm,
 	id string,
 	intentHash string,
 	partyA string,
@@ -126,6 +127,7 @@ func CreateEscrow(
 }
 
 func CreateVerifiedExchange(
+	cur realm,
 	id string,
 	intentHash string,
 	partyA string,
@@ -213,6 +215,7 @@ func CreateVerifiedExchange(
 }
 
 func CreateBundleEscrow(
+	cur realm,
 	id string,
 	intentHash string,
 	partyA string,
@@ -263,11 +266,11 @@ func CreateBundleEscrow(
 	return StatusCreated
 }
 
-func MarkFunded(id string) string {
+func MarkFunded(cur realm, id string) string {
 	return markFunded(id, "")
 }
 
-func MarkFundedWithProof(id string, fundingProof string) string {
+func MarkFundedWithProof(cur realm, id string, fundingProof string) string {
 	if fundingProof == "" {
 		panic("empty funding proof")
 	}
@@ -372,7 +375,7 @@ func knownDisplayDenom(displayDenom string) bool {
 		displayDenom == "STARS"
 }
 
-func ApproveRelease(id string) string {
+func ApproveRelease(cur realm, id string) string {
 	deal := mustGet(id)
 	if deal.Status != StatusFunded {
 		panic("escrow is not fully funded")
@@ -399,7 +402,7 @@ func ApproveRelease(id string) string {
 	return "release_pending"
 }
 
-func Release(id string) string {
+func Release(cur realm, id string) string {
 	deal := mustGet(id)
 	if deal.Status != StatusFunded && deal.Status != StatusDisputed {
 		panic("escrow cannot be released")
@@ -421,7 +424,7 @@ func Release(id string) string {
 	return StatusReleased
 }
 
-func CancelBeforeFunding(id string) string {
+func CancelBeforeFunding(cur realm, id string) string {
 	deal := mustGet(id)
 	if caller() != deal.PartyA && caller() != deal.PartyB {
 		panic("only a party can cancel")
@@ -434,7 +437,7 @@ func CancelBeforeFunding(id string) string {
 	return StatusCancelled
 }
 
-func OpenDispute(id string, reason string) string {
+func OpenDispute(cur realm, id string, reason string) string {
 	deal := mustGet(id)
 	if reason == "" {
 		panic("empty dispute reason")
@@ -452,7 +455,7 @@ func OpenDispute(id string, reason string) string {
 	return StatusDisputed
 }
 
-func Refund(id string) string {
+func Refund(cur realm, id string) string {
 	deal := mustGet(id)
 	c := caller()
 	if deal.Status == StatusDisputed {

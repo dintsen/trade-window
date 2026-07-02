@@ -24,7 +24,7 @@ func init() {
 // The caller MUST be either partyA or partyB — no third party can commit.
 // Both parties must call this independently; only when both have signed
 // is the intent considered fully committed.
-func CreateCommitment(id, intentHash, partyA, partyB string) string {
+func CreateCommitment(cur realm, id, intentHash, partyA, partyB string) string {
 	caller := string(unsafe.OriginCaller())
 
 	if id == "" {

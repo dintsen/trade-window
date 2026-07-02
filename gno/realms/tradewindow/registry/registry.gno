@@ -12,7 +12,7 @@ func init() {
 	assets = make(map[string]*VerifiedAsset)
 }
 
-func AddAsset(denom, status, reason string) string {
+func AddAsset(cur realm, denom, status, reason string) string {
 	if denom == "" {
 		panic("empty denom")
 	}
@@ -32,7 +32,7 @@ func GetAsset(denom string) *VerifiedAsset {
 	return assets[denom]
 }
 
-func MarkAssetStatus(denom, status, reason string) string {
+func MarkAssetStatus(cur realm, denom, status, reason string) string {
 	asset, exists := assets[denom]
 	if !exists {
 		panic("asset not found")

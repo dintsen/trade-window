@@ -14,7 +14,7 @@ func init() {
 	escrows = make(map[string]*Escrow)
 }
 
-func Deposit(user string, amount int64) string {
+func Deposit(cur realm, user string, amount int64) string {
 	if _, exists := escrows[user]; !exists {
 		escrows[user] = &Escrow{Owner: user, Amount: 0, Locked: false}
 	}
@@ -22,7 +22,7 @@ func Deposit(user string, amount int64) string {
 	return "deposited"
 }
 
-func Lock(user string) string {
+func Lock(cur realm, user string) string {
 	if esc, exists := escrows[user]; exists {
 		esc.Locked = true
 		return "locked"

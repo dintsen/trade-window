@@ -2,8 +2,8 @@ package registry
 
 import "testing"
 
-func TestAddAsset(t *testing.T) {
-	res := AddAsset("uatom", "verified", "core asset")
+func TestAddAsset(cur realm, t *testing.T) {
+	res := AddAsset(cross(cur), "uatom", "verified", "core asset")
 	if res != "added" {
 		t.Errorf("Expected 'added', got %s", res)
 	}
@@ -13,26 +13,20 @@ func TestAddAsset(t *testing.T) {
 		t.Errorf("Asset status mismatch")
 	}
 
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("Did not panic on duplicate denom")
-		}
-	}()
-	AddAsset("uatom", "verified", "duplicate")
+	if r := revive(func() { AddAsset(cross(cur), "uatom", "verified", "duplicate") }); r == nil {
+		t.Errorf("Did not panic on duplicate denom")
+	}
 }
 
-func TestRejectEmptyDenom(t *testing.T) {
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("Did not panic on empty denom")
-		}
-	}()
-	AddAsset("", "verified", "empty")
+func TestRejectEmptyDenom(cur realm, t *testing.T) {
+	if r := revive(func() { AddAsset(cross(cur), "", "verified", "empty") }); r == nil {
+		t.Errorf("Did not panic on empty denom")
+	}
 }
 
-func TestMarkAssetStatus(t *testing.T) {
-	AddAsset("uusdc", "verified", "stablecoin")
-	MarkAssetStatus("uusdc", "suspended", "security review")
+func TestMarkAssetStatus(cur realm, t *testing.T) {
+	AddAsset(cross(cur), "uusdc", "verified", "stablecoin")
+	MarkAssetStatus(cross(cur), "uusdc", "suspended", "security review")
 
 	asset := GetAsset("uusdc")
 	if asset.Status != "suspended" {

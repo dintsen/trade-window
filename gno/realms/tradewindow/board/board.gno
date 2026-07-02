@@ -15,7 +15,7 @@ func init() {
 	allListings = make(map[string]*Listing)
 }
 
-func AddListing(id, maker, offered, wanted string) string {
+func AddListing(cur realm, id, maker, offered, wanted string) string {
 	if _, exists := allListings[id]; exists {
 		panic("listing exists")
 	}
@@ -29,7 +29,7 @@ func AddListing(id, maker, offered, wanted string) string {
 	return "listed"
 }
 
-func RemoveListing(id string) string {
+func RemoveListing(cur realm, id string) string {
 	delete(allListings, id)
 	return "removed"
 }

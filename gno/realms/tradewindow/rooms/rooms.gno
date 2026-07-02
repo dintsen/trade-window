@@ -22,7 +22,7 @@ func init() {
 
 // CreateRoom registers a new trade room on-chain.
 // Caller MUST be partyA — the room initiator.
-func CreateRoom(id, partyA, partyB, intentHash string, createdAt, expiresAt int64) string {
+func CreateRoom(cur realm, id, partyA, partyB, intentHash string, createdAt, expiresAt int64) string {
 	caller := string(unsafe.OriginCaller())
 
 	if id == "" {
@@ -55,7 +55,7 @@ func CreateRoom(id, partyA, partyB, intentHash string, createdAt, expiresAt int6
 }
 
 // CancelRoom cancels a room. Only partyA or partyB can cancel.
-func CancelRoom(id string) string {
+func CancelRoom(cur realm, id string) string {
 	caller := string(unsafe.OriginCaller())
 
 	room, exists := activeRooms[id]
@@ -76,7 +76,7 @@ func CancelRoom(id string) string {
 }
 
 // ExpireRoom expires a room. Only partyA or partyB can expire.
-func ExpireRoom(id string) string {
+func ExpireRoom(cur realm, id string) string {
 	caller := string(unsafe.OriginCaller())
 
 	room, exists := activeRooms[id]

@@ -13,10 +13,10 @@ func resetCommitmentsForTest() {
 	testing.SetOriginCaller(address(partyA))
 }
 
-func TestCreateCommitment(t *testing.T) {
+func TestCreateCommitment(cur realm, t *testing.T) {
 	resetCommitmentsForTest()
 
-	res := CreateCommitment("intent1", "hashXYZ", partyA, partyB)
+	res := CreateCommitment(cross(cur), "intent1", "hashXYZ", partyA, partyB)
 	if res != "committed" {
 		t.Errorf("Expected 'committed', got %s", res)
 	}
@@ -26,40 +26,31 @@ func TestCreateCommitment(t *testing.T) {
 		t.Errorf("Stored hash mismatch")
 	}
 
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("Did not panic on duplicate intent ID")
-		}
-	}()
-	CreateCommitment("intent1", "hashXYZ", partyA, partyB)
+	if r := revive(func() { CreateCommitment(cross(cur), "intent1", "hashXYZ", partyA, partyB) }); r == nil {
+		t.Errorf("Did not panic on duplicate intent ID")
+	}
 }
 
-func TestRejectEmptyHash(t *testing.T) {
+func TestRejectEmptyHash(cur realm, t *testing.T) {
 	resetCommitmentsForTest()
 
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("Did not panic on empty hash")
-		}
-	}()
-	CreateCommitment("intent2", "", partyA, partyB)
+	if r := revive(func() { CreateCommitment(cross(cur), "intent2", "", partyA, partyB) }); r == nil {
+		t.Errorf("Did not panic on empty hash")
+	}
 }
 
-func TestRejectEmptyParty(t *testing.T) {
+func TestRejectEmptyParty(cur realm, t *testing.T) {
 	resetCommitmentsForTest()
 
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("Did not panic on empty party")
-		}
-	}()
-	CreateCommitment("intent3", "hash", "", partyB)
+	if r := revive(func() { CreateCommitment(cross(cur), "intent3", "hash", "", partyB) }); r == nil {
+		t.Errorf("Did not panic on empty party")
+	}
 }
 
-func TestDualSignedCommitment(t *testing.T) {
+func TestDualSignedCommitment(cur realm, t *testing.T) {
 	resetCommitmentsForTest()
 
-	if res := CreateCommitment("intent4", "hash", partyA, partyB); res != "committed" {
+	if res := CreateCommitment(cross(cur), "intent4", "hash", partyA, partyB); res != "committed" {
 		t.Errorf("Expected committed, got %s", res)
 	}
 	if IsDualSigned("intent4") {
@@ -67,7 +58,7 @@ func TestDualSignedCommitment(t *testing.T) {
 	}
 
 	testing.SetOriginCaller(address(partyB))
-	if res := CreateCommitment("intent4", "hash", partyA, partyB); res != "co-signed" {
+	if res := CreateCommitment(cross(cur), "intent4", "hash", partyA, partyB); res != "co-signed" {
 		t.Errorf("Expected co-signed, got %s", res)
 	}
 	if !IsDualSigned("intent4") {
@@ -75,28 +66,22 @@ func TestDualSignedCommitment(t *testing.T) {
 	}
 }
 
-func TestRejectUnauthorizedCommitment(t *testing.T) {
+func TestRejectUnauthorizedCommitment(cur realm, t *testing.T) {
 	resetCommitmentsForTest()
 	testing.SetOriginCaller(address(stranger))
 
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("Did not panic on unauthorized commitment")
-		}
-	}()
-	CreateCommitment("intent5", "hash", partyA, partyB)
+	if r := revive(func() { CreateCommitment(cross(cur), "intent5", "hash", partyA, partyB) }); r == nil {
+		t.Errorf("Did not panic on unauthorized commitment")
+	}
 }
 
-func TestRejectHashMismatchOnCosign(t *testing.T) {
+func TestRejectHashMismatchOnCosign(cur realm, t *testing.T) {
 	resetCommitmentsForTest()
 
-	CreateCommitment("intent6", "hash-one", partyA, partyB)
+	CreateCommitment(cross(cur), "intent6", "hash-one", partyA, partyB)
 	testing.SetOriginCaller(address(partyB))
 
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("Did not panic on hash mismatch")
-		}
-	}()
-	CreateCommitment("intent6", "hash-two", partyA, partyB)
+	if r := revive(func() { CreateCommitment(cross(cur), "intent6", "hash-two", partyA, partyB) }); r == nil {
+		t.Errorf("Did not panic on hash mismatch")
+	}
 }

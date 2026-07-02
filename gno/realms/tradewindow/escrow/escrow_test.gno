@@ -14,8 +14,8 @@ func resetEscrowsForTest() {
 	testing.SetOriginCaller(address(partyA))
 }
 
-func createDefaultEscrow(id string) {
-	CreateEscrow(
+func createDefaultEscrow(cur realm, id string) {
+	CreateEscrow(cross(cur), 
 		id,
 		"0xabc",
 		partyA,
@@ -32,8 +32,8 @@ func createDefaultEscrow(id string) {
 	)
 }
 
-func createDefaultBundleEscrow(id string) {
-	CreateBundleEscrow(
+func createDefaultBundleEscrow(cur realm, id string) {
+	CreateBundleEscrow(cross(cur), 
 		id,
 		"0xbundle",
 		partyA,
@@ -46,8 +46,8 @@ func createDefaultBundleEscrow(id string) {
 	)
 }
 
-func createDefaultVerifiedExchange(id string) {
-	CreateVerifiedExchange(
+func createDefaultVerifiedExchange(cur realm, id string) {
+	CreateVerifiedExchange(cross(cur), 
 		id,
 		"0xexchange",
 		partyA,
@@ -76,43 +76,43 @@ func createDefaultVerifiedExchange(id string) {
 	)
 }
 
-func TestCreateFundApproveRelease(t *testing.T) {
+func TestCreateFundApproveRelease(cur realm, t *testing.T) {
 	resetEscrowsForTest()
-	createDefaultEscrow("escrow1")
+	createDefaultEscrow(cur, "escrow1")
 
 	if GetStatus("escrow1") != StatusCreated {
 		t.Errorf("Expected created status")
 	}
 
-	if res := MarkFunded("escrow1"); res != StatusFunding {
+	if res := MarkFunded(cross(cur), "escrow1"); res != StatusFunding {
 		t.Errorf("Expected funding after first deposit, got %s", res)
 	}
 
 	testing.SetOriginCaller(address(partyB))
-	if res := MarkFunded("escrow1"); res != StatusFunded {
+	if res := MarkFunded(cross(cur), "escrow1"); res != StatusFunded {
 		t.Errorf("Expected funded after both deposits, got %s", res)
 	}
 
-	if res := ApproveRelease("escrow1"); res != "release_pending" {
+	if res := ApproveRelease(cross(cur), "escrow1"); res != "release_pending" {
 		t.Errorf("Expected release_pending, got %s", res)
 	}
 
 	testing.SetOriginCaller(address(partyA))
-	if res := ApproveRelease("escrow1"); res != "release_ready" {
+	if res := ApproveRelease(cross(cur), "escrow1"); res != "release_ready" {
 		t.Errorf("Expected release_ready, got %s", res)
 	}
 
 	if !IsReleaseReady("escrow1") {
 		t.Errorf("Expected release-ready escrow")
 	}
-	if res := Release("escrow1"); res != StatusReleased {
+	if res := Release(cross(cur), "escrow1"); res != StatusReleased {
 		t.Errorf("Expected released, got %s", res)
 	}
 }
 
-func TestCreateBundleEscrowStoresBothOfferDigests(t *testing.T) {
+func TestCreateBundleEscrowStoresBothOfferDigests(cur realm, t *testing.T) {
 	resetEscrowsForTest()
-	createDefaultBundleEscrow("bundle1")
+	createDefaultBundleEscrow(cur, "bundle1")
 
 	deal := GetEscrow("bundle1")
 	if deal.OfferACount != 2 || deal.OfferBCount != 1 {
@@ -123,9 +123,9 @@ func TestCreateBundleEscrowStoresBothOfferDigests(t *testing.T) {
 	}
 }
 
-func TestCreateVerifiedExchangeStoresSettlementAndFundingProofs(t *testing.T) {
+func TestCreateVerifiedExchangeStoresSettlementAndFundingProofs(cur realm, t *testing.T) {
 	resetEscrowsForTest()
-	createDefaultVerifiedExchange("exchange1")
+	createDefaultVerifiedExchange(cur, "exchange1")
 
 	deal := GetEscrow("exchange1")
 	if deal.AssetA.DisplayDenom != "ATONE" || deal.AssetA.ReceiverAddress != "atone1receiver" {
@@ -135,7 +135,7 @@ func TestCreateVerifiedExchangeStoresSettlementAndFundingProofs(t *testing.T) {
 		t.Errorf("Expected partyB settlement asset to be stored")
 	}
 
-	if res := MarkFundedWithProof("exchange1", "atomone-txhash"); res != StatusFunding {
+	if res := MarkFundedWithProof(cross(cur), "exchange1", "atomone-txhash"); res != StatusFunding {
 		t.Errorf("Expected funding after first proof, got %s", res)
 	}
 	if GetEscrow("exchange1").FundingProofA != "atomone-txhash" {
@@ -143,20 +143,16 @@ func TestCreateVerifiedExchangeStoresSettlementAndFundingProofs(t *testing.T) {
 	}
 
 	testing.SetOriginCaller(address(partyB))
-	if res := MarkFundedWithProof("exchange1", "gno-txhash"); res != StatusFunded {
+	if res := MarkFundedWithProof(cross(cur), "exchange1", "gno-txhash"); res != StatusFunded {
 		t.Errorf("Expected funded after both proofs, got %s", res)
 	}
 }
 
-func TestRejectFakeVerifiedKnownTickerInExchange(t *testing.T) {
+func TestRejectFakeVerifiedKnownTickerInExchange(cur realm, t *testing.T) {
 	resetEscrowsForTest()
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("Did not panic on fake verified ticker")
-		}
-	}()
 
-	CreateVerifiedExchange(
+	r := revive(func() {
+		CreateVerifiedExchange(cross(cur),
 		"fake1",
 		"0xfake",
 		partyA,
@@ -183,12 +179,16 @@ func TestRejectFakeVerifiedKnownTickerInExchange(t *testing.T) {
 		1,
 		guarantor,
 	)
+	})
+	if r == nil {
+		t.Errorf("Did not panic on fake verified ticker")
+	}
 }
 
-func TestAllowExplicitSuspiciousKnownTickerMismatchInExchange(t *testing.T) {
+func TestAllowExplicitSuspiciousKnownTickerMismatchInExchange(cur realm, t *testing.T) {
 	resetEscrowsForTest()
 
-	res := CreateVerifiedExchange(
+	res := CreateVerifiedExchange(cross(cur), 
 		"suspicious1",
 		"0xsuspicious",
 		partyA,
@@ -220,79 +220,63 @@ func TestAllowExplicitSuspiciousKnownTickerMismatchInExchange(t *testing.T) {
 	}
 }
 
-func TestRejectUnauthorizedCreateAndFund(t *testing.T) {
+func TestRejectUnauthorizedCreateAndFund(cur realm, t *testing.T) {
 	resetEscrowsForTest()
 	testing.SetOriginCaller(address(stranger))
 
-	func() {
-		defer func() {
-			if r := recover(); r == nil {
-				t.Errorf("Did not panic on unauthorized create")
-			}
-		}()
-		createDefaultEscrow("escrow2")
-	}()
+	if r := revive(func() { createDefaultEscrow(cur, "escrow2") }); r == nil {
+		t.Errorf("Did not panic on unauthorized create")
+	}
 
 	testing.SetOriginCaller(address(partyA))
-	createDefaultEscrow("escrow2")
+	createDefaultEscrow(cur, "escrow2")
 
 	testing.SetOriginCaller(address(stranger))
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("Did not panic on unauthorized funding")
-		}
-	}()
-	MarkFunded("escrow2")
+	if r := revive(func() { MarkFunded(cross(cur), "escrow2") }); r == nil {
+		t.Errorf("Did not panic on unauthorized funding")
+	}
 }
 
-func TestRejectReleaseBeforeBothApprovals(t *testing.T) {
+func TestRejectReleaseBeforeBothApprovals(cur realm, t *testing.T) {
 	resetEscrowsForTest()
-	createDefaultEscrow("escrow3")
-	MarkFunded("escrow3")
+	createDefaultEscrow(cur, "escrow3")
+	MarkFunded(cross(cur), "escrow3")
 	testing.SetOriginCaller(address(partyB))
-	MarkFunded("escrow3")
-	ApproveRelease("escrow3")
+	MarkFunded(cross(cur), "escrow3")
+	ApproveRelease(cross(cur), "escrow3")
 
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("Did not panic on one-sided release")
-		}
-	}()
-	Release("escrow3")
+	if r := revive(func() { Release(cross(cur), "escrow3") }); r == nil {
+		t.Errorf("Did not panic on one-sided release")
+	}
 }
 
-func TestCancelBeforeFullyFunded(t *testing.T) {
+func TestCancelBeforeFullyFunded(cur realm, t *testing.T) {
 	resetEscrowsForTest()
-	createDefaultEscrow("escrow4")
-	MarkFunded("escrow4")
+	createDefaultEscrow(cur, "escrow4")
+	MarkFunded(cross(cur), "escrow4")
 
-	if res := CancelBeforeFunding("escrow4"); res != StatusCancelled {
+	if res := CancelBeforeFunding(cross(cur), "escrow4"); res != StatusCancelled {
 		t.Errorf("Expected cancelled, got %s", res)
 	}
 }
 
-func TestDisputeRequiresGuarantorResolution(t *testing.T) {
+func TestDisputeRequiresGuarantorResolution(cur realm, t *testing.T) {
 	resetEscrowsForTest()
-	createDefaultEscrow("escrow5")
-	MarkFunded("escrow5")
+	createDefaultEscrow(cur, "escrow5")
+	MarkFunded(cross(cur), "escrow5")
 	testing.SetOriginCaller(address(partyB))
-	MarkFunded("escrow5")
+	MarkFunded(cross(cur), "escrow5")
 
-	if res := OpenDispute("escrow5", "counterparty did not confirm receipt"); res != StatusDisputed {
+	if res := OpenDispute(cross(cur), "escrow5", "counterparty did not confirm receipt"); res != StatusDisputed {
 		t.Errorf("Expected disputed, got %s", res)
 	}
 
-	func() {
-		defer func() {
-			if r := recover(); r == nil {
-				t.Errorf("Did not panic on party refunding disputed escrow")
-			}
-		}()
-		Refund("escrow5")
-	}()
+	if r := revive(func() { Refund(cross(cur), "escrow5") }); r == nil {
+		t.Errorf("Did not panic on party refunding disputed escrow")
+	}
 
 	testing.SetOriginCaller(address(guarantor))
-	if res := Refund("escrow5"); res != StatusRefunded {
+	if res := Refund(cross(cur), "escrow5"); res != StatusRefunded {
 		t.Errorf("Expected refunded, got %s", res)
 	}
 }

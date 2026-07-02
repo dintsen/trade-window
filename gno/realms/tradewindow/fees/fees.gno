@@ -18,7 +18,7 @@ func GetFeeConfig() *FeeConfig {
 	return currentConfig
 }
 
-func SetFeeConfig(baseFee int64, denom string) string {
+func SetFeeConfig(cur realm, baseFee int64, denom string) string {
 	currentConfig.BaseFee = baseFee
 	currentConfig.Denom = denom
 	return "updated"
