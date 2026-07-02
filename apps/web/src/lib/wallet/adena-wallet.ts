@@ -25,12 +25,13 @@ export const adenaWalletAdapter: WalletAdapter = {
         throw new Error("Adena did not return an address.");
       }
       
+      const reportedChainId = accountInfo.chainId || "gno-testnet";
       return {
         address: accountInfo.address,
         displayAddress: accountInfo.address.slice(0, 10) + "…" + accountInfo.address.slice(-4),
         name: accountInfo.name,
-        chainId: "gno-testnet",
-        chainName: CHAIN_NAMES["gno-testnet"],
+        chainId: reportedChainId,
+        chainName: CHAIN_NAMES[reportedChainId] ?? reportedChainId,
         providerLabel: "Adena Wallet",
         supportLevel: "preview",
         publicKeyHex: accountInfo.publicKey,
@@ -58,12 +59,13 @@ export const adenaWalletAdapter: WalletAdapter = {
       const accountInfo = await adena.GetAccount();
       if (!accountInfo || !accountInfo.address) return null;
 
+      const reportedChainId = accountInfo.chainId || "gno-testnet";
       return {
         address: accountInfo.address,
         displayAddress: accountInfo.address.slice(0, 10) + "…" + accountInfo.address.slice(-4),
         name: accountInfo.name,
-        chainId: "gno-testnet",
-        chainName: CHAIN_NAMES["gno-testnet"],
+        chainId: reportedChainId,
+        chainName: CHAIN_NAMES[reportedChainId] ?? reportedChainId,
         providerLabel: "Adena Wallet",
         supportLevel: "preview",
         publicKeyHex: accountInfo.publicKey,

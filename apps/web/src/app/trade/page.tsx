@@ -53,11 +53,11 @@ function walletBalancesToTradeAssets(balances: WalletBalance[]): TradeAsset[] {
       chainId: b.chainId,
       sourceChain: CHAIN_DISPLAY[b.chainId] ?? b.chainId,
       displayDenom: reg?.displayDenom ?? b.symbol ?? b.denom.toUpperCase(),
-      baseDenom: b.denom,
+      baseDenom: b.baseDenom ?? b.denom,
       technicalDenom: b.denom,
       amount: human,   // used as placeholder; user types actual qty
       decimals: b.decimals ?? reg?.decimals ?? 6,
-      ibcTrace: '',
+      ibcTrace: b.ibcTrace ?? '',
       verificationStatus: 'unknown',
       verificationReason: 'Pending technical identity check',
       metadata: JSON.stringify({

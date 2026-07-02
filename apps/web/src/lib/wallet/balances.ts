@@ -1,11 +1,12 @@
 import { WalletBalance } from "./types";
 import { getAsset } from "@/lib/assets/asset-registry";
+import { resolveIbcTraces } from "./ibc";
 
 /**
  * Public LCD REST endpoints (cosmos.directory community proxy) used for
  * read-only balance queries from the user's browser. No keys, no signing.
  */
-const LCD_ENDPOINTS: Record<string, string> = {
+export const LCD_ENDPOINTS: Record<string, string> = {
   "cosmoshub-4": "https://rest.cosmos.directory/cosmoshub",
   "stargaze-1": "https://rest.cosmos.directory/stargaze",
   "atomone-1": "https://rest.cosmos.directory/atomone",
@@ -39,7 +40,7 @@ export async function fetchBalances(
     const data: BankBalancesResponse = await res.json();
     if (!data.balances) return [];
 
-    return data.balances.map((b) => {
+    const mapped = data.balances.map((b) => {
       const asset = getAsset(b.denom);
       return {
         denom: b.denom,
@@ -49,6 +50,8 @@ export async function fetchBalances(
         chainId,
       };
     });
+    // Best-effort IBC denom trace resolution (read-only LCD query).
+    return resolveIbcTraces(mapped);
   } catch {
     return null;
   }

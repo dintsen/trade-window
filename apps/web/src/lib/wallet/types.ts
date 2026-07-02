@@ -32,6 +32,10 @@ export interface WalletBalance {
   symbol?: string;
   decimals?: number;
   chainId: string;
+  /** resolved IBC transfer path + base denom, e.g. "transfer/channel-0/uosmo" */
+  ibcTrace?: string;
+  /** base denom behind an ibc/ hash denom, e.g. "uosmo" */
+  baseDenom?: string;
   ownerAddress?: string;
   ownerLabel?: string;
   ownerProvider?: WalletProviderId;

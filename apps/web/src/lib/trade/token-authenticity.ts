@@ -65,10 +65,16 @@ export function verifyTokenAuthenticity(input: TokenAuthenticityInput): TokenAut
     };
   }
 
-  if (input.technicalDenom.toLowerCase().startsWith('ibc/') && !input.ibcTrace) {
+  if (input.technicalDenom.toLowerCase().startsWith('ibc/')) {
+    if (input.ibcTrace) {
+      return {
+        status: 'unverified',
+        reason: `IBC asset resolved to ${input.ibcTrace}. Verify the source chain and channel before accepting; a resolved trace alone is not verification.`,
+      };
+    }
     return {
       status: 'unverified',
-      reason: 'IBC denom has no denom trace in this app yet; verify source path before accepting.',
+      reason: 'IBC denom trace could not be resolved; verify source path before accepting.',
     };
   }
 
