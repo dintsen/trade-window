@@ -31,7 +31,10 @@ const ADAPTERS: Record<WalletProviderId, WalletAdapter> = {
  * flow unless NEXT_PUBLIC_ENABLE_MOCK_WALLET=true is set explicitly.
  */
 const ENABLED_ADAPTERS: WalletAdapter[] = Object.values(ADAPTERS).filter(
-  (adapter) => adapter.id !== "mock" || featureFlags.enableMockWallet
+  (adapter) =>
+    adapter.id === "mock"
+      ? featureFlags.enableMockWallet
+      : featureFlags.enableRealWallet
 );
 
 // ─── Singleton state ─────────────────────────────────────────────────────────
@@ -82,6 +85,11 @@ async function connect(
     if (providerId === "mock" && !featureFlags.enableMockWallet) {
       throw new Error(
         "Mock wallet is disabled. Set NEXT_PUBLIC_ENABLE_MOCK_WALLET=true for local demos only."
+      );
+    }
+    if (providerId !== "mock" && !featureFlags.enableRealWallet) {
+      throw new Error(
+        "Real wallet connections are disabled (NEXT_PUBLIC_ENABLE_REAL_WALLET=false)."
       );
     }
     const adapter = ADAPTERS[providerId];

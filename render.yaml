@@ -1,0 +1,42 @@
+# Render Blueprint — Trade Window Go backend
+# Deploy: connect this repo in Render → "New Blueprint Instance".
+# After first deploy, point DNS: api.tradewindow.xyz CNAME <service>.onrender.com
+services:
+  - type: web
+    name: trade-window-backend
+    runtime: docker
+    rootDir: services/backend-go
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PORT
+        value: "8080"
+      - key: ALLOWED_ORIGINS
+        value: "https://tradewindow.xyz,https://www.tradewindow.xyz"
+      - key: STORAGE_DRIVER
+        value: "jsonl" # switch to "postgres" + DATABASE_URL for persistence across deploys
+      - key: MAX_WS_MESSAGE_BYTES
+        value: "16384"
+      - key: WS_RATE_LIMIT_PER_MINUTE
+        value: "120"
+      - key: COUNTDOWN_SECONDS
+        value: "10"
+      - key: INTENT_TTL_MINUTES
+        value: "15"
+      - key: ROOM_EXPIRY_MINUTES
+        value: "60"
+      - key: GNO_CHAIN_ID
+        value: "gno-testnet"
+      - key: GNO_SETTLEMENT_ENABLED
+        value: "false"
+      # - key: DATABASE_URL
+      #   fromDatabase:
+      #     name: trade-window-db
+      #     property: connectionString
+
+# Optional managed Postgres (uncomment together with DATABASE_URL above):
+# databases:
+#   - name: trade-window-db
+#     plan: starter
