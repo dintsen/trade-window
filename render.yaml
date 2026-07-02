@@ -7,7 +7,7 @@ services:
     runtime: docker
     rootDir: services/backend-go
     dockerfilePath: ./Dockerfile
-    plan: starter
+    plan: free
     healthCheckPath: /health
     autoDeploy: true
     envVars:
@@ -16,7 +16,7 @@ services:
       - key: ALLOWED_ORIGINS
         value: "https://tradewindow.xyz,https://www.tradewindow.xyz"
       - key: STORAGE_DRIVER
-        value: "jsonl" # switch to "postgres" + DATABASE_URL for persistence across deploys
+        value: "postgres" # Supabase; set DATABASE_URL in the Render dashboard (never commit it)
       - key: MAX_WS_MESSAGE_BYTES
         value: "16384"
       - key: WS_RATE_LIMIT_PER_MINUTE
@@ -39,4 +39,4 @@ services:
 # Optional managed Postgres (uncomment together with DATABASE_URL above):
 # databases:
 #   - name: trade-window-db
-#     plan: starter
+#     plan: free
