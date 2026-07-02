@@ -1,0 +1,67 @@
+import type { Metadata } from "next";
+import "./globals.css";
+import { ToastContainer } from "@/components/ui/toasts";
+
+export const metadata: Metadata = {
+  metadataBase: new URL("https://tradewindow.xyz"),
+  title: {
+    default: "Trade Window",
+    template: "%s | Trade Window",
+  },
+  description: "Trade Window is an MVP/research prototype for structured OTC deal coordination, public deal intents and future Gno.land commitment flows. It does not provide custody, financial advice, guaranteed execution or real settlement.",
+  icons: {
+    icon: [
+      { url: '/favicon-v4.ico' },
+      { url: '/favicon-v4.svg', type: 'image/svg+xml' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon-v4.png', sizes: '180x180', type: 'image/png' },
+    ],
+    other: [
+      { rel: 'manifest', url: '/site.webmanifest' },
+    ],
+  },
+  alternates: {
+    canonical: "https://tradewindow.xyz",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Trade Window",
+    description: "Structured OTC deal coordination, public deal intents and future Gno.land commitment flows.",
+    images: ["https://tradewindow.xyz/og-image-v4.png"],
+  },
+  openGraph: {
+    title: "Trade Window",
+    description: "Structured OTC deal coordination, public deal intents and future Gno.land commitment flows.",
+    url: "https://tradewindow.xyz",
+    siteName: "Trade Window",
+    images: [
+      {
+        url: "https://tradewindow.xyz/og-image-v4.png",
+        width: 1200,
+        height: 630,
+        alt: "Trade Window — OTC Trade Room for AtomOne & Gno.land",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html
+      lang="en"
+      className="h-full antialiased"
+    >
+      <body className="min-h-full flex flex-col">
+        {children}
+        <ToastContainer />
+      </body>
+    </html>
+  );
+}

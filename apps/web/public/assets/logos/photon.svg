@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Navy background -->
+  <circle cx="50" cy="50" r="50" fill="#0e1d5c"/>
+
+  <!-- 8-pointed compass star — cyan -->
+  <!-- Outer cardinal r=42, outer diagonal r=25, inner r=3 -->
+  <polygon points="
+    50,8
+    51.15,47.23
+    67.68,32.32
+    52.77,48.85
+    92,50
+    52.77,51.15
+    67.68,67.68
+    51.15,52.77
+    50,92
+    48.85,52.77
+    32.32,67.68
+    47.23,51.15
+    8,50
+    47.23,48.85
+    32.32,32.32
+    48.85,47.23
+  " fill="#00BFDF"/>
+
+  <!-- Bright cyan overlay on cardinal points only for extra pop -->
+  <polygon points="50,8 51.15,47.23 50,50 48.85,47.23" fill="#29D9F5"/>
+  <polygon points="92,50 52.77,48.85 50,50 52.77,51.15" fill="#29D9F5"/>
+  <polygon points="50,92 48.85,52.77 50,50 51.15,52.77" fill="#29D9F5"/>
+  <polygon points="8,50 47.23,51.15 50,50 47.23,48.85" fill="#29D9F5"/>
+
+  <!-- White ring -->
+  <circle cx="50" cy="50" r="34" fill="none" stroke="white" stroke-width="3"/>
+</svg>

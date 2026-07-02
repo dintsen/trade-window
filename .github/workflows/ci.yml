@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        working-directory: apps/web
+        run: npm ci || npm install
+      - name: Lint
+        working-directory: apps/web
+        run: npm run lint
+      - name: Build
+        working-directory: apps/web
+        run: npm run build
+
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version: '1.25'
+      - name: Go tests
+        working-directory: services/backend-go
+        run: go test ./... -v -count=1
+
+  # TODO: Add Gno.land CI once toolchain setup is standardized.

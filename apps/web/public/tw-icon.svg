@@ -1,0 +1,12 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer frame -->
+  <rect x="1.5" y="1.5" width="29" height="29" rx="7" fill="#0A0A0A" stroke="#3ECF8E" stroke-width="1.5"/>
+  <!-- Center divider -->
+  <line x1="16" y1="5" x2="16" y2="27" stroke="#3ECF8E" stroke-width="1.2" stroke-dasharray="0"/>
+  <!-- Left pane: offer block -->
+  <rect x="5" y="9" width="8" height="5" rx="1.5" fill="#3ECF8E"/>
+  <rect x="5" y="17" width="8" height="3" rx="1" fill="#3ECF8E" opacity="0.4"/>
+  <!-- Right pane: receive block -->
+  <rect x="19" y="9" width="8" height="5" rx="1.5" fill="white" opacity="0.85"/>
+  <rect x="19" y="17" width="8" height="3" rx="1" fill="white" opacity="0.3"/>
+</svg>
