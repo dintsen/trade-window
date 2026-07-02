@@ -13,6 +13,7 @@ import {
   leapWalletAdapter,
   cosmostationWalletAdapter,
 } from "./cosmos-wallets";
+import { featureFlags } from "../config/feature-flags";
 
 // ─── Adapters ────────────────────────────────────────────────────────────────
 
@@ -23,6 +24,15 @@ const ADAPTERS: Record<WalletProviderId, WalletAdapter> = {
   leap: leapWalletAdapter,
   cosmostation: cosmostationWalletAdapter,
 };
+
+/**
+ * Adapters actually offered to the UI.
+ * The mock wallet is a demo-only tool and is excluded from the production
+ * flow unless NEXT_PUBLIC_ENABLE_MOCK_WALLET=true is set explicitly.
+ */
+const ENABLED_ADAPTERS: WalletAdapter[] = Object.values(ADAPTERS).filter(
+  (adapter) => adapter.id !== "mock" || featureFlags.enableMockWallet
+);
 
 // ─── Singleton state ─────────────────────────────────────────────────────────
 
@@ -69,6 +79,11 @@ async function connect(
 ) {
   setState({ isConnecting: true, error: null });
   try {
+    if (providerId === "mock" && !featureFlags.enableMockWallet) {
+      throw new Error(
+        "Mock wallet is disabled. Set NEXT_PUBLIC_ENABLE_MOCK_WALLET=true for local demos only."
+      );
+    }
     const adapter = ADAPTERS[providerId];
     let chainId: string | undefined;
     if (providerId === "mock" && (mockUserOrChainId === "A" || mockUserOrChainId === "B")) {
@@ -131,6 +146,6 @@ export function useWalletStore() {
     error: snap.error,
     connect: stableConnect,
     disconnect: stableDisconnect,
-    adapters: Object.values(ADAPTERS),
+    adapters: ENABLED_ADAPTERS,
   };
 }

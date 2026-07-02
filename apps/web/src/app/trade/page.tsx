@@ -32,6 +32,7 @@ import { formatBaseAmount } from '@/lib/wallet/balances';
 import { buildSettlementRoute, validateSettlementReadiness } from '@/lib/trade/settlement';
 import { applyTokenAuthenticity } from '@/lib/trade/token-authenticity';
 import { config, ESCROW_SETTLEMENT_DISABLED_MESSAGE } from '@/lib/config';
+import { featureFlags } from '@/lib/config/feature-flags';
 import { fetchStargazeNfts, normalizeNftImageUrl } from '@/lib/wallet/nfts';
 
 // ── Live balance → TradeAsset ─────────────────────────────────────────────────
@@ -159,7 +160,8 @@ function TradeRoomWrapperInner() {
                 </p>
               </div>
 
-              {/* Mock Wallet */}
+              {/* Mock Wallet — demo-only, hidden unless NEXT_PUBLIC_ENABLE_MOCK_WALLET=true */}
+              {featureFlags.enableMockWallet && (
               <div className="bg-[#111111] border border-[#1c1c1c] rounded-xl p-4 mb-5">
                 <div className="flex items-center gap-4 mb-4">
                   <div className="w-11 h-11 rounded-xl bg-[#3ECF8E]/10 border border-[#3ECF8E]/20 flex items-center justify-center shrink-0">
@@ -192,6 +194,7 @@ function TradeRoomWrapperInner() {
                   </button>
                 </div>
               </div>
+              )}
 
               {/* Section label */}
               <p className="text-[10px] font-mono text-white/30 uppercase tracking-[0.15em] mb-2 px-1">Real Wallets</p>

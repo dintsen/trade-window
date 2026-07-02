@@ -23,6 +23,8 @@ type Client struct {
 	Address  string
 	ClientID string
 	RoomID   string
+
+	limiter *slidingWindowLimiter
 }
 
 func (c *Client) ReadPump() {
@@ -36,8 +38,13 @@ func (c *Client) ReadPump() {
 		return
 	} // for mock tests
 	maxBytes := int64(16384)
+	rateLimit := 120
 	if config.AppConfig != nil {
 		maxBytes = config.AppConfig.MaxWSMessageBytes
+		rateLimit = config.AppConfig.WSRateLimitPerMinute
+	}
+	if c.limiter == nil {
+		c.limiter = newSlidingWindowLimiter(rateLimit, time.Minute)
 	}
 	c.Conn.SetReadLimit(maxBytes)
 	c.Conn.SetReadDeadline(time.Now().Add(pongWait))
@@ -52,6 +59,10 @@ func (c *Client) ReadPump() {
 		}
 		if int64(len(message)) > maxBytes {
 			c.SendError(protocol.ErrMessageTooLong, "WebSocket message exceeds configured size limit")
+			continue
+		}
+		if !c.limiter.Allow(time.Now()) {
+			c.SendError(protocol.ErrRateLimited, "Too many messages. Slow down.")
 			continue
 		}
 		var msg protocol.WSMessage

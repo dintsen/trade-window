@@ -37,5 +37,6 @@ const (
 	ErrInvalidAsset  = "invalid_asset"
 	ErrStateRejected = "state_rejected"
 	ErrMessageTooLong = "message_too_long"
+	ErrRateLimited   = "rate_limited"
 	ErrInternalError = "internal_error"
 )

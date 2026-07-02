@@ -112,6 +112,11 @@ type Room struct {
 	LockA          bool         `json:"lockA"`
 	LockB          bool         `json:"lockB"`
 	CountdownAt    time.Time    `json:"countdownAt"`
+	// IntentExpiresAt is fixed once when the room enters ready_to_sign.
+	// It is part of the final trade state, so the intent hash stays
+	// deterministic: recomputing the intent for the same room state always
+	// yields the same expiry and therefore the same hash.
+	IntentExpiresAt time.Time   `json:"intentExpiresAt"`
 	LastActivityAt time.Time    `json:"-"`
 
 	countdownStarted bool
@@ -432,6 +437,13 @@ func (r *Room) CheckCountdown() {
 
 	if r.State == StateLockedCountdown && time.Now().After(r.CountdownAt) {
 		r.State = StateReadyToSign
+		ttlMinutes := 15
+		if config.AppConfig != nil {
+			ttlMinutes = config.AppConfig.IntentTTLMinutes
+		}
+		// Anchor expiry to the (already fixed) countdown deadline, not to
+		// time.Now(), so the value is deterministic for this room state.
+		r.IntentExpiresAt = r.CountdownAt.Add(time.Duration(ttlMinutes) * time.Minute).UTC()
 	}
 }
 

@@ -1,4 +1,10 @@
 export const featureFlags = {
+  /**
+   * Mock wallet is a local demo tool ONLY.
+   * Disabled unless NEXT_PUBLIC_ENABLE_MOCK_WALLET=true is set explicitly.
+   * Production deployments must never set this flag.
+   */
+  enableMockWallet: process.env.NEXT_PUBLIC_ENABLE_MOCK_WALLET === "true",
   enableAdena: process.env.NEXT_PUBLIC_ENABLE_ADENA === "true",
   enableGnoTxPreview: process.env.NEXT_PUBLIC_ENABLE_GNO_TX_PREVIEW === "true",
   enableGnoTestnetTransfers:

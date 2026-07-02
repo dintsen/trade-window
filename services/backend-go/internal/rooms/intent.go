@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"sort"
+	"time"
 )
 
 type TradeIntent struct {
@@ -52,6 +53,13 @@ func (r *Room) GenerateIntent() TradeIntent {
 	canonA := canonicalAssets(r.OfferA)
 	canonB := canonicalAssets(r.OfferB)
 
+	// Deterministic expiry: fixed once when the room entered ready_to_sign.
+	// Empty until then, so a pre-countdown intent preview is clearly unsigned-ready.
+	expiresAt := ""
+	if !r.IntentExpiresAt.IsZero() {
+		expiresAt = r.IntentExpiresAt.UTC().Format(time.RFC3339)
+	}
+
 	intentID := r.ID + "-intent"
 	return TradeIntent{
 		IntentID:  intentID,
@@ -65,7 +73,7 @@ func (r *Room) GenerateIntent() TradeIntent {
 		Fee:       "0",
 		FeeToken:  "uatone",
 		CreatedAt: "",
-		ExpiresAt: "",
+		ExpiresAt: expiresAt,
 		Nonce:     r.ID,
 		Status:    "ready_to_sign",
 	}
