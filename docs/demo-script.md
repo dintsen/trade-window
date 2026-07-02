@@ -16,3 +16,17 @@
 8. The room enters a 10-second countdown.
 9. After 10 seconds, the final "Ready to Sign" state is displayed showing the deterministic Intent Hash.
 10. The "Sign & Settle" button is deliberately disabled in the demo to reinforce that real wallet integration is not yet complete.
+
+---
+
+## Update 2026-07-02 — Real-wallet demo
+
+The mock-wallet demo now requires `NEXT_PUBLIC_ENABLE_MOCK_WALLET=true` in
+`apps/web/.env.local` (never set it in production).
+
+Real-wallet demo path: connect Keplr (or Adena) on both browsers → live
+balances appear via LCD → add real asset to the offer → append-only +
+double-lock + countdown as before → final intent preview shows technical
+denoms, IBC traces and the deterministic intent hash (now including expiry).
+On-chain commit/settlement remains gated behind
+NEXT_PUBLIC_ENABLE_GNO_COMMIT / NEXT_PUBLIC_ENABLE_TESTNET_SETTLEMENT.

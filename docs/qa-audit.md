@@ -177,3 +177,26 @@ The current Go Backend is tested only as a coordination layer for live mock sess
 ### Known Limits
 - Offline visual demo cannot synchronize room ownership across browsers without the Go WebSocket backend.
 - Live two-window testing requires `NEXT_PUBLIC_WS_URL` and the backend service to be running.
+
+---
+
+## QA Update 2026-07-02 — Production hardening verification
+
+| Check | Result |
+| --- | --- |
+| `go test ./...` (backend, incl. new expiry + ratelimit tests) | PASS |
+| `npx tsc --noEmit` | PASS (0 errors) |
+| `npm run lint` (eslint) | PASS (0 errors) |
+| `next build` | PASS (15/15 static pages) |
+| `gno test` — rooms/intents/registry/fees/escrow/board/token | PASS (7/7) |
+| Localnet: addpkg 7 realms | PASS |
+| Localnet: dual-sign intent e2e (+ negative: wrong hash, stranger) | PASS |
+| Localnet: escrow full lifecycle | PASS |
+
+Fixed since codex audit: mock wallet gating, deterministic intent expiry
+(in-hash), WS rate limiting, IBC denom-trace lookup, realm crossing ABI
+(on-chain calls previously impossible), deployment config + canonical flags.
+
+Outstanding (manual, requires real browser + extensions): two-wallet manual QA
+per docs/manual-qa-two-wallets.md; production deploy verification per
+docs/deployment.md.

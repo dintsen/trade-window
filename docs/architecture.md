@@ -117,3 +117,24 @@ Trade Window is a three-layer system:
 | Database | Supabase Postgres | ✅ Active, 4 migrations |
 | Domain | `tradewindow.xyz` (planned) | ⏳ Not yet configured |
 | Gno testnet | Gno.land | ❌ Not deployed |
+
+---
+
+## Update 2026-07-02 — Production hardening pass
+
+Verified working state (all tests run in CI-like sandbox):
+
+- Frontend: real wallet adapters (Adena read+sign preview, Keplr/Cosmostation),
+  live LCD balance queries, IBC denom-trace resolution (`lib/wallet/ibc.ts`),
+  registry-based token authenticity checks. Mock wallet exists only behind
+  `NEXT_PUBLIC_ENABLE_MOCK_WALLET=true` and is absent from production builds' UI.
+- Backend (Go): WS origin allowlist, wallet/clientId validation, full asset
+  payload validation, 16KB message cap, per-connection rate limit
+  (`WS_RATE_LIMIT_PER_MINUTE`), room expiry + cleanup, third-user rejection,
+  deterministic trade intent with fixed `ExpiresAt` (set on ready_to_sign,
+  part of the hash).
+- Gno realms: 7 realms (rooms, intents, registry, fees, escrow, board, token)
+  on the current crossing ABI, unit-tested with `gno test` and verified on a
+  localnet end-to-end (addpkg, dual-sign commitment, escrow lifecycle).
+- Deployment: `render.yaml` + Dockerfile for the backend, Vercel env contract
+  for the frontend, canonical feature flags (see `docs/deployment.md`).

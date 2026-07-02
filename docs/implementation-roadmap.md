@@ -141,3 +141,17 @@ Remaining work:
 - NFT transfer unless confirmed by Gno contract support
 - Real fee collection
 - Any investment or speculative tokenomics
+
+---
+
+## Status 2026-07-02
+
+Completed: backend hardening (validation, limits, expiry, rate limit),
+deterministic intent (+expiry in hash, tests), mock-wallet production gating,
+real wallet adapters + live balances + IBC trace, Gno realms on crossing ABI
+with full localnet e2e, deployment configs (Render/Vercel) and canonical
+feature flags.
+
+Next: production deploy execution (Render + DNS + Vercel env), two-wallet
+manual QA, Gno testnet realm deployment (then NEXT_PUBLIC_ENABLE_GNO_COMMIT=true),
+AtomOne testnet signing rehearsal, decision on custodial-free escrow scope.

@@ -90,3 +90,25 @@ Remaining production blockers:
 - define the evidence model for guarantor decisions;
 - complete external audit before mainnet custody;
 - verify NFT and IBC settlement standards before claiming transfer support.
+
+---
+
+## Update 2026-07-02 — Implemented mitigations
+
+- Deterministic intent expiry: `ExpiresAt` is fixed once when the room enters
+  `ready_to_sign` (anchored to the countdown deadline, never `time.Now()` at
+  hash time) and is part of the intent hash. Tests:
+  `internal/rooms/intent_expiry_test.go`.
+- WS abuse controls: 16KB read limit + sliding-window rate limit
+  (default 120 msg/min per connection, `internal/ws/ratelimit.go`).
+- Mock wallet cannot appear in production: UI block, adapter list and
+  `connect()` are all gated by `NEXT_PUBLIC_ENABLE_MOCK_WALLET`.
+- Mainnet transfers are double-gated: absent implementation paths plus
+  `NEXT_PUBLIC_ENABLE_MAINNET_SETTLEMENT=false` default enforced in
+  `lib/wallet/signing.ts`.
+- On-chain validation verified on localnet: intent co-sign requires identical
+  hash and party set; stranger callers are rejected by the realm
+  ("caller is not a party to this intent", "intent hash mismatch").
+- Known dev-snapshot quirks (gno chain/test13): account query panics until the
+  first post-restart commit; validator sign-state must be reset when a localnet
+  chain is recreated. Documented in docs/gno-local-deployment.md.

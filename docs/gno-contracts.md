@@ -75,3 +75,33 @@ It rejects fake verified tokens:
 - known ticker mismatches must be explicitly marked `suspicious`
 
 `MarkFundedWithProof` records each party's funding proof or transaction reference before release approval. The realm still does not execute cross-chain bank sends; it records and enforces the exchange state machine around deterministic settlement intent.
+
+---
+
+## Update 2026-07-02 — Crossing ABI migration + localnet verification
+
+All realms migrated to the current Gno crossing convention: every
+state-mutating public function takes `cur realm` as its first parameter
+(required for on-chain `MsgCall` on chain/test13+). Read-only functions
+(`GetX`, `IsDualSigned`, `GetStatus`, ...) are unchanged and queryable via
+`vm/qeval`.
+
+Realm tests use `cross(cur)` at call sites and `revive(...)` (not
+`defer/recover`) to assert cross-realm aborts.
+
+Localnet e2e (chainid `dev`, gnokey):
+
+```txt
+addpkg x7 realms                          OK
+intents.CreateCommitment (party A)       "committed"
+intents.CreateCommitment (party B)       "co-signed"
+qeval IsDualSigned("trade-e2e-1")         true
+co-sign with different hash               rejected: intent hash mismatch
+commit from non-party address             rejected: caller is not a party
+escrow Create/MarkFunded x2/Approve x2/
+  Release                                 created→funding→funded→
+                                          release_pending→release_ready→released
+```
+
+Frontend `MsgCall` payloads are unchanged: the `cur realm` parameter is
+injected by the VM and is never passed explicitly by callers.
