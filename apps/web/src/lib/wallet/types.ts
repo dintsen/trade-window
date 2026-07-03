@@ -86,9 +86,21 @@ export interface AdenaResponse {
   hash?: string;
 }
 
+/**
+ * Adena GetAccount historically returned the account fields flat; current
+ * Adena versions wrap them in `{ code, status, message, data: {...} }`.
+ * We accept both shapes and normalize in the adapter.
+ */
+export interface AdenaGetAccountResponse extends AdenaAccountInfo {
+  code?: number;
+  status?: "success" | "failure";
+  message?: string;
+  data?: AdenaAccountInfo;
+}
+
 export interface AdenaProvider {
   AddEstablish(appName: string): Promise<AdenaResponse | void>;
-  GetAccount(): Promise<AdenaAccountInfo>;
+  GetAccount(): Promise<AdenaGetAccountResponse>;
   DoContract?(request: AdenaContractRequest): Promise<AdenaResponse>;
 }
 
